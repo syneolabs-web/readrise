@@ -28,6 +28,18 @@ npx prisma db push      # creates every table on Supabase via DIRECT_URL
 The schema ports cleanly because it obeys the parity rule — no enums, no scalar
 lists (see the header of `prisma/schema.prisma`).
 
+> **Commit the provider change.** `npm run db:postgres` edits
+> `prisma/schema.prisma`, which is a tracked file. If you deploy while it still
+> says `provider = "sqlite"`, Vercel generates a SQLite client, points it at a
+> Postgres URL, and every query fails at runtime — with an error that blames
+> the database, not the schema. This is the most likely way this deploy breaks.
+>
+> The consequence: the provider cannot differ between local and production.
+> Once it says `postgresql`, local `npm run dev` needs a Postgres URL too —
+> either the same Supabase project, or a second free one used as your dev
+> database. Keeping a separate dev project is worth it; the alternative is
+> developing against live user data.
+
 **Optional — demo data.** Only ever on a *fresh* project:
 
 ```bash
