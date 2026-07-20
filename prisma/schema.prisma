@@ -1,0 +1,364 @@
+// Prodoxity schema.
+//
+// PARITY RULE: this schema must run unchanged on both SQLite (dev) and
+// Postgres (prod). That means NO enums and NO scalar lists — they are the
+// only two things that don't port. Union types are String + a TS type in
+// lib/types.ts; the rect array is Json. Switch with `npm run db:postgres`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // switch-provider.ts rewrites this line
+  url      = env("DATABASE_URL")
+
+  // Supabase (and any pgbouncer setup) needs two connection strings:
+  // DATABASE_URL is the transaction pooler, used at runtime because
+  // serverless opens a connection per invocation; DIRECT_URL is a real
+  // session on port 5432, which is the only thing `db push` and `migrate`
+  // can run against. Ignored by SQLite, so it is safe to leave in place
+  // while developing locally.
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  avatarColor  String   @default("#6366f1")
+  avatarImage  String?
+  createdAt    DateTime @default(now())
+
+  memberships Membership[]
+  documents   Document[]
+  highlights  Highlight[]
+  comments    Comment[]
+  votes       CommentVote[]
+  messages    ChatMessage[]
+  progress    ReadingProgress[]
+  actions     MicroAction[]
+  checkins    ActionCheckin[]
+  vaultEntries VaultEntry[]
+
+  proposals     PublishProposal[]
+  publishVotes  PublishVote[]
+  shoutoutsFrom Shoutout[]         @relation("ShoutoutFrom")
+  shoutoutsTo   Shoutout[]         @relation("ShoutoutTo")
+  modActions    ModerationAction[] @relation("ModActor")
+  modAgainst    ModerationAction[] @relation("ModTarget")
+}
+
+model Circle {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String   @unique
+  inviteCode String   @unique
+  // Discovery: a public circle appears in Global Pulse and can be joined
+  // without a code. Private circles stay invite-only.
+  isPublic   Boolean  @default(false)
+  tagline    String?
+  createdAt  DateTime @default(now())
+
+  /// Set when a unanimous member vote carried the circle private -> public.
+  /// Null while private. The owner becomes the circle's admin at this moment.
+  publishedAt DateTime?
+
+  /// Leaderboard config, owned by the admin. Weights are plain Ints so the
+  /// schema stays parity-safe and the scoring maths stays legible.
+  lbEnabled          Boolean @default(true)
+  lbWeightPages      Int     @default(1)
+  lbWeightHighlights Int     @default(3)
+  lbWeightDiscussion Int     @default(2)
+
+  memberships  Membership[]
+  documents    Document[]
+  messages     ChatMessage[]
+  actions      MicroAction[]
+  vaultEntries VaultEntry[]
+  proposals    PublishProposal[]
+  shoutouts    Shoutout[]
+  moderation   ModerationAction[]
+}
+
+/// A motion to carry the circle from private to public.
+///
+/// Publishing exposes every past highlight and thread to strangers, so it
+/// needs UNANIMOUS approval — full turnout is not enough, one "no" ends it.
+/// Only one proposal may be open per circle at a time.
+model PublishProposal {
+  id           String    @id @default(cuid())
+  circleId     String
+  proposedById String
+  status       String    @default("open") // "open" | "passed" | "rejected" | "cancelled"
+  createdAt    DateTime  @default(now())
+  resolvedAt   DateTime?
+
+  circle     Circle        @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  proposedBy User          @relation(fields: [proposedById], references: [id], onDelete: Cascade)
+  votes      PublishVote[]
+
+  @@index([circleId, status])
+}
+
+model PublishVote {
+  id         String   @id @default(cuid())
+  proposalId String
+  userId     String
+  approve    Boolean
+  votedAt    DateTime @default(now())
+
+  proposal PublishProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([proposalId, userId])
+}
+
+/// The admin publicly recognising a member's highlight — the one piece of
+/// praise that is broadcast to the whole circle rather than threaded.
+model Shoutout {
+  id          String   @id @default(cuid())
+  circleId    String
+  highlightId String?
+  fromId      String
+  toId        String
+  note        String?
+  createdAt   DateTime @default(now())
+
+  circle    Circle     @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  highlight Highlight? @relation(fields: [highlightId], references: [id], onDelete: SetNull)
+  from      User       @relation("ShoutoutFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to        User       @relation("ShoutoutTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@index([circleId])
+}
+
+/// Audit log AND ban list in one table. A removal row is what stops a removed
+/// member walking straight back in through a public circle's open join door —
+/// deleting the Membership alone would not.
+model ModerationAction {
+  id        String   @id @default(cuid())
+  circleId  String
+  actorId   String
+  targetId  String
+  action    String // "remove"
+  reason    String
+  createdAt DateTime @default(now())
+
+  circle Circle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  actor  User   @relation("ModActor", fields: [actorId], references: [id], onDelete: Cascade)
+  target User   @relation("ModTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@index([circleId, targetId])
+}
+
+/// The permission boundary for the entire app. If a row exists here,
+/// the user can see everything in the circle. See lib/auth.ts.
+model Membership {
+  id       String   @id @default(cuid())
+  userId   String
+  circleId String
+  role     String   @default("member") // MemberRole: "owner" | "member"
+  joinedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circle Circle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, circleId])
+  @@index([circleId])
+}
+
+model Document {
+  id           String   @id @default(cuid())
+  circleId     String
+  title        String
+  author       String?
+  /// Path relative to STORAGE_DIR. Never under public/ — served only
+  /// through an auth-checked route handler.
+  storageKey   String
+  pageCount    Int      @default(0)
+  uploadedById String
+  createdAt    DateTime @default(now())
+
+  /// Reading goal, set by the uploader when the book is added.
+  ///
+  /// Grounded in goal-setting research (docs/RESEARCH.md §8): a specific,
+  /// deadline-bound target outperforms "do your best" ~90% of the time, and
+  /// `goalRitual` — a one-sentence implementation intention naming WHEN you'll
+  /// read — is the single cheapest lever known to nearly double completion.
+  /// Null goalDays = no goal, which stays a first-class choice.
+  goalDays      Int?
+  goalStartedAt DateTime?
+  goalRitual    String?
+
+  circle     Circle            @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  uploadedBy User              @relation(fields: [uploadedById], references: [id])
+  milestones Milestone[]
+  highlights Highlight[]
+  progress   ReadingProgress[]
+  actions    MicroAction[]
+
+  @@index([circleId])
+}
+
+/// A chapter range. Drives both the reading schedule and spoiler gating:
+/// a milestone's room is locked until your own progress reaches endPage.
+model Milestone {
+  id         String   @id @default(cuid())
+  documentId String
+  title      String
+  startPage  Int
+  endPage    Int
+  order      Int
+  createdAt  DateTime @default(now())
+
+  document Document      @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+  actions  MicroAction[]
+
+  @@index([documentId])
+}
+
+/// The core record. `rects` holds normalized 0..1 fractions of the page at
+/// scale 1.0 — never viewport pixels. See docs/BLUEPRINT.md §3 and lib/anchor.ts.
+model Highlight {
+  id         String   @id @default(cuid())
+  documentId String
+  userId     String
+  pageNumber Int
+  /// Json: NormalizedRect[] — [{ x, y, w, h }] as fractions of page W/H.
+  /// Value object, never queried independently, so not a child table.
+  rects      Json
+  /// Fallback anchor + what the Vault and search actually read.
+  textContent String
+  textStart   Int  @default(0)
+  textEnd     Int  @default(0)
+  color       String @default("yellow") // HighlightColor, see lib/types.ts
+  createdAt   DateTime @default(now())
+
+  document     Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+  vaultEntries VaultEntry[]
+  shoutouts    Shoutout[]
+
+  @@index([documentId, pageNumber])
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  highlightId String
+  userId      String
+  body        String
+  parentId    String?
+  createdAt   DateTime @default(now())
+
+  highlight Highlight     @relation(fields: [highlightId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    Comment?      @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[]     @relation("CommentThread")
+  votes     CommentVote[]
+
+  @@index([highlightId])
+}
+
+model CommentVote {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+}
+
+/// milestoneId null = the Lounge (always open).
+/// milestoneId set = that milestone's spoiler-gated room.
+model ChatMessage {
+  id          String   @id @default(cuid())
+  circleId    String
+  userId      String
+  milestoneId String?
+  body        String
+  createdAt   DateTime @default(now())
+
+  circle    Circle     @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+
+  @@index([circleId, milestoneId])
+}
+
+/// Powers Progress Match and gates milestone rooms.
+model ReadingProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  documentId  String
+  currentPage Int      @default(1)
+  updatedAt   DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, documentId])
+}
+
+/// The COMMIT step — the thing no other reading platform has.
+/// One concrete habit the circle derives from a chapter.
+model MicroAction {
+  id          String   @id @default(cuid())
+  circleId    String
+  documentId  String?
+  milestoneId String?
+  createdById String
+  title       String
+  detail      String?
+  /// ISO date (Monday) bucketing the streak.
+  weekOf      String
+  createdAt   DateTime @default(now())
+
+  circle    Circle          @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  document  Document?       @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  milestone Milestone?      @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  createdBy User            @relation(fields: [createdById], references: [id])
+  checkins  ActionCheckin[]
+  vaultEntries VaultEntry[]
+
+  @@index([circleId, weekOf])
+}
+
+model ActionCheckin {
+  id            String   @id @default(cuid())
+  microActionId String
+  userId        String
+  done          Boolean  @default(true)
+  checkedAt     DateTime @default(now())
+
+  microAction MicroAction @relation(fields: [microActionId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([microActionId, userId])
+}
+
+/// The Insight Vault: the circle's private second brain, indexed across
+/// every book. Pins either a highlight or a completed action.
+model VaultEntry {
+  id            String   @id @default(cuid())
+  circleId      String
+  addedById     String
+  highlightId   String?
+  microActionId String?
+  /// Synthesis written by the pinner — why this mattered.
+  note          String?
+  createdAt     DateTime @default(now())
+
+  circle      Circle       @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  addedBy     User         @relation(fields: [addedById], references: [id], onDelete: Cascade)
+  highlight   Highlight?   @relation(fields: [highlightId], references: [id], onDelete: Cascade)
+  microAction MicroAction? @relation(fields: [microActionId], references: [id], onDelete: Cascade)
+
+  @@index([circleId])
+}

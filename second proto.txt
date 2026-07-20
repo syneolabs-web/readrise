@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hearth – Read Together, Grow Together</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    inter: ['Inter', 'sans-serif'],
+                    oswald: ['Oswald', 'sans-serif'],
+                }
+            }
+        }
+    }
+    </script>
+    <style>
+        *{font-family:'Inter',sans-serif;box-sizing:border-box}
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:#090A0B}
+        ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+        ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
+        .view{display:none}.view.active{display:block}
+        @keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+        .anim{animation:fadeUp .6s ease-out forwards}
+        .d1{animation-delay:.1s;opacity:0}.d2{animation-delay:.2s;opacity:0}
+        .d3{animation-delay:.3s;opacity:0}.d4{animation-delay:.4s;opacity:0}
+        .d5{animation-delay:.5s;opacity:0}
+        @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.3)}50%{box-shadow:0 0 20px 4px rgba(249,115,22,.1)}}
+        .pulse-glow{animation:pulseGlow 2.5s ease-in-out infinite}
+        @keyframes flameDance{0%,100%{transform:scaleY(1) scaleX(1) rotate(-1deg)}25%{transform:scaleY(1.1) scaleX(.95) rotate(1deg)}50%{transform:scaleY(.95) scaleX(1.05) rotate(-0.5deg)}75%{transform:scaleY(1.05) scaleX(.97) rotate(0.5deg)}}
+        .flame{animation:flameDance 1.2s ease-in-out infinite}
+        @keyframes checkPop{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+        .check-pop{animation:checkPop .35s ease-out forwards}
+        @keyframes typing{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+        .td:nth-child(1){animation:typing 1.4s infinite 0s}
+        .td:nth-child(2){animation:typing 1.4s infinite .2s}
+        .td:nth-child(3){animation:typing 1.4s infinite .4s}
+        .nav-btn{position:relative;transition:color .2s}
+        .nav-btn.active{color:#f97316}
+        .nav-btn.active::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:18px;height:2px;background:#f97316;border-radius:1px}
+        .mob-btn{transition:color .2s}.mob-btn.active{color:#f97316}
+        .card-h{transition:all .3s ease}
+        .card-h:hover{border-color:rgba(249,115,22,.25);transform:translateY(-1px)}
+        .modal-bg{opacity:0;pointer-events:none;transition:opacity .3s}
+        .modal-bg.open{opacity:1;pointer-events:auto}
+        .modal-bg.open .modal-box{transform:scale(1);opacity:1}
+        .modal-box{transform:scale(.95);opacity:0;transition:all .3s}
+        .toast-el{transform:translateY(80px);opacity:0;transition:all .4s ease}
+        .toast-el.show{transform:translateY(0);opacity:1}
+        .book-cover{transition:transform .4s ease,box-shadow .4s ease}
+        .book-cover:hover{transform:scale(1.03);box-shadow:0 8px 32px rgba(249,115,22,.12)}
+        .chat-in{animation:fadeUp .3s ease-out}
+        .tag{transition:all .2s}.tag.active{background:rgba(249,115,22,.12);color:#f97316;border-color:rgba(249,115,22,.25)}
+        @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+        .streak-shine{background:linear-gradient(90deg,transparent,rgba(249,115,22,.06),transparent);background-size:200% 100%;animation:shimmer 3s infinite}
+        @keyframes emberFloat{0%{opacity:0;transform:translateY(0) scale(0)}20%{opacity:1;transform:translateY(-10px) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(0)}}
+        .ember{position:absolute;width:4px;height:4px;border-radius:50%;background:#f97316;animation:emberFloat 2s ease-out infinite}
+        .ember:nth-child(2){animation-delay:.4s;left:55%;width:3px;height:3px}
+        .ember:nth-child(3){animation-delay:.9s;left:45%;width:2px;height:2px}
+        .ember:nth-child(4){animation-delay:1.3s;left:60%;width:3px;height:3px;opacity:.7}
+        input:focus,textarea:focus{outline:none;border-color:rgba(249,115,22,.4)!important;box-shadow:0 0 0 3px rgba(249,115,22,.08)}
+        .line-clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+
+<!-- ═══════════ TOP NAV ═══════════ -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/[.05]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <button onclick="showView('circles')" class="flex items-center gap-2.5 group">
+                <div class="relative w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center overflow-hidden">
+                    <span class="iconify text-white text-sm relative z-10" data-icon="lucide:flame"></span>
+                </div>
+                <span class="font-oswald font-600 text-lg tracking-tight">HEARTH</span>
+            </button>
+            <div class="hidden sm:flex items-center gap-6">
+                <button onclick="showView('circles')" class="nav-btn active text-sm font-medium" data-nav="circles">Circles</button>
+                <button onclick="showView('dashboard')" class="nav-btn text-white/40 text-sm font-medium" data-nav="dashboard">Dashboard</button>
+                <button onclick="showView('vault')" class="nav-btn text-white/40 text-sm font-medium" data-nav="vault">Vault</button>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[.04] border border-white/[.06]">
+                <span class="text-sm flame">🔥</span>
+                <span class="text-xs font-semibold text-white/80">12</span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-[11px] font-bold">P</div>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════ MOBILE BOTTOM NAV ═══════════ -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-white/[.05] sm:hidden">
+    <div class="flex items-center justify-around h-16 px-2">
+        <button onclick="showView('circles')" class="mob-btn active flex flex-col items-center gap-1 px-3 py-1" data-mob="circles">
+            <span class="iconify text-xl" data-icon="lucide:flame-kindling"></span>
+            <span class="text-[10px] font-medium">Circles</span>
+        </button>
+        <button onclick="showView('dashboard')" class="mob-btn text-white/35 flex flex-col items-center gap-1 px-3 py-1" data-mob="dashboard">
+            <span class="iconify text-xl" data-icon="lucide:layout-dashboard"></span>
+            <span class="text-[10px] font-medium">Board</span>
+        </button>
+        <button onclick="showView('reader')" class="mob-btn text-white/35 flex flex-col items-center gap-1 px-3 py-1 relative" data-mob="reader">
+            <div class="w-10 h-10 -mt-5 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 border-4 border-black">
+                <span class="iconify text-white text-lg" data-icon="lucide:book-open"></span>
+            </div>
+            <span class="text-[10px] font-medium -mt-0.5">Read</span>
+        </button>
+        <button onclick="showView('vault')" class="mob-btn text-white/35 flex flex-col items-center gap-1 px-3 py-1" data-mob="vault">
+            <span class="iconify text-xl" data-icon="lucide:landmark"></span>
+            <span class="text-[10px] font-medium">Vault</span>
+        </button>
+        <button onclick="showView('profile')" class="mob-btn text-white/35 flex flex-col items-center gap-1 px-3 py-1" data-mob="profile">
+            <span class="iconify text-xl" data-icon="lucide:user"></span>
+            <span class="text-[10px] font-medium">You</span>
+        </button>
+    </div>
+</nav>
+
+<main class="pt-16 pb-24 sm:pb-8">
+
+<!-- ═══════════ VIEW: CIRCLES ═══════════ -->
+<div id="view-circles" class="view active">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16">
+        <div class="anim d1">
+            <p class="text-[10px] font-medium tracking-[.2em] uppercase text-orange-500/80 mb-3">Welcome back, Pratik</p>
+            <h1 class="font-oswald font-500 text-4xl sm:text-5xl tracking-tight leading-[1.05] mb-3">Your Hearths</h1>
+            <p class="text-white/40 text-base leading-relaxed max-w-md">Small, private circles of 2-3 people who read together and keep each other's fire burning.</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mt-8 anim d2">
+            <button onclick="openModal('join-modal')" class="px-5 py-2.5 rounded-xl border border-white/10 text-sm font-medium text-white/60 hover:border-white/20 hover:text-white transition flex items-center gap-2">
+                <span class="iconify text-base" data-icon="lucide:link"></span>
+                Join with code
+            </button>
+            <button onclick="openModal('new-modal')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-sm font-semibold text-white hover:from-orange-600 hover:to-amber-600 transition flex items-center gap-2 pulse-glow">
+                <span class="iconify text-base" data-icon="lucide:plus"></span>
+                New hearth
+            </button>
+        </div>
+
+        <!-- Streak Banner -->
+        <div class="mt-8 p-5 rounded-2xl border border-orange-500/10 bg-gradient-to-r from-orange-500/[.04] to-transparent streak-shine anim d3 relative overflow-hidden">
+            <div class="relative z-10 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <span class="text-4xl flame block">🔥</span>
+                        <div class="ember" style="left:40%"></div>
+                        <div class="ember" style="left:55%"></div>
+                        <div class="ember" style="left:45%"></div>
+                        <div class="ember" style="left:60%"></div>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold">12-day reading streak</p>
+                        <p class="text-xs text-white/35 mt-0.5">Personal best: 23 days · You're on fire!</p>
+                    </div>
+                </div>
+                <div class="text-right hidden sm:block">
+                    <p class="font-oswald text-4xl font-500 text-orange-500">12</p>
+                    <p class="text-[10px] text-white/25 uppercase tracking-wider">days</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Circle Cards -->
+        <div class="mt-8 space-y-4">
+            <div class="anim d3 card-h p-5 rounded-2xl border border-white/[.06] bg-white/[.02] cursor-pointer group" onclick="showView('dashboard')">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/15 flex items-center justify-center">
+                                <span class="text-base">🧠</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg group-hover:text-orange-400 transition">Growth Mindset</h3>
+                                <p class="text-xs text-white/35">2 books · 3 members</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 ml-12">
+                            <div class="flex -space-x-2">
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 border-2 border-[#0B0C0E] flex items-center justify-center text-[9px] font-bold">P</div>
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-[#0B0C0E] flex items-center justify-center text-[9px] font-bold">M</div>
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-[#0B0C0E] flex items-center justify-center text-[9px] font-bold">D</div>
+                            </div>
+                            <span class="text-[11px] text-white/25">Pratik, Maya, Dev</span>
+                        </div>
+                    </div>
+                    <span class="iconify text-white/15 group-hover:text-white/30 transition text-lg mt-2" data-icon="lucide:chevron-right"></span>
+                </div>
+                <div class="mt-4 pt-4 border-t border-white/[.03] ml-12 flex items-center gap-5">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+                        <span class="text-[11px] text-white/35">This week: <span class="text-white/60 font-medium">2/3</span></span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                        <span class="text-[11px] text-white/35">Insights: <span class="text-white/60 font-medium">3 new</span></span>
+                    </div>
+                    <span class="text-[10px] text-white/15 ml-auto">2h ago</span>
+                </div>
+            </div>
+
+            <div class="anim d4 card-h p-5 rounded-2xl border border-white/[.06] bg-white/[.02] cursor-pointer opacity-50 group">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-9 h-9 rounded-xl bg-white/[.04] border border-white/[.06] flex items-center justify-center">
+                                <span class="text-base">⚙️</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg">Deep Work</h3>
+                                <p class="text-xs text-white/35">1 book · 2 members</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 ml-12">
+                            <div class="flex -space-x-2">
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 border-2 border-[#0B0C0E] flex items-center justify-center text-[9px] font-bold">P</div>
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 border-2 border-[#0B0C0E] flex items-center justify-center text-[9px] font-bold">A</div>
+                            </div>
+                            <span class="text-[11px] text-white/25">Pratik, Arjun</span>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-white/[.04] text-[10px] text-white/25 font-medium">Paused</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Spark -->
+        <div class="mt-10 p-6 rounded-2xl border border-white/[.04] bg-white/[.015] text-center anim d5">
+            <p class="text-white/15 text-xs leading-relaxed italic max-w-sm mx-auto">"A reader lives a thousand lives before he dies. The man who never reads lives only one."</p>
+            <p class="text-white/10 text-[10px] mt-2 uppercase tracking-wider">— George R.R. Martin</p>
+            <div class="w-8 h-px bg-white/[.06] mx-auto mt-5 mb-4"></div>
+            <p class="text-[10px] text-white/20 uppercase tracking-[.15em]">Daily spark · Jan 13, 2025</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ VIEW: DASHBOARD ═══════════ -->
+<div id="view-dashboard" class="view">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8 anim d1">
+            <div>
+                <button onclick="showView('circles')" class="text-white/25 hover:text-white/50 transition text-xs flex items-center gap-1 mb-3">
+                    <span class="iconify text-sm" data-icon="lucide:arrow-left"></span> Hearths
+                </button>
+                <div class="flex items-center gap-3 mb-1">
+                    <span class="text-xl">🧠</span>
+                    <h1 class="font-oswald font-500 text-3xl sm:text-4xl tracking-tight">Growth Mindset</h1>
+                </div>
+                <div class="flex items-center gap-2 ml-8">
+                    <div class="flex -space-x-1.5">
+                        <div class="w-5 h-5 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 border border-black flex items-center justify-center text-[7px] font-bold">P</div>
+                        <div class="w-5 h-5 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-black flex items-center justify-center text-[7px] font-bold">M</div>
+                        <div class="w-5 h-5 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-black flex items-center justify-center text-[7px] font-bold">D</div>
+                    </div>
+                    <span class="text-xs text-white/25">Pratik, Maya, Dev</span>
+                </div>
+            </div>
+            <button onclick="showView('reader')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-sm font-semibold hover:from-orange-600 hover:to-amber-600 transition flex items-center gap-2 self-start pulse-glow mt-2 sm:mt-6">
+                <span class="iconify" data-icon="lucide:book-open"></span>
+                Continue Reading
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- LEFT: READING -->
+            <div class="lg:col-span-2 space-y-4 anim d2">
+                <p class="text-[10px] font-medium tracking-[.2em] uppercase text-white/25 mb-1">Currently Reading</p>
+                
+                <div class="card-h p-5 rounded-2xl border border-white/[.06] bg-white/[.02] flex gap-5 cursor-pointer" onclick="showView('reader')">
+                    <div class="w-20 h-28 sm:w-24 sm:h-32 rounded-xl overflow-hidden flex-shrink-0 book-cover">
+                        <img src="https://picsum.photos/seed/yogi-book-cover/200/300" alt="Book" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-[15px] truncate">Autobiography of a YOGI</h3>
+                        <p class="text-xs text-white/35 mt-0.5">Paramhansa Yogananda</p>
+                        <div class="mt-3 flex items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] text-white/25 mb-1.5">
+                                    <span>Progress</span>
+                                    <span class="text-white/45 font-medium">p18 / 388</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-white/[.05] rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full transition-all duration-1000" style="width:4.6%"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[.03] border border-white/[.05]">
+                                <span class="iconify text-orange-500/70 text-xs" data-icon="lucide:highlighter"></span>
+                                <span class="text-xs text-white/45 font-medium">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-h p-5 rounded-2xl border border-white/[.06] bg-white/[.02] flex gap-5 cursor-pointer" onclick="showView('reader')">
+                    <div class="w-20 h-28 sm:w-24 sm:h-32 rounded-xl overflow-hidden flex-shrink-0 book-cover">
+                        <img src="https://picsum.photos/seed/compound-self-c/200/300" alt="Book" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-[15px] truncate">The Compound Self</h3>
+                        <p class="text-xs text-white/35 mt-0.5">R. Ellery Vance</p>
+                        <div class="mt-3 flex items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] text-white/25 mb-1.5">
+                                    <span>Progress</span>
+                                    <span class="text-white/45 font-medium">p4 / 6</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-white/[.05] rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full transition-all duration-1000" style="width:66.7%"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[.03] border border-white/[.05]">
+                                <span class="iconify text-orange-500/70 text-xs" data-icon="lucide:highlighter"></span>
+                                <span class="text-xs text-white/45 font-medium">10</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circle Feed -->
+                <div class="mt-6">
+                    <p class="text-[10px] font-medium tracking-[.2em] uppercase text-white/25 mb-3">Hearth Activity</p>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white/[.015] border border-white/[.04]">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-[9px] font-bold flex-shrink-0 mt-0.5">M</div>
+                            <div>
+                                <p class="text-[13px]"><span class="font-medium text-white/85">Maya</span> <span class="text-white/35">finished Chapter 3 of</span> <span class="text-orange-400/80 font-medium">Autobiography of a Yogi</span></p>
+                                <p class="text-[10px] text-white/15 mt-1">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white/[.015] border border-white/[.04]">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-[9px] font-bold flex-shrink-0 mt-0.5">D</div>
+                            <div>
+                                <p class="text-[13px]"><span class="font-medium text-white/85">Dev</span> <span class="text-white/35">saved an insight from</span> <span class="text-orange-400/80 font-medium">The Compound Self</span></p>
+                                <p class="text-[10px] text-white/15 mt-1">5 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-white/[.015] border border-white/[.04]">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-[9px] font-bold flex-shrink-0 mt-0.5">P</div>
+                            <div>
+                                <p class="text-[13px]"><span class="font-medium text-white/85">Pratik</span> <span class="text-white/35">set a new weekly challenge</span></p>
+                                <p class="text-[10px] text-white/15 mt-1">1 day ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: TASKS -->
+            <div class="space-y-6 anim d3">
+                <div>
+                    <p class="text-[10px] font-medium tracking-[.2em] uppercase text-white/25 mb-3">This Week</p>
+                    <div class="p-4 rounded-2xl border border-white/[.06] bg-white/[.02] space-y-3">
+                        <div class="flex items-start gap-3" id="task-1">
+                            <button onclick="toggleTask(this)" class="mt-0.5 w-5 h-5 rounded-md border border-white/12 flex items-center justify-center flex-shrink-0 hover:border-orange-500/40 transition task-check"></button>
+                            <div>
+                                <p class="text-[13px] leading-relaxed text-white/75">Read one page before opening any app in the morning</p>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <div class="flex -space-x-1">
+                                        <div class="w-4 h-4 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 border border-[#0B0C0E] text-[6px] flex items-center justify-center font-bold">P</div>
+                                        <div class="w-4 h-4 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-[#0B0C0E] text-[6px] flex items-center justify-center font-bold">M</div>
+                                        <div class="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-[#0B0C0E] text-[6px] flex items-center justify-center font-bold">D</div>
+                                    </div>
+                                    <span class="text-[10px] text-white/20">2 of 3 done</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <button onclick="toggleTask(this)" class="mt-0.5 w-5 h-5 rounded-md bg-orange-500 border border-orange-500 flex items-center justify-center flex-shrink-0 transition">
+                                <span class="iconify text-white text-xs check-pop" data-icon="lucide:check"></span>
+                            </button>
+                            <p class="text-[13px] leading-relaxed text-white/30 line-through">Highlight one insight from today's reading</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <button onclick="toggleTask(this)" class="mt-0.5 w-5 h-5 rounded-md border border-white/12 flex items-center justify-center flex-shrink-0 hover:border-orange-500/40 transition task-check"></button>
+                            <p class="text-[13px] leading-relaxed text-white/75">Share your favorite line in the Lounge</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] font-medium tracking-[.2em] uppercase text-white/25 mb-3">Past Weeks</p>
+                    <div class="p-4 rounded-2xl border border-white/[.06] bg-white/[.02] space-y-3">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-0.5 w-5 h-5 rounded-md bg-green-500/10 border border-green-500/15 flex items-center justify-center flex-shrink-0">
+                                <span class="iconify text-green-400/70 text-xs" data-icon="lucide:check"></span>
+                            </div>
+                            <div>
+                                <p class="text-[13px] text-white/30 line-through">Say the identity sentence out loud once a day</p>
+                                <p class="text-[10px] text-white/15 mt-0.5">Week of Jan 6 · 3/3 completed</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="mt-0.5 w-5 h-5 rounded-md bg-green-500/10 border border-green-500/15 flex items-center justify-center flex-shrink-0">
+                                <span class="iconify text-green-400/70 text-xs" data-icon="lucide:check"></span>
+                            </div>
+                            <div>
+                                <p class="text-[13px] text-white/30 line-through">Read for 15 minutes before bed</p>
+                                <p class="text-[10px] text-white/15 mt-0.5">Week of Dec 30 · 2/3 completed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insight Vault Preview -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-[10px] font-medium tracking-[.2em] uppercase text-white/25">Insight Vault</p>
+                        <button onclick="showView('vault')" class="text-[11px] text-orange-500/70 hover:text-orange-400 transition font-medium flex items-center gap-0.5">
+                            View all <span class="iconify text-xs" data-icon="lucide:arrow-right"></span>
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="p-3.5 rounded-xl border border-white/[.04] bg-white/[.015] card-h cursor-pointer" onclick="showView('vault')">
+                            <p class="text-xs text-white/45 leading-relaxed line-clamp-3">"Never miss twice" — if you miss one day, get back on track immediately.</p>
+                            <p class="text-[10px] text-orange-500/50 mt-2 font-medium">The Compound Self</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl border border-white/[.04] bg-white/[.015] card-h cursor-pointer" onclick="showView('vault')">
+                            <p class="text-xs text-white/45 leading-relaxed line-clamp-3">"Every action you take is a vote for the type of person you wish to become."</p>
+                            <p class="text-[10px] text-orange-500/50 mt-2 font-medium">The Compound Self</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="h-8"></div>
+    </div>
+</div>
+
+<!-- ═══════════ VIEW: READER + LOUNGE ═══════════ -->
+<div id="view-reader" class="view">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-8">
+        <div class="flex items-center justify-between mb-5 anim d1">
+            <button onclick="showView('dashboard')" class="text-white/25 hover:text-white/50 transition text-xs flex items-center gap-1">
+                <span class="iconify text-sm" data-icon="lucide:arrow-left"></span> Dashboard
+            </button>
+            <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full bg-white/[.04] border border-white/[.06] text-[11px] text-white/40 font-medium">Autobiography of a YOGI</span>
+                <span class="text-[11px] text-white/15 font-mono">p18</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+            <!-- Book Content -->
+            <div class="lg:col-span-3 anim d2">
+                <div class="p-6 sm:p-10 rounded-2xl border border-white/[.06] bg-white/[.02]">
+                    <div class="text-center mb-10">
+                        <h2 class="font-oswald font-400 text-xl sm:text-2xl tracking-tight mb-3 text-white/80">AUTOBIOGRAPHY OF A YOGI</h2>
+                        <div class="w-14 h-14 rounded-full mx-auto mb-3 overflow-hidden border border-white/10">
+                            <img src="https://picsum.photos/seed/yogananda-face/200/200" class="w-full h-full object-cover" alt="Author">
+                        </div>
+                        <p class="text-sm text-white/45">Paramhansa Yogananda</p>
+                        <p class="text-[10px] text-white/15 mt-1 italic">With a Preface by W. Y. Evans-Wentz, M.A., D.Litt., D.Sc.</p>
+                    </div>
+                    <div class="w-10 h-px bg-white/[.08] mx-auto mb-8"></div>
+                    <div class="max-w-lg mx-auto space-y-5 text-[13px] text-white/50 leading-[1.9]">
+                        <p>The characteristic features of Indian culture have long been a search for ultimate verities and the concomitant disciple-guru <mark class="bg-orange-500/15 text-orange-300/80 px-0.5 rounded">relationship</mark>. My own path led me to a Christlike saint whose life story is related in the first portion of this book.</p>
+                        <p>In the town of Gorakhpur, near the Himalayan foothills, I was born on January 5, 1893. My mother, the gentle and devout <mark class="bg-orange-500/15 text-orange-300/80 px-0.5 rounded">Bhagabati</mark>, passed away while I was still a small child.</p>
+                        <p>"Mother is everywhere," my father had consoled me. "Her spirit is ever near, invisible but omnipresent."</p>
+                        <p>These words of my father, a disciple of Lahiri Mahasaya, were to prove prophetic. For in the years that followed, I was to discover that the <mark class="bg-orange-500/15 text-orange-300/80 px-0.5 rounded">guru-disciple</mark> relationship is the highest expression of human love — a love that transcends the boundaries of death itself.</p>
+                        <p class="text-center text-white/15 text-xs mt-8 font-mono">— 18 / 388 —</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-8 pt-5 border-t border-white/[.04]">
+                        <button class="px-4 py-2 rounded-lg border border-white/8 text-xs text-white/25 hover:text-white/50 hover:border-white/15 transition flex items-center gap-1.5">
+                            <span class="iconify" data-icon="lucide:chevron-left"></span> Prev
+                        </button>
+                        <button onclick="showToast('Highlight saved to Vault ✨')" class="px-3 py-2 rounded-lg border border-orange-500/25 text-xs text-orange-500/80 hover:bg-orange-500/10 transition flex items-center gap-1.5">
+                            <span class="iconify" data-icon="lucide:highlighter"></span> Highlight
+                        </button>
+                        <button class="px-4 py-2 rounded-lg border border-white/8 text-xs text-white/40 hover:text-white/70 hover:border-white/15 transition flex items-center gap-1.5">
+                            Next <span class="iconify" data-icon="lucide:chevron-right"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lounge -->
+            <div class="lg:col-span-2 anim d3">
+                <div class="rounded-2xl border border-white/[.06] bg-white/[.02] flex flex-col h-[65vh] lg:h-[calc(100vh-140px)] lg:sticky lg:top-20">
+                    <div class="p-4 border-b border-white/[.04] flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="iconify text-orange-500/70" data-icon="lucide:message-circle"></span>
+                            <h3 class="text-sm font-semibold">Lounge</h3>
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                        </div>
+                        <div class="flex -space-x-1.5">
+                            <div class="w-5 h-5 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 border border-[#0B0C0E] text-[7px] flex items-center justify-center font-bold">P</div>
+                            <div class="w-5 h-5 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-[#0B0C0E] text-[7px] flex items-center justify-center font-bold">M</div>
+                            <div class="w-5 h-5 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-[#0B0C0E] text-[7px] flex items-center justify-center font-bold">D</div>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-messages">
+                        <div class="chat-in flex items-start gap-2.5">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-[8px] font-bold flex-shrink-0 mt-0.5">M</div>
+                            <div>
+                                <p class="text-[10px] text-white/20 mb-1">Maya · 10:32 AM</p>
+                                <p class="text-[13px] text-white/60 leading-relaxed">That line about the guru-disciple relationship being the highest expression of love 🥺</p>
+                            </div>
+                        </div>
+                        <div class="chat-in flex items-start gap-2.5">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-[8px] font-bold flex-shrink-0 mt-0.5">D</div>
+                            <div>
+                                <p class="text-[10px] text-white/20 mb-1">Dev · 10:45 AM</p>
+                                <p class="text-[13px] text-white/60 leading-relaxed">"Her spirit is ever near, invisible but omnipresent" — hit different today</p>
+                            </div>
+                        </div>
+                        <div class="chat-in flex items-start gap-2.5 justify-end">
+                            <div class="text-right max-w-[85%]">
+                                <p class="text-[10px] text-white/20 mb-1">You · 11:02 AM</p>
+                                <p class="text-[13px] text-white/75 leading-relaxed bg-orange-500/8 border border-orange-500/15 rounded-xl rounded-tr-sm px-3.5 py-2.5 inline-block text-left">I highlighted "disciple-guru relationship" — reminds me of what we're building here at Hearth</p>
+                            </div>
+                        </div>
+                        <div class="chat-in flex items-start gap-2.5">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-[8px] font-bold flex-shrink-0 mt-0.5">M</div>
+                            <div>
+                                <p class="text-[10px] text-white/20 mb-1">Maya · 11:05 AM</p>
+                                <p class="text-[13px] text-white/60 leading-relaxed">We're literally living that principle 😊🔥</p>
+                            </div>
+                        </div>
+                        <div id="typing-indicator" class="flex items-start gap-2.5" style="display:none">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-[8px] font-bold flex-shrink-0 mt-0.5">D</div>
+                            <div class="flex items-center gap-1 py-2 px-1">
+                                <div class="w-1.5 h-1.5 rounded-full bg-white/20 td"></div>
+                                <div class="w-1.5 h-1.5 rounded-full bg-white/20 td"></div>
+                                <div class="w-1.5 h-1.5 rounded-full bg-white/20 td"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 border-t border-white/[.04]">
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="chat-input" placeholder="Share a thought..." class="flex-1 bg-white/[.03] border border-white/[.06] rounded-xl px-4 py-2.5 text-[13px] text-white placeholder:text-white/15" onkeydown="if(event.key==='Enter')sendChat()">
+                            <button onclick="sendChat()" class="w-10 h-10 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 transition flex items-center justify-center flex-shrink-0">
+                                <span class="iconify text-white text-sm" data-icon="lucide:send"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ VIEW: INSIGHT VAULT ═══════════ -->
+<div id="view-vault" class="view">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
+        <div class="mb-6 anim d1">
+            <button onclick="showView('dashboard')" class="text-white/25 hover:text-white/50 transition text-xs flex items-center gap-1 mb-3">
+                <span class="iconify text-sm" data-icon="lucide:arrow-left"></span> Dashboard
+            </button>
+            <div class="flex items-center gap-3">
+                <span class="iconify text-orange-500/60 text-xl" data-icon="lucide:landmark"></span>
+                <div>
+                    <h1 class="font-oswald font-500 text-3xl sm:text-4xl tracking-tight">Insight Vault</h1>
+                    <p class="text-xs text-white/25 mt-0.5">Growth Mindset · 3 insights saved</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative mb-5 anim d2">
+            <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-white/15" data-icon="lucide:search"></span>
+            <input type="text" id="vault-search" placeholder="Search insights..." class="w-full bg-white/[.03] border border-white/[.06] rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder:text-white/15" oninput="filterVault()">
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-8 anim d2">
+            <button onclick="setVaultFilter('all',this)" class="tag active px-4 py-1.5 rounded-full border border-white/8 text-xs font-medium transition">All</button>
+            <button onclick="setVaultFilter('highlight',this)" class="tag px-4 py-1.5 rounded-full border border-white/8 text-xs font-medium text-white/35 transition">Highlights</button>
+            <button onclick="setVaultFilter('action',this)" class="tag px-4 py-1.5 rounded-full border border-white/8 text-xs font-medium text-white/35 transition">Actions</button>
+            <button onclick="setVaultFilter('discussion',this)" class="tag px-4 py-1.5 rounded-full border border-white/8 text-xs font-medium text-white/35 transition">Discussions</button>
+        </div>
+
+        <div class="space-y-4 anim d3" id="vault-list">
+            <div class="insight-card card-h p-5 rounded-2xl border border-white/[.06] bg-white/[.02]" data-type="action" data-text="say the identity sentence out loud once a day reinforce who you're becoming circle rule action">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/8 border border-purple-500/15 flex items-center justify-center flex-shrink-0">
+                        <span class="iconify text-purple-400/70 text-sm" data-icon="lucide:zap"></span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-purple-500/8 text-purple-400/70 text-[10px] font-semibold uppercase tracking-wider">Action</span>
+                </div>
+                <p class="text-[13px] text-white/75 leading-relaxed mb-4">Say the identity sentence out loud once a day — reinforce who you're becoming.</p>
+                <div class="p-3 rounded-lg bg-white/[.015] border border-white/[.04] mb-4">
+                    <p class="text-xs text-white/35 italic">"I am the type of person who reads every day and grows through reflection."</p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-white/15">From</span>
+                        <span class="px-2 py-0.5 rounded bg-white/[.03] text-[10px] text-white/30 font-medium">Circle rule</span>
+                    </div>
+                    <span class="text-[10px] text-white/10">Jan 6</span>
+                </div>
+            </div>
+
+            <div class="insight-card card-h p-5 rounded-2xl border border-white/[.06] bg-white/[.02]" data-type="highlight" data-text="never miss twice if you miss one day get back on track immediately the compound self highlight">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-orange-500/8 border border-orange-500/15 flex items-center justify-center flex-shrink-0">
+                        <span class="iconify text-orange-400/70 text-sm" data-icon="lucide:highlighter"></span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-orange-500/8 text-orange-400/70 text-[10px] font-semibold uppercase tracking-wider">Highlight</span>
+                </div>
+                <blockquote class="text-[13px] text-white/75 leading-relaxed border-l-2 border-orange-500/25 pl-4 mb-4">"Never miss twice — if you miss one day, get back on track immediately."</blockquote>
+                <div class="p-3 rounded-lg bg-white/[.015] border border-white/[.04] mb-4">
+                    <p class="text-xs text-white/35">Missing once is an accident. Missing twice is the start of a new habit.</p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-white/15">From</span>
+                        <span class="px-2 py-0.5 rounded bg-white/[.03] text-[10px] text-orange-500/50 font-medium">The Compound Self</span>
+                        <span class="text-[10px] text-white/10">· p4</span>
+                    </div>
+                    <span class="text-[10px] text-white/10">Jan 10</span>
+                </div>
+            </div>
+
+            <div class="insight-card card-h p-5 rounded-2xl border border-white/[.06] bg-white/[.02]" data-type="discussion" data-text="every action you take is a vote for the type of person you wish to become the compound self discussion">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/8 border border-blue-500/15 flex items-center justify-center flex-shrink-0">
+                        <span class="iconify text-blue-400/70 text-sm" data-icon="lucide:message-circle"></span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-blue-500/8 text-blue-400/70 text-[10px] font-semibold uppercase tracking-wider">Discussion</span>
+                </div>
+                <blockquote class="text-[13px] text-white/75 leading-relaxed border-l-2 border-blue-500/25 pl-4 mb-4">"Every action you take is a vote for the type of person you wish to become."</blockquote>
+                <div class="p-3 rounded-lg bg-white/[.015] border border-white/[.04] mb-4 space-y-2.5">
+                    <div class="flex items-start gap-2">
+                        <div class="w-4 h-4 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-[6px] font-bold flex-shrink-0 mt-0.5">M</div>
+                        <p class="text-xs text-white/35">This changes how I think about habits — it's not about results, it's about identity</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <div class="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-[6px] font-bold flex-shrink-0 mt-0.5">D</div>
+                        <p class="text-xs text-white/35">So reading one page isn't about the page — it's a vote for "I'm a reader"</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-white/15">From</span>
+                        <span class="px-2 py-0.5 rounded bg-white/[.03] text-[10px] text-orange-500/50 font-medium">The Compound Self</span>
+                        <span class="text-[10px] text-white/10">· p3</span>
+                    </div>
+                    <span class="text-[10px] text-white/10">Jan 12</span>
+                </div>
+            </div>
+        </div>
+        <div class="h-8"></div>
+    </div>
+</div>
+
+<!-- ═══════════ VIEW: PROFILE ═══════════ -->
+<div id="view-profile" class="view">
+    <div class="max-w-lg mx-auto px-4 sm:px-6 pt-10 sm:pt-16">
+        <div class="text-center anim d1">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 mx-auto flex items-center justify-center text-2xl font-bold mb-4 ring-4 ring-orange-500/10">P</div>
+            <h2 class="font-oswald font-500 text-2xl tracking-tight">Pratik</h2>
+            <p class="text-xs text-white/30 mt-1">Joined December 2024</p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-3 gap-3 anim d2">
+            <div class="text-center p-4 rounded-2xl border border-white/[.06] bg-white/[.02]">
+                <p class="font-oswald text-2xl font-500 text-orange-500">12</p>
+                <p class="text-[10px] text-white/25 uppercase tracking-wider mt-1">Day Streak</p>
+            </div>
+            <div class="text-center p-4 rounded-2xl border border-white/[.06] bg-white/[.02]">
+                <p class="font-oswald text-2xl font-500 text-white/80">47</p>
+                <p class="text-[10px] text-white/25 uppercase tracking-wider mt-1">Pages Read</p>
+            </div>
+            <div class="text-center p-4 rounded-2xl border border-white/[.06] bg-white/[.02]">
+                <p class="font-oswald text-2xl font-500 text-white/80">11</p>
+                <p class="text-[10px] text-white/25 uppercase tracking-wider mt-1">Insights</p>
+            </div>
+        </div>
+
+        <!-- Weekly Heatmap -->
+        <div class="mt-6 p-5 rounded-2xl border border-white/[.06] bg-white/[.02] anim d3">
+            <p class="text-[10px] font-medium tracking-[.2em] uppercase text-white/25 mb-4">Reading Heatmap — Last 4 Weeks</p>
+            <div class="grid grid-cols-7 gap-1.5">
+                <div class="text-[9px] text-white/15 text-center">M</div>
+                <div class="text-[9px] text-white/15 text-center">T</div>
+                <div class="text-[9px] text-white/15 text-center">W</div>
+                <div class="text-[9px] text-white/15 text-center">T</div>
+                <div class="text-[9px] text-white/15 text-center">F</div>
+                <div class="text-[9px] text-white/15 text-center">S</div>
+                <div class="text-[9px] text-white/15 text-center">S</div>
+                <!-- Week 1 -->
+                <div class="h-6 rounded bg-orange-500/40"></div>
+                <div class="h-6 rounded bg-orange-500/60"></div>
+                <div class="h-6 rounded bg-orange-500/30"></div>
+                <div class="h-6 rounded bg-orange-500/70"></div>
+                <div class="h-6 rounded bg-orange-500/50"></div>
+                <div class="h-6 rounded bg-orange-500/20"></div>
+                <div class="h-6 rounded bg-white/[.03]"></div>
+                <!-- Week 2 -->
+                <div class="h-6 rounded bg-orange-500/60"></div>
+                <div class="h-6 rounded bg-orange-500/80"></div>
+                <div class="h-6 rounded bg-orange-500/50"></div>
+                <div class="h-6 rounded bg-orange-500/70"></div>
+                <div class="h-6 rounded bg-orange-500/40"></div>
+                <div class="h-6 rounded bg-orange-500/60"></div>
+                <div class="h-6 rounded bg-orange-500/30"></div>
+                <!-- Week 3 -->
+                <div class="h-6 rounded bg-orange-500/70"></div>
+                <div class="h-6 rounded bg-orange-500/90"></div>
+                <div class="h-6 rounded bg-orange-500/60"></div>
+                <div class="h-6 rounded bg-orange-500/80"></div>
+                <div class="h-6 rounded bg-orange-500/50"></div>
+                <div class="h-6 rounded bg-orange-500/70"></div>
+                <div class="h-6 rounded bg-orange-500/40"></div>
+                <!-- Week 4 -->
+                <div class="h-6 rounded bg-orange-500/80"></div>
+                <div class="h-6 rounded bg-orange-500"></div>
+                <div class="h-6 rounded bg-orange-500/70"></div>
+                <div class="h-6 rounded bg-orange-500/90"></div>
+                <div class="h-6 rounded bg-orange-500/60"></div>
+                <div class="h-6 rounded bg-orange-500/40"></div>
+                <div class="h-6 rounded bg-orange-500/10"></div>
+            </div>
+            <div class="flex items-center justify-end gap-1.5 mt-3">
+                <span class="text-[9px] text-white/15">Less</span>
+                <div class="w-3 h-3 rounded-sm bg-white/[.03]"></div>
+                <div class="w-3 h-3 rounded-sm bg-orange-500/30"></div>
+                <div class="w-3 h-3 rounded-sm bg-orange-500/60"></div>
+                <div class="w-3 h-3 rounded-sm bg-orange-500"></div>
+                <span class="text-[9px] text-white/15">More</span>
+            </div>
+        </div>
+
+        <!-- Social Proof -->
+        <div class="mt-6 p-5 rounded-2xl border border-white/[.06] bg-white/[.02] anim d4">
+            <p class="text-[10px] font-medium tracking-[.2em] uppercase text-white/25 mb-3">vs. Average Social Media User</p>
+            <div class="space-y-3">
+                <div>
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-white/50">Time on Hearth</span>
+                        <span class="text-orange-500/70 font-medium">47 min/day</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-white/[.04] rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full" style="width:35%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] mb-1">
+                        <span class="text-white/30">Time on social media</span>
+                        <span class="text-white/20 font-medium">2.4 hrs/day</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-white/[.04] rounded-full overflow-hidden">
+                        <div class="h-full bg-white/[.1] rounded-full" style="width:100%"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-[10px] text-white/15 mt-3 text-center">You've reclaimed 1.7 hours every day this month 🌱</p>
+        </div>
+
+        <div class="mt-8 flex items-center justify-center gap-4 anim d5">
+            <button class="text-xs text-white/20 hover:text-white/40 transition">Sign out</button>
+            <div class="w-px h-3 bg-white/[.06]"></div>
+            <button class="text-xs text-white/20 hover:text-white/40 transition">Settings</button>
+        </div>
+        <div class="h-8"></div>
+    </div>
+</div>
+
+</main>
+
+<!-- ═══════════ MODALS ═══════════ -->
+<div id="join-modal" class="modal-bg fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="modal-box w-full max-w-sm p-6 rounded-2xl border border-white/[.08] bg-[#0E0F11]">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="font-semibold text-lg">Join a Hearth</h3>
+            <button onclick="closeModal('join-modal')" class="text-white/25 hover:text-white/50 transition"><span class="iconify text-xl" data-icon="lucide:x"></span></button>
+        </div>
+        <input type="text" placeholder="Enter invite code..." class="w-full bg-white/[.03] border border-white/[.06] rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/15 mb-4 tracking-[.25em] text-center font-mono uppercase">
+        <button onclick="closeModal('join-modal');showToast('Request sent! Waiting for approval.')" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-sm font-semibold hover:from-orange-600 hover:to-amber-600 transition">Request to Join</button>
+    </div>
+</div>
+
+<div id="new-modal" class="modal-bg fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="modal-box w-full max-w-sm p-6 rounded-2xl border border-white/[.08] bg-[#0E0F11]">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="font-semibold text-lg">New Hearth</h3>
+            <button onclick="closeModal('new-modal')" class="text-white/25 hover:text-white/50 transition"><span class="iconify text-xl" data-icon="lucide:x"></span></button>
+        </div>
+        <input type="text" placeholder="What's this hearth about?" class="w-full bg-white/[.03] border border-white/[.06] rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/15 mb-3">
+        <textarea placeholder="What will you read together? (optional)" class="w-full bg-white/[.03] border border-white/[.06] rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/15 mb-4 resize-none h-20"></textarea>
+        <button onclick="closeModal('new-modal');showToast('Hearth created! Share the code with your circle.')" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-sm font-semibold hover:from-orange-600 hover:to-amber-600 transition">Light the Hearth</button>
+    </div>
+</div>
+
+<!-- ═══════════ TOAST ═══════════ -->
+<div id="toast" class="toast-el fixed bottom-24 sm:bottom-8 left-1/2 -translate-x-1/2 z-[70] px-5 py-3 rounded-xl bg-[#111214] border border-white/[.08] shadow-2xl flex items-center gap-3 max-w-sm">
+    <span class="iconify text-green-400 text-lg flex-shrink-0" data-icon="lucide:check-circle"></span>
+    <span class="text-sm text-white/75" id="toast-text">Success!</span>
+</div>
+
+<script>
+function showView(name){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+name).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.remove('active');b.classList.add('text-white/40')});
+    const an=document.querySelector(`.nav-btn[data-nav="${name}"]`);
+    if(an){an.classList.add('active');an.classList.remove('text-white/40')}
+    document.querySelectorAll('.mob-btn').forEach(b=>{b.classList.remove('active');b.classList.add('text-white/35')});
+    const am=document.querySelector(`.mob-btn[data-mob="${name}"]`);
+    if(am){am.classList.add('active');am.classList.remove('text-white/35')}
+    const view=document.getElementById('view-'+name);
+    view.querySelectorAll('.anim').forEach(el=>{el.style.animation='none';el.offsetHeight;el.style.animation=''});
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleTask(btn){
+    const done=btn.classList.contains('bg-orange-500');
+    if(done){
+        btn.className='mt-0.5 w-5 h-5 rounded-md border border-white/12 flex items-center justify-center flex-shrink-0 hover:border-orange-500/40 transition task-check';
+        btn.innerHTML='';
+        const t=btn.parentElement.querySelector('p');
+        t.classList.remove('line-through','text-white/30');t.classList.add('text-white/75');
+    }else{
+        btn.className='mt-0.5 w-5 h-5 rounded-md bg-orange-500 border border-orange-500 flex items-center justify-center flex-shrink-0 transition';
+        btn.innerHTML='<span class="iconify text-white text-xs check-pop" data-icon="lucide:check"></span>';
+        const t=btn.parentElement.querySelector('p');
+        t.classList.add('line-through','text-white/30');t.classList.remove('text-white/75');
+        showToast('Done! 🔥 Streak continues.');
+    }
+}
+
+function sendChat(){
+    const input=document.getElementById('chat-input');
+    const text=input.value.trim();if(!text)return;
+    const c=document.getElementById('chat-messages');
+    const typing=document.getElementById('typing-indicator');
+    const m=document.createElement('div');m.className='chat-in flex items-start gap-2.5 justify-end';
+    m.innerHTML=`<div class="text-right max-w-[85%]"><p class="text-[10px] text-white/20 mb-1">You · Just now</p><p class="text-[13px] text-white/75 leading-relaxed bg-orange-500/8 border border-orange-500/15 rounded-xl rounded-tr-sm px-3.5 py-2.5 inline-block text-left">${text}</p></div>`;
+    c.insertBefore(m,typing);input.value='';c.scrollTop=c.scrollHeight;
+    typing.style.display='flex';
+    setTimeout(()=>{
+        typing.style.display='none';
+        const r=[{n:'Maya',c:'purple',t:'Beautiful observation! 🌱'},{n:'Dev',c:'blue',t:'This connects to last week\'s discussion'},{n:'Maya',c:'purple',t:'Adding this to my notes ✨'},{n:'Dev',c:'blue',t:'The compound effect in real time 🔥'}][Math.floor(Math.random()*4)];
+        const rm=document.createElement('div');rm.className='chat-in flex items-start gap-2.5';
+        rm.innerHTML=`<div class="w-6 h-6 rounded-full bg-gradient-to-br from-${r.c}-400 to-${r.c}-600 flex items-center justify-center text-[8px] font-bold flex-shrink-0 mt-0.5">${r.n[0]}</div><div><p class="text-[10px] text-white/20 mb-1">${r.n} · Just now</p><p class="text-[13px] text-white/60 leading-relaxed">${r.t}</p></div>`;
+        c.insertBefore(rm,typing);c.scrollTop=c.scrollHeight;
+    },2000);
+}
+
+let currentFilter='all';
+function setVaultFilter(t,btn){
+    currentFilter=t;
+    document.querySelectorAll('.tag').forEach(t=>{t.classList.remove('active');t.classList.add('text-white/35')});
+    btn.classList.add('active');btn.classList.remove('text-white/35');filterVault();
+}
+function filterVault(){
+    const s=document.getElementById('vault-search').value.toLowerCase();
+    document.querySelectorAll('.insight-card').forEach(c=>{
+        const mt=currentFilter==='all'||c.dataset.type===currentFilter;
+        const ms=!s||c.dataset.text.includes(s);
+        c.style.display=(mt&&ms)?'block':'none';
+    });
+}
+
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-bg').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')})});
+
+function showToast(text){
+    const t=document.getElementById('toast');
+    document.getElementById('toast-text').textContent=text;
+    t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+setTimeout(()=>{const t=document.getElementById('typing-indicator');if(t)t.style.display='flex';setTimeout(()=>{if(t)t.style.display='none'},3000)},2500);
+</script>
+</body>
+</html>

@@ -1,0 +1,805 @@
+<title>Prodoxity — Blueprint</title>
+
+<style>
+  /* ── Tokens ─────────────────────────────────────────────────
+     Derived from the app's own system (app/globals.css): warm near-black
+     ink, amber highlighter accent, Palatino for book prose. Light theme is
+     paper; dark theme is reading at night. */
+  :root {
+    --paper: #f5f2ed;
+    --raised: #fffdf9;
+    --sunk: #ebe6dd;
+    --rule: #e0d9ce;
+    --rule-firm: #c9c0b2;
+    --ink: #1a1614;
+    --ink-soft: #574e47;
+    --ink-faint: #8a7f76;
+    --accent: #b47d0a;
+    --accent-bright: #f0b429;
+    --marker: rgba(240, 180, 41, 0.42);
+    --good: #2f7d4f;
+    --warn: #b45309;
+    --crit: #a13a26;
+    --shadow: 0 1px 2px rgba(26, 22, 20, 0.06), 0 8px 24px -12px rgba(26, 22, 20, 0.18);
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0c0a09;
+      --raised: #16120f;
+      --sunk: #050403;
+      --rule: #2a2420;
+      --rule-firm: #3d352e;
+      --ink: #f0eae5;
+      --ink-soft: #b3a89f;
+      --ink-faint: #6d635b;
+      --accent: #f0b429;
+      --accent-bright: #f0b429;
+      --marker: rgba(240, 180, 41, 0.3);
+      --good: #5fb87e;
+      --warn: #e0993a;
+      --crit: #e07a5f;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  /* The viewer's toggle stamps data-theme on :root and must win both ways. */
+  :root[data-theme="light"] {
+    --paper: #f5f2ed; --raised: #fffdf9; --sunk: #ebe6dd;
+    --rule: #e0d9ce; --rule-firm: #c9c0b2;
+    --ink: #1a1614; --ink-soft: #574e47; --ink-faint: #8a7f76;
+    --accent: #b47d0a; --accent-bright: #f0b429;
+    --marker: rgba(240, 180, 41, 0.42);
+    --good: #2f7d4f; --warn: #b45309; --crit: #a13a26;
+    --shadow: 0 1px 2px rgba(26, 22, 20, 0.06), 0 8px 24px -12px rgba(26, 22, 20, 0.18);
+  }
+  :root[data-theme="dark"] {
+    --paper: #0c0a09; --raised: #16120f; --sunk: #050403;
+    --rule: #2a2420; --rule-firm: #3d352e;
+    --ink: #f0eae5; --ink-soft: #b3a89f; --ink-faint: #6d635b;
+    --accent: #f0b429; --accent-bright: #f0b429;
+    --marker: rgba(240, 180, 41, 0.3);
+    --good: #5fb87e; --warn: #e0993a; --crit: #e07a5f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ── Base ───────────────────────────────────────────────── */
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 66rem; margin: 0 auto; padding: 0 1.75rem 7rem; }
+
+  /* ── Masthead ───────────────────────────────────────────── */
+  .masthead {
+    display: flex; flex-direction: column; gap: 1.5rem;
+    padding: 4.5rem 0 2.5rem;
+    border-bottom: 1px solid var(--rule-firm);
+  }
+  .brandline { display: flex; align-items: center; gap: 0.7rem; }
+  .chip-brand {
+    width: 1.4rem; height: 1.4rem; border-radius: 4px;
+    background: var(--accent-bright);
+  }
+  .brandline b { font-size: 0.95rem; letter-spacing: -0.01em; }
+  .brandline span {
+    margin-left: auto; font-family: var(--mono);
+    font-size: 0.7rem; color: var(--ink-faint);
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .masthead h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+    font-weight: 400;
+    max-width: 18ch;
+  }
+  .masthead h1 em { font-style: normal; color: var(--accent); }
+  .standfirst {
+    font-size: 1.075rem; color: var(--ink-soft);
+    max-width: 60ch; text-wrap: pretty;
+  }
+
+  /* ── Section grid: the left rail IS the margin ──────────── */
+  .section {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 64ch);
+    gap: 0 3.25rem;
+    padding: 3.25rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .rail { display: flex; flex-direction: column; gap: 1.1rem; }
+  .mark {
+    font-family: var(--mono); font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent);
+    padding-top: 0.45rem;
+    border-top: 2px solid var(--accent);
+    align-self: start;
+  }
+  /* Marginalia — notes in the margin, like the product itself. */
+  .note {
+    font-size: 0.775rem; line-height: 1.5; color: var(--ink-faint);
+    border-left: 1px solid var(--rule-firm);
+    padding-left: 0.7rem;
+  }
+  .note b { color: var(--ink-soft); font-weight: 600; }
+
+  .body > * + * { margin-top: 1.1rem; }
+  .body h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 1.85rem; line-height: 1.2; letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .body h3 {
+    font-size: 0.98rem; font-weight: 650; letter-spacing: -0.005em;
+    margin-top: 2rem;
+  }
+  .body p { text-wrap: pretty; }
+  .body strong { font-weight: 650; }
+  .body em { font-style: italic; color: var(--ink-soft); }
+  .body a { color: var(--accent); text-underline-offset: 3px; }
+
+  .lede { font-size: 1.075rem; color: var(--ink-soft); }
+
+  /* Highlighter, used sparingly — it's the product's own gesture. */
+  .hl {
+    background: linear-gradient(var(--marker), var(--marker));
+    background-size: 100% 0.85em;
+    background-position: 0 0.62em;
+    background-repeat: no-repeat;
+    padding: 0 0.1em;
+  }
+
+  code {
+    font-family: var(--mono); font-size: 0.855em;
+    background: var(--sunk); border: 1px solid var(--rule);
+    border-radius: 3px; padding: 0.08em 0.34em;
+  }
+
+  /* ── Verdict blocks (wrong / right) ─────────────────────── */
+  .verdicts { display: grid; gap: 0.9rem; }
+  @media (min-width: 760px) { .verdicts { grid-template-columns: 1fr 1fr; } }
+  .verdict {
+    border: 1px solid var(--rule); border-radius: 8px;
+    background: var(--raised); overflow: hidden;
+  }
+  .verdict > header {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.72rem; font-weight: 650;
+    text-transform: uppercase; letter-spacing: 0.09em;
+    border-bottom: 1px solid var(--rule);
+  }
+  .verdict.bad > header { color: var(--crit); background: color-mix(in srgb, var(--crit) 9%, transparent); }
+  .verdict.good > header { color: var(--good); background: color-mix(in srgb, var(--good) 9%, transparent); }
+  .verdict pre {
+    margin: 0; padding: 0.85rem; overflow-x: auto;
+    font-family: var(--mono); font-size: 0.73rem; line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .verdict > p {
+    margin: 0; padding: 0 0.85rem 0.85rem;
+    font-size: 0.78rem; color: var(--ink-faint);
+  }
+
+  /* ── Live proof ─────────────────────────────────────────── */
+  .proof {
+    border: 1px solid var(--rule-firm); border-radius: 10px;
+    background: var(--raised); box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .proof > header {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem;
+    padding: 0.8rem 1rem; border-bottom: 1px solid var(--rule);
+    background: var(--sunk);
+  }
+  .proof > header h3 {
+    margin: 0; font-size: 0.78rem; font-weight: 650;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft);
+  }
+  .zoomctl { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+  .zoomctl label { font-size: 0.72rem; color: var(--ink-faint); }
+  .zoomctl input { accent-color: var(--accent-bright); width: 9rem; }
+  .zoomctl output {
+    font-family: var(--mono); font-size: 0.72rem;
+    font-variant-numeric: tabular-nums; color: var(--ink);
+    min-width: 3.1rem; text-align: right;
+  }
+  .stage { display: grid; gap: 1px; background: var(--rule); }
+  /* The comparison only lands if both panels are visible at once, so the proof
+     breaks out of the text measure into the spare right margin. */
+  @media (min-width: 1060px) {
+    .proof { width: calc(100% + 8rem); }
+    .stage { grid-template-columns: 1fr 1fr; }
+  }
+  .panel { background: var(--raised); padding: 1rem; }
+  .panel > h4 {
+    font-size: 0.7rem; font-weight: 650; letter-spacing: 0.08em;
+    text-transform: uppercase; margin: 0 0 0.15rem;
+  }
+  .panel.bad > h4 { color: var(--crit); }
+  .panel.good > h4 { color: var(--good); }
+  .panel > .cap { font-size: 0.72rem; color: var(--ink-faint); margin: 0 0 0.8rem; }
+  .pageview { overflow-x: auto; padding-bottom: 0.4rem; }
+  .pg {
+    position: relative; overflow: hidden; flex: none;
+    box-sizing: border-box; background: #fffdf7;
+    border: 1px solid var(--rule-firm); border-radius: 2px;
+    font-family: var(--serif); color: #221c18;
+    /* Padding in % of width and text sized from the scale factor means every
+       glyph position scales linearly with the page — the same property the
+       real PDF viewport has. */
+    padding: 11% 6%;
+  }
+  .pg .ln { white-space: nowrap; line-height: 1.62; }
+  /* Measurement anchor. Invisible: it exists so the demo can MEASURE where the
+     phrase truly is rather than hardcode a guess — which is the entire point. */
+  .pg .tgt { position: relative; }
+  .pg .mk { position: absolute; border-radius: 1px; pointer-events: none; }
+  .mk.norm { background: rgba(240, 180, 41, 0.5); }
+  .mk.px { background: rgba(161, 58, 38, 0.42); }
+  .readout {
+    display: flex; gap: 0.5rem; align-items: baseline;
+    margin-top: 0.7rem; font-family: var(--mono); font-size: 0.68rem;
+    font-variant-numeric: tabular-nums; color: var(--ink-faint);
+  }
+  .readout b { font-weight: 650; }
+  .panel.good .readout b { color: var(--good); }
+  .panel.bad .readout b { color: var(--crit); }
+  .proof > footer {
+    padding: 0.75rem 1rem; border-top: 1px solid var(--rule);
+    font-size: 0.775rem; color: var(--ink-faint); background: var(--sunk);
+  }
+
+  /* ── Tables ─────────────────────────────────────────────── */
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.83rem; }
+  th, td {
+    text-align: left; padding: 0.6rem 0.75rem 0.6rem 0;
+    border-bottom: 1px solid var(--rule); vertical-align: top;
+  }
+  th {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-faint); font-weight: 650;
+    border-bottom-color: var(--rule-firm);
+  }
+  td strong { font-weight: 650; }
+  td small { color: var(--ink-faint); }
+
+  /* ── Loop diagram ───────────────────────────────────────── */
+  .loop {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+    padding: 1.1rem; border: 1px solid var(--rule);
+    border-radius: 8px; background: var(--raised);
+  }
+  .step {
+    font-family: var(--mono); font-size: 0.68rem; font-weight: 650;
+    letter-spacing: 0.06em; padding: 0.3rem 0.55rem;
+    border: 1px solid var(--rule-firm); border-radius: 4px;
+    color: var(--ink-faint);
+  }
+  .step.own {
+    border-color: var(--accent); color: var(--ink);
+    background: color-mix(in srgb, var(--accent-bright) 16%, transparent);
+  }
+  .arw { color: var(--rule-firm); font-size: 0.7rem; }
+
+  .callout {
+    border-left: 3px solid var(--warn);
+    background: color-mix(in srgb, var(--warn) 7%, transparent);
+    padding: 0.85rem 1rem; border-radius: 0 6px 6px 0;
+    font-size: 0.86rem; color: var(--ink-soft);
+  }
+  .callout b { color: var(--ink); }
+
+  ul.plain { list-style: none; display: grid; gap: 0.55rem; }
+  ul.plain li {
+    display: grid; grid-template-columns: 0.55rem 1fr; gap: 0.7rem;
+    font-size: 0.9rem; color: var(--ink-soft);
+  }
+  ul.plain li::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); margin-top: 0.6rem;
+  }
+  ul.plain b { color: var(--ink); font-weight: 650; }
+
+  .foot {
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+    padding-top: 2.5rem; font-size: 0.78rem; color: var(--ink-faint);
+  }
+  .foot a {
+    color: var(--ink); text-decoration: none;
+    border: 1px solid var(--rule-firm); border-radius: 6px;
+    padding: 0.45rem 0.8rem; font-weight: 600;
+  }
+  .foot a:hover { border-color: var(--accent); color: var(--accent); }
+
+  :focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+  @media (max-width: 860px) {
+    .section { grid-template-columns: 1fr; gap: 1.25rem; }
+    .rail { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.8rem; }
+    .note { border-left: 0; padding-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="brandline">
+      <div class="chip-brand"></div>
+      <b>Prodoxity</b>
+      <span>Blueprint · v1</span>
+    </div>
+    <h1>Reading is the input.<br><em>Change is the output.</em></h1>
+    <p class="standfirst">
+      A private reading circle for close friends. Not a classroom, not a public
+      book club — two to twelve people who know each other, reading something
+      meant to change how they live, and actually checking whether it did.
+    </p>
+  </header>
+
+  <!-- ── Thesis ─────────────────────────────────────────── -->
+  <section class="section">
+    <div class="rail">
+      <div class="mark">§1 Thesis</div>
+      <p class="note">
+        <b>Why not just use Perusall?</b> Because it's built to make forty
+        strangers demonstrate they did the reading — not to make three friends
+        change a habit.
+      </p>
+    </div>
+    <div class="body">
+      <h2>Every existing platform stops at discussion</h2>
+      <p class="lede">
+        Discussion is the middle of the funnel, not the end. Prodoxity's premise
+        is that <span class="hl">reading is an input and changed behavior is the
+        output</span> — and every feature either feeds that loop or gets cut.
+      </p>
+
+      <div class="loop" role="img" aria-label="The loop: Read, Highlight, Discuss, Commit, Check in, Vault — where Commit, Check in and Vault are Prodoxity's own.">
+        <span class="step">Read</span><span class="arw">→</span>
+        <span class="step">Highlight</span><span class="arw">→</span>
+        <span class="step">Discuss</span><span class="arw">→</span>
+        <span class="step own">Commit</span><span class="arw">→</span>
+        <span class="step own">Check in</span><span class="arw">→</span>
+        <span class="step own">Vault</span>
+      </div>
+      <p>
+        Perusall and Hypothesis implement the first three. The last three, in
+        amber, are the product — the entire reason it exists.
+      </p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Platform</th><th>Optimizes for</th><th>Why it fails here</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Perusall</strong></td><td>Instructor-managed classrooms</td><td>Grading compliance, 40+ strangers, institutional login</td></tr>
+            <tr><td><strong>Hypothesis</strong></td><td>Annotating the open web</td><td>No group structure, no progress, no accountability</td></tr>
+            <tr><td><strong>Fable</strong></td><td>Public book clubs at scale</td><td>Discovery-driven, feed noise, novels not growth books</td></tr>
+            <tr><td><strong>Literal</strong></td><td>Beautiful passive tracking</td><td>Tracking ≠ discussion ≠ change</td></tr>
+            <tr><td><strong>Bookship</strong></td><td>Casual mobile clubs</td><td>Chat-first, weak annotation, no action layer</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>“Close friends” is a technical constraint, not a vibe</h3>
+      <p>
+        Small-group intimacy buys real simplifications. It's why Prodoxity can
+        ship features Perusall can't justify — the assumption removes roughly
+        70% of what makes social reading platforms expensive.
+      </p>
+      <ul class="plain">
+        <li><span><b>Invite-code only, no discovery.</b> No search, recommendations, public profiles, moderation queue, or abuse reporting.</span></li>
+        <li><span><b>Circles of 2–12.</b> Every member loads in one query. No pagination, no fan-out service, no follower graph.</span></li>
+        <li><span><b>Trust is assumed inside the circle.</b> No per-annotation ACLs — the circle <em>is</em> the permission boundary, so one join check gates everything.</span></li>
+        <li><span><b>Real-time is cheap.</b> A dozen concurrent connections per circle, not a million. An in-process event bus is genuinely correct here.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── The hard problem ───────────────────────────────── -->
+  <section class="section">
+    <div class="rail">
+      <div class="mark">§2 Anchoring</div>
+      <p class="note">
+        <b>The tell:</b> this bug looks perfect to whoever created the
+        highlight. You only see it on someone else's screen — so you ship it.
+      </p>
+    </div>
+    <div class="body">
+      <h2>The hard problem: where does a highlight actually live?</h2>
+      <p class="lede">
+        This is the part that “gets mathematically tricky,” and it's where the
+        obvious implementation quietly breaks.
+      </p>
+
+      <div class="verdicts">
+        <div class="verdict bad">
+          <header>✕ The trap</header>
+<pre>{
+  page: 3,
+  x: 412, y: 887,
+  width: 230, height: 18
+}</pre>
+          <p>Viewport pixels, at one zoom, on one window size, at one DPI.</p>
+        </div>
+        <div class="verdict good">
+          <header>✓ The fix</header>
+<pre>{
+  page: 3,
+  rects: [{ x: 0.121, y: 0.443,
+            w: 0.377, h: 0.019 }],
+  textContent: "…", textStart: 1840
+}</pre>
+          <p>Fractions of the page's own coordinate space. Never the screen.</p>
+        </div>
+      </div>
+
+      <p>
+        Store raw <code>getBoundingClientRect()</code> output and the failures
+        are neither hypothetical nor subtle: your friend reads at 150% and the
+        highlight <strong>lands on the wrong line</strong>; they're on a 13"
+        laptop instead of your 27" monitor and it's <strong>the wrong
+        paragraph</strong>; they resize the window and every mark on screen
+        shifts.
+      </p>
+      <p>
+        Normalize against the PDF page's intrinsic size instead, and rendering
+        becomes a pure multiply against whatever size the page happens to be
+        right now. Zoom, resize, DPI and device differences all become
+        <em>free</em> — because <span class="hl">the stored value never
+        referenced the screen in the first place</span>.
+      </p>
+
+      <!-- Live proof -->
+      <div class="proof">
+        <header>
+          <h3>Drag the zoom — watch which one drifts</h3>
+          <div class="zoomctl">
+            <label for="z">Zoom</label>
+            <input id="z" type="range" min="80" max="220" value="100" step="1"
+                   aria-label="Zoom level" />
+            <output id="zv" for="z">100%</output>
+          </div>
+        </header>
+        <div class="stage">
+          <div class="panel bad">
+            <h4>✕ Stored as viewport pixels</h4>
+            <p class="cap">Captured once at 100%. Correct only at 100%.</p>
+            <div class="pageview"><div class="pg" id="pgA"></div></div>
+            <div class="readout">drift <b id="driftA">0 px</b></div>
+          </div>
+          <div class="panel good">
+            <h4>✓ Stored as page fractions</h4>
+            <p class="cap">x: 0.121 · w: 0.377 — resolved at render time.</p>
+            <div class="pageview"><div class="pg" id="pgB"></div></div>
+            <div class="readout">drift <b id="driftB">0 px</b></div>
+          </div>
+        </div>
+        <footer>
+          Both are identical at 100% — which is exactly why the pixel version
+          survives code review and reaches your friends broken.
+        </footer>
+      </div>
+
+      <h3>Why store the text too</h3>
+      <p>
+        <code>textContent</code> and character offsets ride along as a
+        <em>fallback anchor</em>: if geometry ever fails to resolve, the
+        highlight is re-found by locating its text in the page's text layer.
+        Geometry is fast but brittle; text is slow but durable. Perusall and
+        Hypothesis both layer their anchors for the same reason — storing both
+        costs a few bytes and buys durability.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Architecture ───────────────────────────────────── -->
+  <section class="section">
+    <div class="rail">
+      <div class="mark">§3 Architecture</div>
+      <p class="note">
+        <b>Rule of thumb applied throughout:</b> pick the boring option, then
+        write down the condition under which it stops being correct.
+      </p>
+    </div>
+    <div class="body">
+      <h2>Decisions, and what each one buys</h2>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Choice</th><th>Instead of</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>SSE</strong></td><td>WebSockets</td>
+              <td>Traffic is ~99% server→client. The client already has HTTP POST for the other direction. SSE auto-reconnects and needs no upgrade negotiation.</td>
+            </tr>
+            <tr>
+              <td><strong>In-process bus</strong></td><td>Redis / Kafka</td>
+              <td>~12 clients per circle. A <code>Map</code> is the right structure at this scale; pretending otherwise is architecture cosplay.</td>
+            </tr>
+            <tr>
+              <td><strong>JWT cookie</strong></td><td>NextAuth</td>
+              <td>Six people who know each other. NextAuth solves OAuth federation — a problem this product doesn't have.</td>
+            </tr>
+            <tr>
+              <td><strong>pdf.js directly</strong></td><td>react-pdf</td>
+              <td>We need the text layer and intrinsic viewport dimensions. A wrapper abstracts away exactly the two things the core feature depends on.</td>
+            </tr>
+            <tr>
+              <td><strong>Server Components</strong></td><td>A REST layer</td>
+              <td>Reads go straight to Prisma. API routes exist only for mutations and the stream.</td>
+            </tr>
+            <tr>
+              <td><strong>SQLite → Postgres</strong></td><td>Docker Postgres</td>
+              <td>Neither exists on the target machine. Schema is parity-safe (no enums, no scalar lists), so the switch is genuinely one line.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <b>Stated limitation, not an oversight.</b> The in-process bus is correct
+        for one Node instance — local dev, a VPS, a single container. On Vercel
+        or any multi-instance serverless deploy, <b>live updates will not cross
+        instances</b>. Reads still work; only push breaks. The fix is one file:
+        back <code>lib/events.ts</code> with Postgres <code>LISTEN/NOTIFY</code>
+        or Redis pub/sub. Nothing else changes.
+      </div>
+
+      <h3>The single authorization gate</h3>
+      <p>
+        Every mutation and every document read passes through one question: does
+        a <code>Membership</code> row link this user to this circle? Because
+        circles are small and trusted, that's the whole model. Non-membership
+        returns <strong>404, not 403</strong> — a private circle shouldn't
+        confirm its own existence to a stranger.
+      </p>
+      <p>
+        Uploads live <em>outside</em> <code>public/</code> and stream through an
+        authenticated route. A PDF in a private circle must never be a guessable
+        URL.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Verification ───────────────────────────────────── -->
+  <section class="section">
+    <div class="rail">
+      <div class="mark">§4 Evidence</div>
+      <p class="note">
+        <b>Driven, not asserted.</b> Every claim below was produced by
+        operating the real app, not by reading the code.
+      </p>
+    </div>
+    <div class="body">
+      <h2>What was actually verified</h2>
+
+      <ul class="plain">
+        <li><span><b>Anchoring holds across zoom.</b> The same highlight tracks its text exactly at 115%, 130% and 175%. Pinned by 12 tests so a regression fails CI rather than shipping.</span></li>
+        <li><span><b>Round-trip via real selection.</b> A highlight made by actual browser text selection stored 13 normalized rects, every value inside 0–1. The API rejects anything outside that range — so a <code>200</code> <em>is</em> the proof no pixel leaked into the database.</span></li>
+        <li><span><b>Two independent derivations agree.</b> A browser-created rect landed at <code>x=0.11758</code>; the seed, computing from Helvetica metrics, landed at <code>x=0.11765</code>. Both are the left margin (72/612 = 0.117647).</span></li>
+        <li><span><b>Spoiler gating works.</b> A member on page 4 sees Chapter 3 locked: “unlocks when you finish page 6.”</span></li>
+      </ul>
+
+      <h3>Three real bugs the verification caught</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Bug</th><th>Consequence</th><th>Found by</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Unbounded render loop</strong><br><small>Effect dep on a callback the parent recreated every render</small></td>
+              <td>Re-rasterized the canvas forever, pegged the CPU, wedged the browser</td>
+              <td>Reading the code while writing a DB inspector</td>
+            </tr>
+            <tr>
+              <td><strong>Timezone bug in streaks</strong><br><small><code>weekOf()</code> mixed local getters with <code>Date.UTC()</code></small></td>
+              <td>Sunday-night check-ins east of UTC bucketed into next week — silently breaking streaks</td>
+              <td>A test. Not by looking.</td>
+            </tr>
+            <tr>
+              <td><strong>Seeded highlights drifted</strong><br><small>Helvetica approximated at 0.5em/char; it's proportional</small></td>
+              <td>Marks landed several characters right of their text — looking exactly like an anchoring bug when the engine was fine</td>
+              <td>Rendering it and looking closely</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="#" id="tracker-link">Build tracker →</a>
+    <span>Next.js 15 · TypeScript · Prisma · pdf.js · SSE · ~5,800 lines</span>
+  </footer>
+</div>
+
+<script>
+  // ── The live proof ──────────────────────────────────────
+  // A faithful miniature of the real thing. Both panels highlight the same
+  // phrase; the ONLY difference is what they stored.
+  //
+  //   A stores viewport pixels, captured once at 100% — the naive approach.
+  //   B stores fractions of the page and resolves them at render time.
+  //
+  // Neither coordinate is hardcoded here. Both are MEASURED from the live span
+  // at 100%, exactly the way the real app measures a browser selection — because
+  // a demo arguing "don't guess coordinates" must not guess its own.
+
+  const BASE_W = 250;   // page width at 100%
+  // A cropped page, not a full US Letter sheet — the drift is what's on
+  // trial here, and half a page of blank paper would only push it off screen.
+  const ASPECT = 0.92;
+  // Kept large enough that browser text hinting still scales cleanly across
+  // the slider's range. Below ~9px, glyph positions round and even a correct
+  // anchor picks up a pixel or two of noise — an artifact of laying out HTML
+  // text, not of the technique. pdf.js computes glyph positions in PDF space
+  // and doesn't have this problem.
+  const BASE_FS = 13;
+
+  const LINES = [
+    { text: "Most people set goals and then wonder" },
+    { text: "why the goals do not set them." },
+    { pre: "It is a wish ", mark: "wearing the costume" },
+    { text: "of a plan." },
+  ];
+
+  function buildPage(el, markClass) {
+    el.replaceChildren();
+    for (const line of LINES) {
+      const ln = document.createElement("div");
+      ln.className = "ln";
+      if (line.mark) {
+        ln.append(line.pre);
+        const tgt = document.createElement("span");
+        tgt.className = "tgt";
+        tgt.textContent = line.mark;
+        ln.append(tgt);
+      } else {
+        ln.textContent = line.text;
+      }
+      el.append(ln);
+    }
+    const mk = document.createElement("div");
+    mk.className = "mk " + markClass;
+    el.append(mk);
+    return mk;
+  }
+
+  function applyScale(pg, scale) {
+    const W = BASE_W * scale;
+    const H = W * ASPECT;
+    pg.style.width = W + "px";
+    pg.style.height = H + "px";
+    pg.style.fontSize = BASE_FS * scale + "px";
+    return { W, H };
+  }
+
+  /**
+   * The page's PADDING box — the origin an absolutely-positioned child
+   * actually resolves against. getBoundingClientRect() returns the border
+   * box, so normalizing against it bakes the border width into every
+   * highlight as a constant offset. Small, but it's the same family of
+   * mistake this whole page is about.
+   */
+  function pageBox(pg) {
+    const r = pg.getBoundingClientRect();
+    return {
+      left: r.left + pg.clientLeft,
+      top: r.top + pg.clientTop,
+      width: pg.clientWidth,
+      height: pg.clientHeight,
+    };
+  }
+
+  /** Normalize the live span against the page — the production algorithm. */
+  function measureNormalized(pg) {
+    const box = pageBox(pg);
+    const tr = pg.querySelector(".tgt").getBoundingClientRect();
+    return {
+      x: (tr.left - box.left) / box.width,
+      y: (tr.top - box.top) / box.height,
+      w: tr.width / box.width,
+      h: tr.height / box.height,
+    };
+  }
+
+  const pgA = document.getElementById("pgA");
+  const pgB = document.getElementById("pgB");
+  const mkA = buildPage(pgA, "px");
+  const mkB = buildPage(pgB, "norm");
+
+  const zoom = document.getElementById("z");
+  const zval = document.getElementById("zv");
+  const driftA = document.getElementById("driftA");
+  const driftB = document.getElementById("driftB");
+
+  let NORM = null;   // what panel B stores: fractions
+  let FROZEN = null; // what panel A stores: pixels at 100%
+
+  function capture() {
+    applyScale(pgA, 1);
+    applyScale(pgB, 1);
+    NORM = measureNormalized(pgB);
+    // Panel A's stored value: the same rect, in pixels, at 100%. Frozen.
+    const box = pageBox(pgB);
+    FROZEN = {
+      left: NORM.x * box.width,
+      top: NORM.y * box.height,
+      width: NORM.w * box.width,
+      height: NORM.h * box.height,
+    };
+  }
+
+  function render() {
+    if (!NORM) return;
+    const scale = Number(zoom.value) / 100;
+    applyScale(pgA, scale);
+    applyScale(pgB, scale);
+    zval.textContent = Math.round(scale * 100) + "%";
+
+    const box = pageBox(pgB);
+
+    // A: stored in screen pixels, so it never rescales. Right only at 100%.
+    Object.assign(mkA.style, {
+      left: FROZEN.left + "px",
+      top: FROZEN.top + "px",
+      width: FROZEN.width + "px",
+      height: FROZEN.height + "px",
+    });
+
+    // B: a pure multiply against the CURRENT size. This is the whole fix.
+    Object.assign(mkB.style, {
+      left: NORM.x * box.width + "px",
+      top: NORM.y * box.height + "px",
+      width: NORM.w * box.width + "px",
+      height: NORM.h * box.height + "px",
+    });
+
+    // Both readouts are MEASURED against the live phrase, not asserted. If the
+    // technique ever stopped working, this number would say so on screen.
+    driftA.textContent = Math.round(driftOf(pgA, mkA)) + " px";
+    driftB.textContent = Math.round(driftOf(pgB, mkB)) + " px";
+  }
+
+  /** How far the painted mark sits from the text it's supposed to cover. */
+  function driftOf(pg, mk) {
+    const tgt = pg.querySelector(".tgt").getBoundingClientRect();
+    const m = mk.getBoundingClientRect();
+    return Math.hypot(m.left - tgt.left, m.top - tgt.top);
+  }
+
+  zoom.addEventListener("input", render);
+
+  capture();
+  render();
+  // Palatino is a system face, but if the browser substitutes late the metrics
+  // shift — so re-measure once fonts settle rather than trust the first read.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { capture(); render(); });
+  }
+
+  // The tracker link is filled in once the tracker is published.
+  const TRACKER_URL = "";
+  const link = document.getElementById("tracker-link");
+  if (TRACKER_URL) link.href = TRACKER_URL;
+  else link.remove();
+</script>

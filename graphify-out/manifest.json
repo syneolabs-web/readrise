@@ -1,0 +1,442 @@
+{
+  "D:\\prodoxity\\next-env.d.ts": {
+    "mtime": 1784119125.2198691,
+    "ast_hash": "90426577ad8f38459f3e566411c85589",
+    "semantic_hash": "90426577ad8f38459f3e566411c85589"
+  },
+  "D:\\prodoxity\\next.config.ts": {
+    "mtime": 1784106086.1604853,
+    "ast_hash": "5f417a1e82f90c3e56231640e40c0947",
+    "semantic_hash": "5f417a1e82f90c3e56231640e40c0947"
+  },
+  "D:\\prodoxity\\package.json": {
+    "mtime": 1784298677.1137705,
+    "ast_hash": "6d9361878604254039678ee0c8921495",
+    "semantic_hash": "6d9361878604254039678ee0c8921495"
+  },
+  "D:\\prodoxity\\postcss.config.mjs": {
+    "mtime": 1784106088.4938843,
+    "ast_hash": "0f8aa602547b154dc06be77b007c51d2",
+    "semantic_hash": "0f8aa602547b154dc06be77b007c51d2"
+  },
+  "D:\\prodoxity\\tsconfig.json": {
+    "mtime": 1784106082.5360658,
+    "ast_hash": "eabe23a0c2c44889c29b3c46939499c3",
+    "semantic_hash": "eabe23a0c2c44889c29b3c46939499c3"
+  },
+  "D:\\prodoxity\\app\\layout.tsx": {
+    "mtime": 1784304547.385548,
+    "ast_hash": "bfc993546ddbf3a3f25b1e3dd54b2bba",
+    "semantic_hash": "bfc993546ddbf3a3f25b1e3dd54b2bba"
+  },
+  "D:\\prodoxity\\app\\(marketing)\\Manifesto.tsx": {
+    "mtime": 1784304472.7740889,
+    "ast_hash": "42750759c80cd545e244438ab74c726f",
+    "semantic_hash": "42750759c80cd545e244438ab74c726f"
+  },
+  "D:\\prodoxity\\app\\(marketing)\\page.tsx": {
+    "mtime": 1784304901.3931036,
+    "ast_hash": "a54fd1466462e077ca51e9c2dad6964a",
+    "semantic_hash": "a54fd1466462e077ca51e9c2dad6964a"
+  },
+  "D:\\prodoxity\\app\\api\\actions\\route.ts": {
+    "mtime": 1784118446.5458243,
+    "ast_hash": "4a0e56a1e8206d987a38978b60b2d3ff",
+    "semantic_hash": "4a0e56a1e8206d987a38978b60b2d3ff"
+  },
+  "D:\\prodoxity\\app\\api\\actions\\[id]\\checkin\\route.ts": {
+    "mtime": 1784118452.1888964,
+    "ast_hash": "bf2576dfbdebbf8efdd744a5840158f0",
+    "semantic_hash": "bf2576dfbdebbf8efdd744a5840158f0"
+  },
+  "D:\\prodoxity\\app\\api\\auth\\login\\route.ts": {
+    "mtime": 1784118229.348801,
+    "ast_hash": "1c355df7d9055c37359bdbd6e023aa78",
+    "semantic_hash": "1c355df7d9055c37359bdbd6e023aa78"
+  },
+  "D:\\prodoxity\\app\\api\\auth\\logout\\route.ts": {
+    "mtime": 1784118238.2658613,
+    "ast_hash": "979161a33d023e12a6fb66473361d923",
+    "semantic_hash": "979161a33d023e12a6fb66473361d923"
+  },
+  "D:\\prodoxity\\app\\api\\auth\\register\\route.ts": {
+    "mtime": 1784118235.1322138,
+    "ast_hash": "c77127e4ddcc57e5f69bfbf604e0d388",
+    "semantic_hash": "c77127e4ddcc57e5f69bfbf604e0d388"
+  },
+  "D:\\prodoxity\\app\\api\\chat\\route.ts": {
+    "mtime": 1784118431.7196155,
+    "ast_hash": "0b2bf7f86682080c239d2fc350af86d5",
+    "semantic_hash": "0b2bf7f86682080c239d2fc350af86d5"
+  },
+  "D:\\prodoxity\\app\\api\\chat\\[circleId]\\route.ts": {
+    "mtime": 1784118438.2524228,
+    "ast_hash": "960ab81478b3cbd9c465833e1389b95e",
+    "semantic_hash": "960ab81478b3cbd9c465833e1389b95e"
+  },
+  "D:\\prodoxity\\app\\api\\circles\\route.ts": {
+    "mtime": 1784118282.374715,
+    "ast_hash": "0fbde7b33f6b6ad2443e5c7f7e0d00dc",
+    "semantic_hash": "0fbde7b33f6b6ad2443e5c7f7e0d00dc"
+  },
+  "D:\\prodoxity\\app\\api\\circles\\join\\route.ts": {
+    "mtime": 1784118288.3907106,
+    "ast_hash": "ba47c5122795446302a394bec14c1fc9",
+    "semantic_hash": "ba47c5122795446302a394bec14c1fc9"
+  },
+  "D:\\prodoxity\\app\\api\\comments\\route.ts": {
+    "mtime": 1784118388.1787496,
+    "ast_hash": "34cf628aea98b9b0b0edde8b0c8ad55d",
+    "semantic_hash": "34cf628aea98b9b0b0edde8b0c8ad55d"
+  },
+  "D:\\prodoxity\\app\\api\\comments\\[id]\\route.ts": {
+    "mtime": 1784118393.8831594,
+    "ast_hash": "0ccbefc44ea6ea3061b1555566048803",
+    "semantic_hash": "0ccbefc44ea6ea3061b1555566048803"
+  },
+  "D:\\prodoxity\\app\\api\\comments\\[id]\\vote\\route.ts": {
+    "mtime": 1784118400.7981482,
+    "ast_hash": "f88a576f68962d87e7f40fdffa69643b",
+    "semantic_hash": "f88a576f68962d87e7f40fdffa69643b"
+  },
+  "D:\\prodoxity\\app\\api\\documents\\route.ts": {
+    "mtime": 1784118344.208407,
+    "ast_hash": "f7d8f52a3f7e4cdbf03f9487d222967b",
+    "semantic_hash": "f7d8f52a3f7e4cdbf03f9487d222967b"
+  },
+  "D:\\prodoxity\\app\\api\\documents\\[id]\\annotations\\route.ts": {
+    "mtime": 1784118366.6179495,
+    "ast_hash": "f802a49c53aacd9c7dc6a4f5346bc4b8",
+    "semantic_hash": "f802a49c53aacd9c7dc6a4f5346bc4b8"
+  },
+  "D:\\prodoxity\\app\\api\\documents\\[id]\\file\\route.ts": {
+    "mtime": 1784118351.108522,
+    "ast_hash": "55a770ee338ed62bb3781c692a6aef2a",
+    "semantic_hash": "55a770ee338ed62bb3781c692a6aef2a"
+  },
+  "D:\\prodoxity\\app\\api\\highlights\\route.ts": {
+    "mtime": 1784118375.4611704,
+    "ast_hash": "01a7c2288bd25935c794dc592f55ddd9",
+    "semantic_hash": "01a7c2288bd25935c794dc592f55ddd9"
+  },
+  "D:\\prodoxity\\app\\api\\highlights\\[id]\\route.ts": {
+    "mtime": 1784118381.176299,
+    "ast_hash": "98836d4da2dd53a0f71f0a098167d3bf",
+    "semantic_hash": "98836d4da2dd53a0f71f0a098167d3bf"
+  },
+  "D:\\prodoxity\\app\\api\\progress\\route.ts": {
+    "mtime": 1784118420.5711012,
+    "ast_hash": "8fbd509ae9da6b1b49a5e95265a37704",
+    "semantic_hash": "8fbd509ae9da6b1b49a5e95265a37704"
+  },
+  "D:\\prodoxity\\app\\api\\stream\\route.ts": {
+    "mtime": 1784118480.0200973,
+    "ast_hash": "460ee3c2e003a573e3673c99b03a366b",
+    "semantic_hash": "460ee3c2e003a573e3673c99b03a366b"
+  },
+  "D:\\prodoxity\\app\\api\\vault\\route.ts": {
+    "mtime": 1784118461.9426289,
+    "ast_hash": "7e318619dc59cb1472c8d4f6590cbf30",
+    "semantic_hash": "7e318619dc59cb1472c8d4f6590cbf30"
+  },
+  "D:\\prodoxity\\app\\api\\vault\\[id]\\route.ts": {
+    "mtime": 1784118466.642976,
+    "ast_hash": "59082db2cef26d71d66e74b8655b6b0d",
+    "semantic_hash": "59082db2cef26d71d66e74b8655b6b0d"
+  },
+  "D:\\prodoxity\\app\\circles\\CircleActions.tsx": {
+    "mtime": 1784118321.0879903,
+    "ast_hash": "cccca0a6240af1ee650a1dad0afdce5b",
+    "semantic_hash": "cccca0a6240af1ee650a1dad0afdce5b"
+  },
+  "D:\\prodoxity\\app\\circles\\page.tsx": {
+    "mtime": 1784304472.8415506,
+    "ast_hash": "4f16862469e116a9e122c3e384f500ae",
+    "semantic_hash": "4f16862469e116a9e122c3e384f500ae"
+  },
+  "D:\\prodoxity\\app\\circles\\[slug]\\InviteCode.tsx": {
+    "mtime": 1784118988.007366,
+    "ast_hash": "3c48bc20052b2f5b99e1c169afbf03c7",
+    "semantic_hash": "3c48bc20052b2f5b99e1c169afbf03c7"
+  },
+  "D:\\prodoxity\\app\\circles\\[slug]\\MicroActions.tsx": {
+    "mtime": 1784304472.872054,
+    "ast_hash": "1018aa6cf98c006bd6d29dcca561c2a0",
+    "semantic_hash": "1018aa6cf98c006bd6d29dcca561c2a0"
+  },
+  "D:\\prodoxity\\app\\circles\\[slug]\\page.tsx": {
+    "mtime": 1784304950.9447825,
+    "ast_hash": "1725ac3ece009d298c057f2bab8f5d1c",
+    "semantic_hash": "1725ac3ece009d298c057f2bab8f5d1c"
+  },
+  "D:\\prodoxity\\app\\circles\\[slug]\\UploadButton.tsx": {
+    "mtime": 1784119007.6513739,
+    "ast_hash": "455d6b3bd94893f117c875ca7e19c870",
+    "semantic_hash": "455d6b3bd94893f117c875ca7e19c870"
+  },
+  "D:\\prodoxity\\app\\circles\\[slug]\\vault\\page.tsx": {
+    "mtime": 1784119027.2870393,
+    "ast_hash": "2a4b8671ff8e94d4c25dc04392e8e8bb",
+    "semantic_hash": "2a4b8671ff8e94d4c25dc04392e8e8bb"
+  },
+  "D:\\prodoxity\\app\\circles\\[slug]\\vault\\VaultList.tsx": {
+    "mtime": 1784304472.9740064,
+    "ast_hash": "7089fe539afc0a2ad1ed31bb3a6430fe",
+    "semantic_hash": "7089fe539afc0a2ad1ed31bb3a6430fe"
+  },
+  "D:\\prodoxity\\app\\login\\AuthForm.tsx": {
+    "mtime": 1784304473.0177248,
+    "ast_hash": "30e0055027147c10b96961fc7ff7ef70",
+    "semantic_hash": "30e0055027147c10b96961fc7ff7ef70"
+  },
+  "D:\\prodoxity\\app\\login\\page.tsx": {
+    "mtime": 1784304473.0607414,
+    "ast_hash": "af9980739271692f7d97a27ae6c3d8d0",
+    "semantic_hash": "af9980739271692f7d97a27ae6c3d8d0"
+  },
+  "D:\\prodoxity\\app\\read\\[documentId]\\page.tsx": {
+    "mtime": 1784118891.777764,
+    "ast_hash": "f9ebfacfcf6f01ef878346f8810b31f6",
+    "semantic_hash": "f9ebfacfcf6f01ef878346f8810b31f6"
+  },
+  "D:\\prodoxity\\components\\AppHeader.tsx": {
+    "mtime": 1784304598.469473,
+    "ast_hash": "bca2f683245e0f39e9dfa3681d45ecba",
+    "semantic_hash": "bca2f683245e0f39e9dfa3681d45ecba"
+  },
+  "D:\\prodoxity\\components\\CircleNav.tsx": {
+    "mtime": 1784118948.650383,
+    "ast_hash": "4f33db933a497f0eaf7d79b31f8bc21a",
+    "semantic_hash": "4f33db933a497f0eaf7d79b31f8bc21a"
+  },
+  "D:\\prodoxity\\components\\icons.tsx": {
+    "mtime": 1784304620.9283879,
+    "ast_hash": "afb8e273fe2e932d37a68a5c6ec0ffbb",
+    "semantic_hash": "afb8e273fe2e932d37a68a5c6ec0ffbb"
+  },
+  "D:\\prodoxity\\components\\LogoutButton.tsx": {
+    "mtime": 1784118311.2166371,
+    "ast_hash": "9f94f497b432e59e384e9b2903206fd3",
+    "semantic_hash": "9f94f497b432e59e384e9b2903206fd3"
+  },
+  "D:\\prodoxity\\components\\Modal.tsx": {
+    "mtime": 1784118327.7363343,
+    "ast_hash": "051705edd9022e4d8dc3861aff52fc87",
+    "semantic_hash": "051705edd9022e4d8dc3861aff52fc87"
+  },
+  "D:\\prodoxity\\components\\ThemeMenu.tsx": {
+    "mtime": 1784304573.711023,
+    "ast_hash": "e7994abdd74024150cff9735c4435db5",
+    "semantic_hash": "e7994abdd74024150cff9735c4435db5"
+  },
+  "D:\\prodoxity\\components\\ui.tsx": {
+    "mtime": 1784304473.3352683,
+    "ast_hash": "022b41e169a78356efa980cbc63c5dac",
+    "semantic_hash": "022b41e169a78356efa980cbc63c5dac"
+  },
+  "D:\\prodoxity\\components\\reader\\ChatPanel.tsx": {
+    "mtime": 1784123761.3258626,
+    "ast_hash": "c7cc5213125f78bbf7f5f7f2a3094753",
+    "semantic_hash": "c7cc5213125f78bbf7f5f7f2a3094753"
+  },
+  "D:\\prodoxity\\components\\reader\\HighlightLayer.tsx": {
+    "mtime": 1784304473.1442986,
+    "ast_hash": "c3bfd6c38e9c5b53e910c7ca6dfb9f37",
+    "semantic_hash": "c3bfd6c38e9c5b53e910c7ca6dfb9f37"
+  },
+  "D:\\prodoxity\\components\\reader\\PageSlot.tsx": {
+    "mtime": 1784121481.1480787,
+    "ast_hash": "58f3451fc2ea55442d6b414cd92d55a2",
+    "semantic_hash": "58f3451fc2ea55442d6b414cd92d55a2"
+  },
+  "D:\\prodoxity\\components\\reader\\PdfPage.tsx": {
+    "mtime": 1784125037.536502,
+    "ast_hash": "6eed5b2360646ccdc66e79e0b9c96edc",
+    "semantic_hash": "6eed5b2360646ccdc66e79e0b9c96edc"
+  },
+  "D:\\prodoxity\\components\\reader\\Reader.tsx": {
+    "mtime": 1784304692.797049,
+    "ast_hash": "4b64d0ba1a205e85633c5fdd9fc1f701",
+    "semantic_hash": "4b64d0ba1a205e85633c5fdd9fc1f701"
+  },
+  "D:\\prodoxity\\components\\reader\\ReaderToolbar.tsx": {
+    "mtime": 1784304760.0519938,
+    "ast_hash": "bef530f547f8398c79d06427d8a83718",
+    "semantic_hash": "bef530f547f8398c79d06427d8a83718"
+  },
+  "D:\\prodoxity\\components\\reader\\SelectionPopover.tsx": {
+    "mtime": 1784304473.2186284,
+    "ast_hash": "894cfc02ab8f7f5f791165470e8c8ef3",
+    "semantic_hash": "894cfc02ab8f7f5f791165470e8c8ef3"
+  },
+  "D:\\prodoxity\\components\\reader\\Sidebar.tsx": {
+    "mtime": 1784304473.2601645,
+    "ast_hash": "71872325f0f746b8dc5b1587113b370b",
+    "semantic_hash": "71872325f0f746b8dc5b1587113b370b"
+  },
+  "D:\\prodoxity\\components\\reader\\ThreadPanel.tsx": {
+    "mtime": 1784304473.2940798,
+    "ast_hash": "bb36949bd0a2ed41eb8192a3cdbebc2f",
+    "semantic_hash": "bb36949bd0a2ed41eb8192a3cdbebc2f"
+  },
+  "D:\\prodoxity\\components\\reader\\types.ts": {
+    "mtime": 1784118772.7828448,
+    "ast_hash": "fd04a42b76b79935b03c17f6eb46328b",
+    "semantic_hash": "fd04a42b76b79935b03c17f6eb46328b"
+  },
+  "D:\\prodoxity\\hooks\\useRealtime.ts": {
+    "mtime": 1784118489.4531314,
+    "ast_hash": "8593d9e123bf70f6daae35a36bed090c",
+    "semantic_hash": "8593d9e123bf70f6daae35a36bed090c"
+  },
+  "D:\\prodoxity\\lib\\anchor.test.ts": {
+    "mtime": 1784120880.3479114,
+    "ast_hash": "2a794d1941431f975fcc07bf8fbe739b",
+    "semantic_hash": "2a794d1941431f975fcc07bf8fbe739b"
+  },
+  "D:\\prodoxity\\lib\\anchor.ts": {
+    "mtime": 1784118731.8153005,
+    "ast_hash": "ceb275f5f9fbaeae06d0f81670d4a2f9",
+    "semantic_hash": "ceb275f5f9fbaeae06d0f81670d4a2f9"
+  },
+  "D:\\prodoxity\\lib\\api.ts": {
+    "mtime": 1784106174.909375,
+    "ast_hash": "7d467864752bb66ebb73263c3b2edf99",
+    "semantic_hash": "7d467864752bb66ebb73263c3b2edf99"
+  },
+  "D:\\prodoxity\\lib\\auth.ts": {
+    "mtime": 1784106154.419975,
+    "ast_hash": "15fba7b4b6359a5c1db22e8fde66df72",
+    "semantic_hash": "15fba7b4b6359a5c1db22e8fde66df72"
+  },
+  "D:\\prodoxity\\lib\\db.ts": {
+    "mtime": 1784106134.7112832,
+    "ast_hash": "f5616a54f4e4cb9906815032a6cd63ef",
+    "semantic_hash": "f5616a54f4e4cb9906815032a6cd63ef"
+  },
+  "D:\\prodoxity\\lib\\events.ts": {
+    "mtime": 1784298721.035544,
+    "ast_hash": "eedd7d588dc2da0a648d567e87fd47ab",
+    "semantic_hash": "eedd7d588dc2da0a648d567e87fd47ab"
+  },
+  "D:\\prodoxity\\lib\\fonts.ts": {
+    "mtime": 1784123563.5971577,
+    "ast_hash": "5b34c8e98131fe795e05d6785bc93702",
+    "semantic_hash": "5b34c8e98131fe795e05d6785bc93702"
+  },
+  "D:\\prodoxity\\lib\\pdf.ts": {
+    "mtime": 1784118673.556293,
+    "ast_hash": "9e231d7c84c897ef346c6fe5219cee1f",
+    "semantic_hash": "9e231d7c84c897ef346c6fe5219cee1f"
+  },
+  "D:\\prodoxity\\lib\\serialize.ts": {
+    "mtime": 1784118361.3003454,
+    "ast_hash": "dced0a82fb4ac97f24a919e844c5fd6f",
+    "semantic_hash": "dced0a82fb4ac97f24a919e844c5fd6f"
+  },
+  "D:\\prodoxity\\lib\\session.ts": {
+    "mtime": 1784106142.2281182,
+    "ast_hash": "66f8e0b9722980cfb06f1476bd5ba757",
+    "semantic_hash": "66f8e0b9722980cfb06f1476bd5ba757"
+  },
+  "D:\\prodoxity\\lib\\storage.ts": {
+    "mtime": 1784298742.1088915,
+    "ast_hash": "ed91bb05a28792a1fac4e27fa162cef3",
+    "semantic_hash": "ed91bb05a28792a1fac4e27fa162cef3"
+  },
+  "D:\\prodoxity\\lib\\types.ts": {
+    "mtime": 1784106106.8858278,
+    "ast_hash": "3e25aae833b5e84bad3f07fee6846127",
+    "semantic_hash": "3e25aae833b5e84bad3f07fee6846127"
+  },
+  "D:\\prodoxity\\lib\\utils.test.ts": {
+    "mtime": 1784120465.9059634,
+    "ast_hash": "54e890bbed218e10c6d4ad0cfa7308df",
+    "semantic_hash": "54e890bbed218e10c6d4ad0cfa7308df"
+  },
+  "D:\\prodoxity\\lib\\utils.ts": {
+    "mtime": 1784120841.6808121,
+    "ast_hash": "158f6c84e755051250db39bd11f59bc4",
+    "semantic_hash": "158f6c84e755051250db39bd11f59bc4"
+  },
+  "D:\\prodoxity\\prisma\\book-content.ts": {
+    "mtime": 1784119593.3783464,
+    "ast_hash": "b2e383d59c91d2a963ae06d293c6f714",
+    "semantic_hash": "b2e383d59c91d2a963ae06d293c6f714"
+  },
+  "D:\\prodoxity\\prisma\\seed.ts": {
+    "mtime": 1784119586.737619,
+    "ast_hash": "3171cde87f9bdb8f99955ad7aee49878",
+    "semantic_hash": "3171cde87f9bdb8f99955ad7aee49878"
+  },
+  "D:\\prodoxity\\public\\pdf.worker.min.mjs": {
+    "mtime": 1784105986.0924902,
+    "ast_hash": "f7ae3fe3cc9c326175ba6815547a71fa",
+    "semantic_hash": "f7ae3fe3cc9c326175ba6815547a71fa"
+  },
+  "D:\\prodoxity\\scripts\\copy-pdf-worker.ts": {
+    "mtime": 1784118532.3167953,
+    "ast_hash": "04e3cd99f4086376130425b011dfa59d",
+    "semantic_hash": "04e3cd99f4086376130425b011dfa59d"
+  },
+  "D:\\prodoxity\\scripts\\diagnose-rect.ts": {
+    "mtime": 1784124820.694565,
+    "ast_hash": "af28f2fb63a66a50fc426e1d028e6567",
+    "semantic_hash": "af28f2fb63a66a50fc426e1d028e6567"
+  },
+  "D:\\prodoxity\\scripts\\helvetica-metrics.ts": {
+    "mtime": 1784119538.662955,
+    "ast_hash": "7f9b4ec0be74e0acc42ce7903056c6ad",
+    "semantic_hash": "7f9b4ec0be74e0acc42ce7903056c6ad"
+  },
+  "D:\\prodoxity\\scripts\\inspect-highlights.ts": {
+    "mtime": 1784121355.53194,
+    "ast_hash": "d825ee40372425ecc682b06df41d496e",
+    "semantic_hash": "d825ee40372425ecc682b06df41d496e"
+  },
+  "D:\\prodoxity\\scripts\\pdf-builder.ts": {
+    "mtime": 1784119562.730883,
+    "ast_hash": "4e7a0d3ad262d2a99521e233cf2204a4",
+    "semantic_hash": "4e7a0d3ad262d2a99521e233cf2204a4"
+  },
+  "D:\\prodoxity\\scripts\\switch-provider.ts": {
+    "mtime": 1784106208.6458528,
+    "ast_hash": "8cc6dc303661f310984f85faaa1cbd3e",
+    "semantic_hash": "8cc6dc303661f310984f85faaa1cbd3e"
+  },
+  "D:\\prodoxity\\scripts\\verify-capture.ts": {
+    "mtime": 1784126336.4195864,
+    "ast_hash": "579a91ba3d69a9f567b9275d988c7f39",
+    "semantic_hash": "579a91ba3d69a9f567b9275d988c7f39"
+  },
+  "D:\\prodoxity\\scripts\\verify-realtime.ts": {
+    "mtime": 1784298760.540582,
+    "ast_hash": "dba8e3b25e2c3bc267dad0eb49e811e4",
+    "semantic_hash": "dba8e3b25e2c3bc267dad0eb49e811e4"
+  },
+  "D:\\prodoxity\\README.md": {
+    "mtime": 1784299998.0889945,
+    "ast_hash": "502d3a3e012b273c01a83772f410f1c0",
+    "semantic_hash": "502d3a3e012b273c01a83772f410f1c0"
+  },
+  "D:\\prodoxity\\docs\\blueprint.html": {
+    "mtime": 1784123296.7461991,
+    "ast_hash": "b74efc7d7bcad7eb92fa75869d0b1677",
+    "semantic_hash": "b74efc7d7bcad7eb92fa75869d0b1677"
+  },
+  "D:\\prodoxity\\docs\\BLUEPRINT.md": {
+    "mtime": 1784300014.8976755,
+    "ast_hash": "754e4d4f4b0590e2b9538205c9d3f7eb",
+    "semantic_hash": "754e4d4f4b0590e2b9538205c9d3f7eb"
+  },
+  "D:\\prodoxity\\docs\\DECISIONS.md": {
+    "mtime": 1784305205.937438,
+    "ast_hash": "5096ded00a405f07cb5044fe8c168d2b",
+    "semantic_hash": "5096ded00a405f07cb5044fe8c168d2b"
+  },
+  "D:\\prodoxity\\docs\\RESEARCH.md": {
+    "mtime": 1784304457.992488,
+    "ast_hash": "e1a2eb64f2ca5bba4ebc5fdde893ccee",
+    "semantic_hash": "e1a2eb64f2ca5bba4ebc5fdde893ccee"
+  }
+}

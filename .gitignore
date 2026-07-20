@@ -1,0 +1,32 @@
+node_modules/
+.next/
+out/
+build/
+storage/
+*.db
+*.db-journal
+
+# Secrets. `.env` is ignored too — it carries SESSION_SECRET and, once Prisma
+# points at Supabase, the database password. Commit `.env.example` instead;
+# it documents every key without any of the values.
+.env
+.env.*
+!.env.example
+.mcp.json
+
+next-env.d.ts
+.DS_Store
+tsconfig.tsbuildinfo
+.vercel/
+
+# Source scans, the unused 52MB FBX and Blender working files — ~87MB that
+# never reaches a user. Keeping it out keeps clones fast. Move to Git LFS or
+# cloud storage if it ever needs versioning.
+assets/
+
+# AI Studio scratch project. Already excluded from tsconfig; not part of the app.
+new changes/
+
+# Regenerable AST cache (~10MB). GRAPH_REPORT.md and graph.html are kept —
+# they're the part CLAUDE.md points future sessions at.
+graphify-out/cache/

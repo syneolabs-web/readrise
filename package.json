@@ -1,0 +1,61 @@
+{
+  "name": "prodoxity",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A private reading circle for close friends: read together, extract insights, hold each other accountable.",
+  "scripts": {
+    "postinstall": "tsx scripts/copy-pdf-worker.ts",
+    "predev": "tsx scripts/copy-pdf-worker.ts",
+    "dev": "next dev",
+    "prebuild": "tsx scripts/copy-pdf-worker.ts",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "tsx --test lib/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma db push --force-reset && npm run db:seed",
+    "db:postgres": "tsx scripts/switch-provider.ts postgresql",
+    "db:sqlite": "tsx scripts/switch-provider.ts sqlite",
+    "setup": "npm install && prisma generate && prisma db push && npm run db:seed"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.1.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
+    "@supabase/supabase-js": "^2.110.7",
+    "@types/three": "^0.185.1",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.42.2",
+    "framer-motion-3d": "^12.4.13",
+    "jose": "^5.9.6",
+    "lenis": "^1.3.25",
+    "lucide-react": "^1.24.0",
+    "next": "^15.1.0",
+    "pdfjs-dist": "4.8.69",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.5.5",
+    "three": "^0.185.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "prisma": "^6.1.0",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
