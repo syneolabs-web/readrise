@@ -10,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite" // switch-provider.ts rewrites this line
+  provider = "postgresql" // switch-provider.ts rewrites this line
   url      = env("DATABASE_URL")
 
   // Supabase (and any pgbouncer setup) needs two connection strings:
