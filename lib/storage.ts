@@ -28,6 +28,38 @@ const SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
 
 const useSupabase = Boolean(SUPABASE_URL && SECRET_KEY);
 
+/**
+ * Fail loudly when production is configured to write to a disk that cannot be
+ * written to.
+ *
+ * This exact misconfiguration already shipped once: SUPABASE_SECRET_KEY was
+ * set in Vercel but NEXT_PUBLIC_SUPABASE_URL was not, so `useSupabase` was
+ * false and every upload fell through to writeFile() on a read-only
+ * filesystem. The user-visible result was a generic "Something went wrong",
+ * which points at the upload route rather than at the missing variable, so
+ * the real cause was invisible from the outside.
+ *
+ * Setting one of the two and not the other is always a mistake, so it is
+ * worth naming precisely — the whole cost of that outage was not knowing
+ * which variable was missing.
+ */
+function assertStorageConfigured(): void {
+  if (useSupabase || process.env.NODE_ENV !== "production") return;
+
+  const missing = [
+    !SUPABASE_URL && "NEXT_PUBLIC_SUPABASE_URL",
+    !SECRET_KEY && "SUPABASE_SECRET_KEY",
+  ].filter(Boolean);
+
+  throw new Error(
+    `Storage is not configured: ${missing.join(" and ")} missing. ` +
+      "Production cannot use the local-disk fallback — the filesystem is " +
+      "ephemeral and read-only, so uploads would be lost even if they " +
+      "appeared to succeed. Set the variable(s) in your host's environment " +
+      "and redeploy."
+  );
+}
+
 // ── Supabase backend ────────────────────────────────────────
 
 let adminClient: SupabaseClient | null = null;
@@ -74,6 +106,7 @@ function resolveKey(key: string): string {
 // ── The interface the app sees ──────────────────────────────
 
 export async function saveFile(buffer: Buffer, ext = "pdf"): Promise<string> {
+  assertStorageConfigured();
   const key = `${Date.now()}-${randomBytes(12).toString("hex")}.${ext}`;
 
   if (useSupabase) {
@@ -92,6 +125,7 @@ export async function saveFile(buffer: Buffer, ext = "pdf"): Promise<string> {
 }
 
 export async function readStoredFile(key: string): Promise<Buffer> {
+  assertStorageConfigured();
   if (useSupabase) {
     const { data, error } = await admin().storage.from(BUCKET).download(key);
     if (error || !data) {

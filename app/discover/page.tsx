@@ -37,7 +37,7 @@ export default async function DiscoverPage() {
         </nav>
       </AppHeader>
 
-      <main className="mx-auto max-w-5xl px-6 py-8">
+      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
         <div>
           <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-accent">
             Global Pulse
@@ -53,7 +53,7 @@ export default async function DiscoverPage() {
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           {/* ── Public circles ──────────────────────────── */}
-          <section>
+          <section className="min-w-0">
             <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
               Circles forming now
             </h2>
@@ -98,7 +98,7 @@ export default async function DiscoverPage() {
           </section>
 
           {/* ── Popular books ───────────────────────────── */}
-          <aside>
+          <aside className="min-w-0">
             <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
               Most highlighted
             </h2>

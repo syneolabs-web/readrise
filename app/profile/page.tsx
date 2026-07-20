@@ -39,7 +39,7 @@ export default async function ProfilePage() {
         </nav>
       </AppHeader>
 
-      <main className="mx-auto max-w-3xl px-6 py-12">
+      <main className="mx-auto max-w-3xl px-4 py-8 pb-24 sm:px-6 sm:py-12 sm:pb-12">
         <div className="mb-8">
           <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-accent">
             Account

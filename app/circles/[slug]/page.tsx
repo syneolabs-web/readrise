@@ -112,7 +112,7 @@ export default async function CirclePage({
         <CircleNav slug={slug} name={circle.name} active="books" />
       </AppHeader>
 
-      <main className="mx-auto max-w-5xl px-6 py-8">
+      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">{circle.name}</h1>
@@ -223,7 +223,7 @@ export default async function CirclePage({
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_20rem]">
           {/* ── Books ─────────────────────────────────── */}
-          <section>
+          <section className="min-w-0">
             <h2 className="text-[11px] font-semibold uppercase tracking-widest text-ink-500">
               Reading
             </h2>
@@ -247,7 +247,7 @@ export default async function CirclePage({
                     : 0;
 
                   return (
-                    <Link key={doc.id} href={`/read/${doc.id}`}>
+                    <Link key={doc.id} href={`/read/${doc.id}`} className="min-w-0">
                       <Card className="group flex gap-4 p-4 transition-colors hover:border-ink-700 hover:bg-ink-850">
                         <BookCover title={doc.title} author={doc.author} />
                         <div className="min-w-0 flex-1">

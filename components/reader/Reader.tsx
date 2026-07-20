@@ -62,6 +62,9 @@ export function Reader({
   // (docs/RESEARCH.md §4). While active, the sidebar and Progress Match
   // disappear: one page, one job. Exiting shows what was BUILT (§5, §6).
   const [focus, setFocus] = useState(false);
+  // Threads sheet, below lg only. Closed by default so the page column owns
+  // the whole viewport until the reader asks for the conversation.
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [recap, setRecap] = useState<{
     minutes: number;
@@ -99,6 +102,24 @@ export function Reader({
         const page = await d.getPage(1);
         const vp = page.getViewport({ scale: 1 });
         setAspect(vp.height / vp.width); // placeholder ratio for unrendered pages
+
+        // Fit the page to the column on first load.
+        //
+        // The 1.3 default is right on a desktop and unusable on a phone: a
+        // 612pt page at 130% is ~800px wide inside a ~370px column, so every
+        // line needs horizontal panning. PDFs are fixed-layout, so the only
+        // lever we have is scale — fit-to-width is what a phone reader
+        // actually wants, and the zoom controls still do whatever you like
+        // afterwards.
+        //
+        // Only narrows: on a wide screen 1.3 already fits, and blowing a page
+        // up to fill a 27" monitor would be worse than the default.
+        const column = scrollRef.current?.clientWidth;
+        if (column) {
+          const padding = 24; // matches px-3 on the scroll container
+          const fit = (column - padding) / vp.width;
+          if (fit < 1.3) setScale(Math.max(0.4, Number(fit.toFixed(2))));
+        }
       })
       .catch((err) => {
         if (!cancelled) {
@@ -311,7 +332,7 @@ export function Reader({
       <div className="flex min-h-0 flex-1">
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto bg-ink-900 px-6 py-8 outline-none"
+          className="flex-1 overflow-y-auto bg-ink-900 px-3 py-4 outline-none sm:px-6 sm:py-8"
           onScroll={() => pending && setPending(null)}
           data-lenis-prevent
           tabIndex={0}
@@ -358,9 +379,33 @@ export function Reader({
             milestones={milestones}
             myProgress={myProgress}
             canShoutout={canShoutout}
+            open={sheetOpen}
+            onClose={() => setSheetOpen(false)}
           />
         )}
       </div>
+
+      {/* Sheet scrim, below lg only. Tapping outside is the gesture people try
+          first, so it has to work. */}
+      {!focus && sheetOpen && (
+        <button
+          aria-label="Close threads"
+          onClick={() => setSheetOpen(false)}
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+        />
+      )}
+
+      {/* The only way to reach threads on a phone. Hidden at lg+, where the
+          sidebar is always on screen, and during focus mode, which exists
+          precisely to remove other people from the frame. */}
+      {!focus && !sheetOpen && (
+        <button
+          onClick={() => setSheetOpen(true)}
+          className="fixed bottom-4 right-4 z-30 rounded-full bg-accent px-4 py-3 text-xs font-semibold text-white shadow-lg lg:hidden"
+        >
+          Threads{highlights.length ? ` (${highlights.length})` : ""}
+        </button>
+      )}
 
       {recap && <FocusRecap {...recap} onClose={() => setRecap(null)} />}
 

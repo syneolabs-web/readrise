@@ -30,3 +30,5 @@ new changes/
 # Regenerable AST cache (~10MB). GRAPH_REPORT.md and graph.html are kept —
 # they're the part CLAUDE.md points future sessions at.
 graphify-out/cache/
+.vercel
+.env*

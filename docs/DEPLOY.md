@@ -12,10 +12,24 @@ and the secrets have to be in Vercel before the first deploy rather than after.
 
 | Variable | Port | Used by | Why |
 |---|---|---|---|
-| `DATABASE_URL` | 6543 | the running app | Transaction pooler. Serverless opens a connection per invocation; a direct connection would exhaust Postgres' limit. Keep `?pgbouncer=true&connection_limit=1`. |
+| `DATABASE_URL` | 6543 | the running app | Transaction pooler. Serverless opens a connection per invocation; a direct connection would exhaust Postgres' limit. Use `?pgbouncer=true&connection_limit=5&pool_timeout=20`. |
 | `DIRECT_URL` | 5432 | `prisma db push` / `migrate` | Schema changes need a real session, which the transaction pooler cannot provide. |
 
 Put both in `.env` (**not** `.env.local` — the Prisma CLI only reads `.env`).
+
+> **Do not set `connection_limit=1`.** It is the most repeated piece of
+> serverless-Prisma advice on the internet and it takes this app down. Pages
+> run several queries concurrently through `Promise.all` — the dashboard runs
+> three — and a pool of one makes them wait on each other until they time out.
+> Every logged-in page then 500s with Prisma `P2024`, which reads like a
+> database outage rather than a connection-string setting. pgbouncer already
+> multiplexes behind us, so a small per-instance pool is the correct shape.
+
+> **Vercel cannot show you these values again.** Variables stored as Sensitive
+> are write-only: the dashboard masks them and `vercel env pull` writes the
+> literal string `[REDACTED]`, not the value. Never round-trip a secret through
+> `env pull` → `env add`; you will overwrite it with the placeholder. Re-copy
+> from Supabase instead, and keep your own copy in `.env` locally.
 
 **Switch the provider and push the schema:**
 

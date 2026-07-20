@@ -78,6 +78,14 @@ export default function LoginPage() {
               <p className="text-ink-soft text-sm">Enter your details to sign in to your account</p>
             </div>
             
+            {/* Development only. On the deployed site these buttons advertised
+                seeded logins and their shared password to anyone who opened the
+                page — and against a production database that was never seeded,
+                they could not work anyway, so every click was a dead end that
+                looked like a broken login. NEXT_PUBLIC_ so it survives into the
+                client bundle; Next inlines it at build time and tree-shakes the
+                whole block out of the production build. */}
+            {process.env.NODE_ENV !== "production" && (
             <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
               <span className="text-xs text-ink-faint mr-1 uppercase tracking-widest font-semibold">Test Accounts:</span>
               <button type="button" onClick={() => attemptLogin('pratik@prodoxity.dev')} className="text-xs bg-ink/[0.03] dark:bg-ink/[0.05] border border-rule/50 hover:bg-ink/10 text-ink-soft py-1 px-3 rounded-full transition-all hover:scale-105 active:scale-95 font-medium">Pratik</button>
@@ -87,6 +95,7 @@ export default function LoginPage() {
                   discovery and standings from a non-owner's point of view. */}
               <button type="button" onClick={() => attemptLogin('sofia@readers.dev')} className="text-xs bg-ink/[0.03] dark:bg-ink/[0.05] border border-rule/50 hover:bg-ink/10 text-ink-soft py-1 px-3 rounded-full transition-all hover:scale-105 active:scale-95 font-medium">Sofia</button>
             </div>
+            )}
 
             {error && (
               <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 text-sm text-center">

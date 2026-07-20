@@ -55,7 +55,7 @@ export default async function VaultPage({
         <CircleNav slug={slug} name={circle.name} active="vault" />
       </AppHeader>
 
-      <main className="mx-auto max-w-3xl px-6 py-8">
+      <main className="mx-auto max-w-3xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Insight Vault</h1>
           <p className="mt-1 max-w-xl text-sm leading-relaxed text-ink-500">

@@ -45,7 +45,10 @@ export function GoalCard({
       <div className="flex items-baseline justify-between gap-3">
         <Link
           href={`/read/${documentId}`}
-          className="truncate text-sm font-medium text-ink-100 transition-colors hover:text-accent"
+          // min-w-0 is what actually lets `truncate` work here: without it the
+          // flex item refuses to shrink below its text and pushes the card
+          // wider than the viewport instead of ellipsising.
+          className="min-w-0 truncate text-sm font-medium text-ink-100 transition-colors hover:text-accent"
         >
           {title}
         </Link>

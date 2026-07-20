@@ -93,7 +93,7 @@ export default async function DashboardPage() {
         </nav>
       </AppHeader>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">
+      <main className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-accent">
@@ -112,9 +112,14 @@ export default async function DashboardPage() {
           </div>
         )}
 
+        {/* Stacks below lg. The source order is activity → reading → built,
+            which is right on desktop where all three are side by side, but
+            wrong stacked: it buries your books and goals under a feed you have
+            to scroll past. `order-*` puts reading first on small screens
+            without disturbing the desktop columns. */}
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.2fr_18rem]">
           {/* ── Circle activity ─────────────────────────── */}
-          <section>
+          <section className="order-2 min-w-0 lg:order-none">
             <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
               In your circles
             </h2>
@@ -134,14 +139,14 @@ export default async function DashboardPage() {
                       aria-hidden="true"
                     />
                     <Link href={a.href} className="group block">
-                      <div className="flex items-center gap-2">
+                      <div className="flex min-w-0 items-center gap-2">
                         <Avatar
                           name={a.actor.name}
                           color={a.actor.avatarColor}
                           image={(a.actor as any).avatarImage}
                           size={18}
                         />
-                        <p className="text-xs text-ink-300">
+                        <p className="min-w-0 break-words text-xs text-ink-300">
                           <span className="font-medium text-ink-100">
                             {a.actor.name}
                           </span>{" "}
@@ -159,7 +164,7 @@ export default async function DashboardPage() {
           </section>
 
           {/* ── Reading snapshot ────────────────────────── */}
-          <section>
+          <section className="order-1 min-w-0 lg:order-none">
             {/* Goals sit above the shelf: a deadline you set is the thing most
                 likely to decide what you open next. */}
             {goals.length > 0 && (
@@ -197,7 +202,7 @@ export default async function DashboardPage() {
                 {books.map((b) => {
                   const pct = b.pageCount ? (b.page / b.pageCount) * 100 : 0;
                   return (
-                    <Link key={b.id} href={`/read/${b.id}`}>
+                    <Link key={b.id} href={`/read/${b.id}`} className="min-w-0">
                       <Card className="group flex h-full gap-3 p-3 transition-colors hover:border-ink-700 hover:bg-ink-850">
                         <BookCover title={b.title} author={b.author} width={46} />
                         <div className="flex min-w-0 flex-1 flex-col">
@@ -249,7 +254,7 @@ export default async function DashboardPage() {
           </section>
 
           {/* ── My progress ─────────────────────────────── */}
-          <aside className="space-y-4">
+          <aside className="order-3 min-w-0 space-y-4 lg:order-none">
             <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
               What you&apos;ve built
             </h2>
