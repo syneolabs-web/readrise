@@ -23,7 +23,6 @@ var d=document.documentElement;
 d.dataset.theme=t;d.dataset.vibe=v;
 }catch(e){}})();`;
 
-import { SmoothScroll } from "@/components/SmoothScroll";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export default function RootLayout({
@@ -36,7 +35,7 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <SmoothScroll>{children}</SmoothScroll>
+          {children}
         </ThemeProvider>
       </body>
     </html>

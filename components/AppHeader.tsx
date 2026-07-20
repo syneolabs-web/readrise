@@ -21,14 +21,29 @@ export async function AppHeader({
   return (
     <>
     <header className="sticky top-0 z-30 border-b border-ink-800 bg-ink-950/85 backdrop-blur">
-      <div className="flex h-14 items-center gap-3 px-4 sm:gap-4 sm:px-6">
+      {/*
+        Wraps to two rows on a phone.
+
+        Logo + circle name + Books/Vault + theme + bell + avatar + "Sign out"
+        cannot fit 370px. Forced onto one line they overlapped each other and
+        "Sign out" broke across two lines. Dropping controls would have been
+        the easy fix, but Sign out lives nowhere else in the app, so instead
+        the page context (children) takes its own full-width row below the
+        identity controls. Single DOM node either way — no duplicate nav for
+        screen readers.
+      */}
+      <div className="flex flex-wrap items-center gap-x-3 px-4 py-2 sm:h-14 sm:flex-nowrap sm:gap-x-4 sm:px-6 sm:py-0">
         <Link href="/circles" className="flex shrink-0 items-center gap-2">
           <ReadriseLogo />
         </Link>
 
-        {children}
+        {children && (
+          <div className="order-last w-full min-w-0 pt-1 sm:order-none sm:w-auto sm:pt-0">
+            {children}
+          </div>
+        )}
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <ThemeMenu />
           <NotificationBell items={notifications} />
           <Avatar name={user.name} color={user.avatarColor} image={(user as any).avatarImage} size={26} />

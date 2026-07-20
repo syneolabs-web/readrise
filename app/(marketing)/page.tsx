@@ -96,13 +96,13 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 relative z-10 pointer-events-none pb-24">
         
         {/* HERO */}
-        <section id="hero" className="min-h-screen pt-48 pb-24 flex flex-col justify-center pointer-events-auto">
+        <section id="hero" className="min-h-[85vh] pt-28 pb-12 sm:min-h-screen sm:pt-48 sm:pb-24 flex flex-col justify-center pointer-events-auto">
           <FadeIn>
             <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">A story you already know</h3>
-            <h1 className="font-serif text-6xl md:text-8xl leading-[1.1] mb-8 max-w-3xl text-ink">
+            <h1 className="font-serif text-4xl sm:text-6xl md:text-8xl leading-[1.1] mb-4 sm:mb-8 max-w-3xl text-ink">
               It&apos;s 11:47pm and the feed already knows how tonight goes.
             </h1>
-            <p className="text-xl md:text-2xl text-ink-soft max-w-2xl mb-16 leading-relaxed">
+            <p className="text-base sm:text-xl md:text-2xl text-ink-soft max-w-2xl mb-8 sm:mb-16 leading-relaxed">
               You&apos;ve been here an hour. You couldn&apos;t name three things you saw.
             </p>
             <button 
@@ -115,11 +115,11 @@ export default function Home() {
         </section>
 
         {/* ACT I */}
-        <section id="act-1" className="min-h-[120vh] py-24 flex flex-col justify-center items-end text-right pointer-events-auto">
+        <section id="act-1" className="min-h-[80vh] py-12 sm:min-h-[120vh] sm:py-24 flex flex-col justify-center items-end text-right pointer-events-auto">
           <div className="max-w-2xl">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act I · The feed</h3>
-              <h2 className="font-serif text-5xl md:text-7xl leading-[1.1] mb-8 text-ink">
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 Two hours a day, every day, spent becoming no one in particular.
               </h2>
               <div className="bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block text-left">
@@ -138,14 +138,14 @@ export default function Home() {
         </section>
 
         {/* ACT II */}
-        <section id="act-2" className="min-h-[120vh] py-24 flex flex-col justify-center pointer-events-auto">
+        <section id="act-2" className="min-h-[80vh] py-12 sm:min-h-[120vh] sm:py-24 flex flex-col justify-center pointer-events-auto">
           <div className="max-w-2xl">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act II · The page</h3>
-              <h2 className="font-serif text-5xl md:text-7xl leading-[1.1] mb-8 text-ink">
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 The phone opens. This time it&apos;s a book.
               </h2>
-              <p className="text-xl text-ink-soft leading-relaxed mb-16 bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl shadow-sm inline-block">
+              <p className="text-base sm:text-xl text-ink-soft leading-relaxed mb-8 sm:mb-16 bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-sm inline-block">
                 A real one — the same PDF for everyone in your circle, laid out on warm paper. It has a last page. That is not a missing feature.
               </p>
               
@@ -161,11 +161,11 @@ export default function Home() {
         </section>
 
         {/* ACT III */}
-        <section id="act-3" className="min-h-[120vh] py-24 flex flex-col justify-center items-end text-right pointer-events-auto">
+        <section id="act-3" className="min-h-[80vh] py-12 sm:min-h-[120vh] sm:py-24 flex flex-col justify-center items-end text-right pointer-events-auto">
           <div className="max-w-2xl">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act III · The margin</h3>
-              <h2 className="font-serif text-5xl md:text-7xl leading-[1.1] mb-8 text-ink">
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 By morning, someone has answered in the margin.
               </h2>
               <p className="text-xl text-ink-soft leading-relaxed bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm text-left inline-block">
@@ -176,11 +176,11 @@ export default function Home() {
         </section>
 
         {/* ACT IV */}
-        <section id="act-4" className="min-h-[120vh] py-24 flex flex-col justify-center items-center text-center pointer-events-auto pt-32">
+        <section id="act-4" className="min-h-[80vh] py-12 sm:min-h-[120vh] sm:py-24 flex flex-col justify-center items-center text-center pointer-events-auto pt-32">
           <div className="max-w-4xl w-full">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act IV · The circle</h3>
-              <h2 className="font-serif text-5xl md:text-7xl leading-[1.1] mb-16 text-ink max-w-3xl mx-auto">
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-8 sm:mb-16 text-ink max-w-3xl mx-auto">
                 Two or three people who notice whether you showed up.
               </h2>
               
@@ -220,15 +220,15 @@ export default function Home() {
         </section>
 
         {/* INTERLUDE */}
-        <section id="interlude" className="min-h-[100vh] py-32 flex flex-col justify-center items-center text-center max-w-3xl mx-auto pointer-events-auto">
+        <section id="interlude" className="min-h-[75vh] py-14 sm:min-h-[100vh] sm:py-32 flex flex-col justify-center items-center text-center max-w-3xl mx-auto pointer-events-auto">
           <FadeIn>
             <h4 className="font-bold text-ink mb-4 text-xl">The honest part</h4>
-            <p className="text-xl text-ink-soft leading-relaxed mb-12 bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl shadow-sm">
+            <p className="text-base sm:text-xl text-ink-soft leading-relaxed mb-8 sm:mb-12 bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-sm">
               You can still lose two hours in here.<br/>
               Chase the tangent. Argue about one paragraph until midnight. The difference is where it lands: you&apos;ll be two hours deeper into the book, with the margins to prove it.
             </p>
-            <blockquote className="border-y border-rule py-8 my-8 bg-paper/90 md:bg-paper/60 md:backdrop-blur-sm px-6 rounded-2xl">
-              <p className="font-serif text-3xl md:text-4xl italic text-ink mb-6 leading-tight">
+            <blockquote className="border-y border-rule py-6 my-6 sm:py-8 sm:my-8 bg-paper/90 md:bg-paper/60 md:backdrop-blur-sm px-6 rounded-2xl">
+              <p className="font-serif text-2xl sm:text-3xl md:text-4xl italic text-ink mb-6 leading-tight">
                 “A reader lives a thousand lives before he dies. The man who never reads lives only one.”
               </p>
               <footer className="text-sm font-bold uppercase tracking-widest text-ink-faint">
@@ -239,11 +239,11 @@ export default function Home() {
         </section>
 
         {/* ACT V */}
-        <section id="act-5" className="min-h-[100vh] py-24 flex flex-col justify-center items-center text-center pointer-events-auto">
+        <section id="act-5" className="min-h-[75vh] py-12 sm:min-h-[100vh] sm:py-24 flex flex-col justify-center items-center text-center pointer-events-auto">
           <div className="max-w-3xl relative z-10">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act V · A year later</h3>
-              <h2 className="font-serif text-5xl md:text-7xl leading-[1.1] mb-8 text-ink">
+              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 The scroll left nothing. The shelf is still here.
               </h2>
               <p className="text-xl text-ink-soft leading-relaxed bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block">
@@ -254,16 +254,16 @@ export default function Home() {
         </section>
 
         {/* OUTRO / CTA */}
-        <section id="cta" className="min-h-[100vh] py-24 flex flex-col justify-center items-center text-center pointer-events-auto">
+        <section id="cta" className="min-h-[75vh] py-12 sm:min-h-[100vh] sm:py-24 flex flex-col justify-center items-center text-center pointer-events-auto">
           <FadeIn className="flex flex-col items-center">
             <div className="bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-12 rounded-3xl border border-rule shadow-xl">
-              <h2 className="font-serif text-6xl md:text-8xl leading-[1.1] text-ink mb-2">
+              <h2 className="font-serif text-4xl sm:text-6xl md:text-8xl leading-[1.1] text-ink mb-2">
                 Want to learn and grow?
               </h2>
-              <h2 className="font-serif text-6xl md:text-8xl leading-[1.1] text-accent mb-8">
+              <h2 className="font-serif text-4xl sm:text-6xl md:text-8xl leading-[1.1] text-accent mb-8">
                 Use this.
               </h2>
-              <p className="text-xl text-ink-faint italic mb-12">
+              <p className="text-base sm:text-xl text-ink-faint italic mb-8 sm:mb-12">
                 Want to keep scrolling? You know the way back.
               </p>
               

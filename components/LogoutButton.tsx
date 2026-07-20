@@ -12,7 +12,9 @@ export function LogoutButton() {
         router.push("/login");
         router.refresh();
       }}
-      className="text-xs text-ink-500 transition-colors hover:text-ink-200"
+      // whitespace-nowrap: at narrow widths this wrapped to two lines and
+      // pushed the header taller than its own row.
+      className="whitespace-nowrap text-xs text-ink-500 transition-colors hover:text-ink-200"
     >
       Sign out
     </button>
