@@ -29,8 +29,24 @@ if (updated === schema) {
 
 writeFileSync(schemaPath, updated);
 console.log(`✓ Provider switched to "${target}".`);
+// The two-URL requirement is the step people miss: `db push` against the
+// transaction pooler fails in a way that doesn't obviously say "wrong port".
 console.log(
   target === "postgresql"
-    ? "\nNext:\n  1. Set DATABASE_URL=postgresql://...\n  2. npx prisma db push\n  3. Swap lib/events.ts to Redis/LISTEN-NOTIFY if deploying multi-instance (see BLUEPRINT §4)"
-    : "\nNext:\n  1. Set DATABASE_URL=\"file:./dev.db\"\n  2. npx prisma db push"
+    ? [
+        "\nNext — in .env (NOT .env.local; the Prisma CLI only reads .env):",
+        '  1. DATABASE_URL="…pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"',
+        '     DIRECT_URL="…pooler.supabase.com:5432/postgres"',
+        "     Both from Supabase → Connect → ORMs → Prisma. 6543 is the pooler",
+        "     the app runs on; 5432 is the direct session db push needs.",
+        "  2. npx prisma generate && npx prisma db push",
+        "  3. Seeding is optional and DESTRUCTIVE — it wipes every table first:",
+        "       SEED_ALLOW_REMOTE=yes npm run db:seed",
+        "\nFull runbook: docs/DEPLOY.md",
+      ].join("\n")
+    : [
+        "\nNext:",
+        '  1. Set DATABASE_URL="file:./dev.db" and DIRECT_URL="file:./dev.db" in .env',
+        "  2. npx prisma generate && npx prisma db push",
+      ].join("\n")
 );
