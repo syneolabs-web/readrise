@@ -17,6 +17,9 @@ export function UploadButton({ circleId }: { circleId: string }) {
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // A 40MB book takes real time to reach Supabase, and a button that just says
+  // "Uploading…" for a minute reads as frozen. Naming the phase costs nothing.
+  const [stage, setStage] = useState<"idle" | "uploading" | "saving">("idle");
 
   async function pick(e: React.ChangeEvent<HTMLInputElement>) {
     const picked = e.target.files?.[0];
@@ -45,11 +48,34 @@ export function UploadButton({ circleId }: { circleId: string }) {
   }
 
   function reset() {
+    setStage("idle");
     setFile(null);
     setPageCount(null);
     setForm(EMPTY);
     setError(null);
     if (inputRef.current) inputRef.current.value = "";
+  }
+
+  /**
+   * Read a response without assuming it is ours.
+   *
+   * Infrastructure answers before our code does — Vercel's 413 body is the
+   * plain string "Request Entity Too Large", and blindly calling res.json()
+   * turned that into `Unexpected token 'R'`, which told the user nothing about
+   * the actual problem (the file was too big).
+   */
+  async function readError(res: Response, fallback: string): Promise<string> {
+    const text = await res.text().catch(() => "");
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed?.error) return String(parsed.error);
+    } catch {
+      // Not our JSON — a proxy or the platform replied.
+    }
+    if (res.status === 413) {
+      return "That file is too large to upload. The limit is 50MB.";
+    }
+    return text.slice(0, 120) || fallback;
   }
 
   async function upload(e: React.FormEvent) {
@@ -58,23 +84,65 @@ export function UploadButton({ circleId }: { circleId: string }) {
     setBusy(true);
     setError(null);
 
-    const body = new FormData();
-    body.set("file", file);
-    body.set("circleId", circleId);
-    body.set("title", form.title);
-    body.set("author", form.author);
-    body.set("pageCount", String(pageCount ?? 0));
-    body.set("goalDays", form.goalDays);
-    body.set("goalRitual", form.goalRitual);
+    const meta = {
+      circleId,
+      title: form.title,
+      author: form.author,
+      pageCount: String(pageCount ?? 0),
+      goalDays: form.goalDays,
+      goalRitual: form.goalRitual,
+    };
 
     try {
-      const res = await fetch("/api/documents", { method: "POST", body });
+      // Ask where the bytes should go. In production this is Supabase Storage
+      // directly: Vercel refuses any function request body over 4.5MB, so a
+      // book-sized PDF can never travel through our own API route.
+      const planRes = await fetch("/api/documents/upload-url", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ circleId }),
+      });
+      if (!planRes.ok) {
+        throw new Error(await readError(planRes, "Couldn't start the upload"));
+      }
+      const plan = await planRes.json();
+
+      let res: Response;
+
+      if (plan.mode === "direct") {
+        setStage("uploading");
+        const put = await fetch(plan.signedUrl, {
+          method: "PUT",
+          headers: { "content-type": "application/pdf" },
+          body: file,
+        });
+        if (!put.ok) {
+          throw new Error(await readError(put, "Upload to storage failed"));
+        }
+
+        setStage("saving");
+        res = await fetch("/api/documents", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ ...meta, key: plan.key, keyToken: plan.keyToken }),
+        });
+      } else {
+        // Local development: no Supabase project, storage is a directory, and
+        // there is no 4.5MB ceiling to work around.
+        setStage("uploading");
+        const body = new FormData();
+        body.set("file", file);
+        for (const [k, v] of Object.entries(meta)) body.set(k, v);
+        res = await fetch("/api/documents", { method: "POST", body });
+      }
+
+      if (!res.ok) throw new Error(await readError(res, "Upload failed"));
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
       reset();
       router.push(`/read/${data.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
+      setStage("idle");
       setBusy(false);
     }
   }
@@ -178,7 +246,11 @@ export function UploadButton({ circleId }: { circleId: string }) {
               Cancel
             </Button>
             <Button type="submit" size="sm" disabled={busy || !form.title.trim()}>
-              {busy ? "Uploading…" : "Add book"}
+              {stage === "uploading"
+                ? "Uploading…"
+                : stage === "saving"
+                  ? "Finishing…"
+                  : "Add book"}
             </Button>
           </div>
         </form>

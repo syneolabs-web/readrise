@@ -105,9 +105,59 @@ function resolveKey(key: string): string {
 
 // ── The interface the app sees ──────────────────────────────
 
+/** True when uploads can bypass the server and go straight to Supabase. */
+export const canUploadDirect = useSupabase;
+
+export function newStorageKey(ext = "pdf"): string {
+  return `${Date.now()}-${randomBytes(12).toString("hex")}.${ext}`;
+}
+
+/**
+ * Mint a one-shot URL the browser can PUT the file to directly.
+ *
+ * This exists because Vercel caps a serverless function's request body at
+ * 4.5MB and that limit is not configurable. Routing a book through
+ * /api/documents therefore fails with FUNCTION_PAYLOAD_TOO_LARGE for any
+ * realistic PDF — the 50MB cap below was never reachable in production. The
+ * bytes have to skip the function entirely.
+ */
+export async function createDirectUpload(
+  key: string
+): Promise<{ signedUrl: string; token: string }> {
+  assertStorageConfigured();
+  await ensureBucket();
+  const { data, error } = await admin()
+    .storage.from(BUCKET)
+    .createSignedUploadUrl(key);
+  if (error || !data) {
+    throw new Error(`Could not start upload: ${error?.message ?? "no data"}`);
+  }
+  return { signedUrl: data.signedUrl, token: data.token };
+}
+
+/**
+ * Confirm an object really landed, and how big it is.
+ *
+ * With direct upload the server never sees the bytes, so this is the only
+ * point where we can refuse an upload that silently failed or that lied about
+ * its size. Returns null when the object isn't there.
+ */
+export async function statStoredFile(
+  key: string
+): Promise<{ size: number } | null> {
+  assertStorageConfigured();
+  const { data, error } = await admin()
+    .storage.from(BUCKET)
+    .list("", { search: key, limit: 1 });
+  if (error || !data?.length) return null;
+  const found = data.find((f) => f.name === key);
+  const size = (found?.metadata as { size?: number } | undefined)?.size;
+  return found ? { size: typeof size === "number" ? size : 0 } : null;
+}
+
 export async function saveFile(buffer: Buffer, ext = "pdf"): Promise<string> {
   assertStorageConfigured();
-  const key = `${Date.now()}-${randomBytes(12).toString("hex")}.${ext}`;
+  const key = newStorageKey(ext);
 
   if (useSupabase) {
     await ensureBucket();
