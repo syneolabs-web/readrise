@@ -54,10 +54,28 @@ export default async function DiscoverPage() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           {/* ── Public circles ──────────────────────────── */}
           <section className="min-w-0">
-            <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+            <h2 className="plate-label">
               Circles forming now
             </h2>
             <div className="mt-3 space-y-3">
+              {circles.length === 0 && (
+                <Card className="border-dashed p-6">
+                  <p className="text-sm font-medium text-ink-300">
+                    No public circles yet
+                  </p>
+                  <p className="mt-1.5 max-w-md text-xs leading-relaxed text-ink-500">
+                    Circles start private. One becomes public only when every
+                    member votes to publish it — so this fills up slowly, and
+                    on purpose. Start your own and invite two or three people.
+                  </p>
+                  <Link
+                    href="/circles"
+                    className="mt-3 inline-block text-xs font-medium text-accent hover:underline"
+                  >
+                    Go to your circles →
+                  </Link>
+                </Card>
+              )}
               {circles.map((c) => (
                 <Card key={c.slug} className="p-5">
                   <div className="flex items-start justify-between gap-4">
@@ -99,10 +117,16 @@ export default async function DiscoverPage() {
 
           {/* ── Popular books ───────────────────────────── */}
           <aside className="min-w-0">
-            <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+            <h2 className="plate-label">
               Most highlighted
             </h2>
             <Card className="mt-3 divide-y divide-ink-850">
+              {books.length === 0 && (
+                <p className="p-5 text-xs leading-relaxed text-ink-500">
+                  Nothing ranked yet. This fills in as public circles highlight
+                  passages — the books people actually argue about rise here.
+                </p>
+              )}
               {books.map((b, i) => (
                 <Link
                   key={b.id}
@@ -121,7 +145,7 @@ export default async function DiscoverPage() {
                       {b.circleName}
                     </p>
                   </div>
-                  <span className="shrink-0 text-2xs tabular-nums text-ink-500">
+                  <span className="shrink-0 fig text-2xs text-ink-500">
                     {b.highlights} ★
                   </span>
                 </Link>

@@ -115,7 +115,7 @@ export function HighlightLayer({
                 return (
                   <div
                     key={i}
-                    className="absolute transition-all duration-[120ms]"
+                    className="absolute [transition:opacity_var(--dur-micro)_ease,background-color_var(--dur-micro)_ease]"
                     style={{
                       left: box.left,
                       top: box.top,

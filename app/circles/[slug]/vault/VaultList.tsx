@@ -128,13 +128,13 @@ export function VaultList({
                 {e.highlight ? (
                   <>
                     <blockquote
-                      className="rounded-r border-l-2 py-1 pl-4 font-serif text-[15px] leading-relaxed text-ink-100"
+                      className="rounded-r border-l-2 py-1 pl-4 font-prose text-sm leading-relaxed text-ink-100"
                       style={{ borderColor: color.solid }}
                     >
                       {e.highlight.text}
                     </blockquote>
 
-                    <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-ink-600">
+                    <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-2xs text-ink-600">
                       <Link
                         href={`/read/${e.highlight.documentId}`}
                         className="font-medium text-ink-400 transition-colors hover:text-accent"
@@ -178,7 +178,7 @@ export function VaultList({
                         )}
                       </div>
                     </div>
-                    <p className="mt-2 text-[11px] text-ink-600">
+                    <p className="mt-2 text-2xs text-ink-600">
                       Micro-Action · week of {formatWeek(e.action.weekOf)} ·{" "}
                       {e.action.checkins}{" "}
                       {e.action.checkins === 1 ? "check-in" : "check-ins"}
@@ -198,7 +198,7 @@ export function VaultList({
                     color={e.addedBy.avatarColor}
                     size={16}
                   />
-                  <span className="text-[10px] text-ink-600">
+                  <span className="text-2xs text-ink-600">
                     Vaulted by {e.addedBy.name} · {relativeTime(e.createdAt)}
                   </span>
                   {e.addedBy.id === viewerId && (

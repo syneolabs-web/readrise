@@ -49,7 +49,7 @@ function ScrollNav({ currentSection }: { currentSection: string }) {
           className={`group flex items-center gap-4 pointer-events-auto transition-all ${currentSection === sec.id ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}
           aria-label={`Scroll to ${sec.label}`}
         >
-          <span className={`text-xs font-mono uppercase tracking-widest text-white transition-all ${currentSection === sec.id ? 'translate-x-0' : 'translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>
+          <span className={`text-xs font-display uppercase tracking-widest text-white transition-all ${currentSection === sec.id ? 'translate-x-0' : 'translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>
             {sec.label}
           </span>
           <div className={`transition-all rounded-full bg-white ${currentSection === sec.id ? 'w-2 h-8' : 'w-2 h-2'}`} />
@@ -99,7 +99,7 @@ export default function Home() {
         <section id="hero" className="min-h-[85vh] pt-28 pb-12 sm:min-h-screen sm:pt-48 sm:pb-24 flex flex-col justify-center pointer-events-auto">
           <FadeIn>
             <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">A story you already know</h3>
-            <h1 className="font-serif text-4xl sm:text-6xl md:text-8xl leading-[1.1] mb-4 sm:mb-8 max-w-3xl text-ink">
+            <h1 className="font-prose text-4xl sm:text-6xl md:text-8xl leading-[1.1] mb-4 sm:mb-8 max-w-3xl text-ink">
               It&apos;s 11:47pm and the feed already knows how tonight goes.
             </h1>
             <p className="text-base sm:text-xl md:text-2xl text-ink-soft max-w-2xl mb-8 sm:mb-16 leading-relaxed">
@@ -107,9 +107,9 @@ export default function Home() {
             </p>
             <button 
               onClick={() => scrollTo('act-1')}
-              className="flex items-center gap-4 text-xs font-mono uppercase tracking-[0.15em] text-ink-faint border-l-2 border-accent pl-4 hover:text-accent transition-colors cursor-pointer text-left"
+              className="flex items-center gap-4 text-xs font-display uppercase tracking-[0.15em] text-ink-faint border-l-2 border-accent pl-4 hover:text-accent transition-colors cursor-pointer text-left"
             >
-              Scroll — this one ends differently <ArrowDown className="w-4 h-4 animate-bounce" />
+              Scroll — this one ends differently <ArrowDown className="h-4 w-4 motion-safe:animate-[scroll-hint_2s_var(--ease-in-out)_infinite]" />
             </button>
           </FadeIn>
         </section>
@@ -119,7 +119,7 @@ export default function Home() {
           <div className="max-w-2xl">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act I · The feed</h3>
-              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
+              <h2 className="font-prose text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 Two hours a day, every day, spent becoming no one in particular.
               </h2>
               <div className="bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block text-left">
@@ -142,14 +142,14 @@ export default function Home() {
           <div className="max-w-2xl">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act II · The page</h3>
-              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
+              <h2 className="font-prose text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 The phone opens. This time it&apos;s a book.
               </h2>
               <p className="text-base sm:text-xl text-ink-soft leading-relaxed mb-8 sm:mb-16 bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-sm inline-block">
                 A real one — the same PDF for everyone in your circle, laid out on warm paper. It has a last page. That is not a missing feature.
               </p>
               
-              <div className="border-l-2 border-accent pl-6 py-2 bg-surface/95 md:bg-surface/80 md:backdrop-blur-md rounded-r-xl max-w-lg">
+              <div className="border-t border-rule/60 pt-5 bg-surface/95 md:bg-surface/80 md:backdrop-blur-md rounded-xl px-6 pb-5 max-w-lg">
                 <h4 className="text-sm font-bold uppercase tracking-widest text-ink mb-3">The gesture</h4>
                 <p className="text-lg text-ink-soft leading-relaxed">
                   A line reads you back. You mark it.<br/>
@@ -165,7 +165,7 @@ export default function Home() {
           <div className="max-w-2xl">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act III · The margin</h3>
-              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
+              <h2 className="font-prose text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 By morning, someone has answered in the margin.
               </h2>
               <p className="text-xl text-ink-soft leading-relaxed bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm text-left inline-block">
@@ -180,7 +180,7 @@ export default function Home() {
           <div className="max-w-4xl w-full">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act IV · The circle</h3>
-              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-8 sm:mb-16 text-ink max-w-3xl mx-auto">
+              <h2 className="font-prose text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-8 sm:mb-16 text-ink max-w-3xl mx-auto">
                 Two or three people who notice whether you showed up.
               </h2>
               
@@ -228,7 +228,7 @@ export default function Home() {
               Chase the tangent. Argue about one paragraph until midnight. The difference is where it lands: you&apos;ll be two hours deeper into the book, with the margins to prove it.
             </p>
             <blockquote className="border-y border-rule py-6 my-6 sm:py-8 sm:my-8 bg-surface/90 md:bg-surface/60 md:backdrop-blur-sm px-6 rounded-2xl">
-              <p className="font-serif text-2xl sm:text-3xl md:text-4xl italic text-ink mb-6 leading-tight">
+              <p className="font-prose text-2xl sm:text-3xl md:text-4xl italic text-ink mb-6 leading-tight">
                 “A reader lives a thousand lives before he dies. The man who never reads lives only one.”
               </p>
               <footer className="text-sm font-bold uppercase tracking-widest text-ink-faint">
@@ -243,7 +243,7 @@ export default function Home() {
           <div className="max-w-3xl relative z-10">
             <FadeIn>
               <h3 className="text-accent uppercase tracking-[0.2em] text-xs font-bold mb-6">Act V · A year later</h3>
-              <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
+              <h2 className="font-prose text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 The scroll left nothing. The shelf is still here.
               </h2>
               <p className="text-xl text-ink-soft leading-relaxed bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block">
@@ -257,10 +257,10 @@ export default function Home() {
         <section id="cta" className="min-h-[75vh] py-12 sm:min-h-[100vh] sm:py-24 flex flex-col justify-center items-center text-center pointer-events-auto">
           <FadeIn className="flex flex-col items-center">
             <div className="bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-12 rounded-3xl border border-rule shadow-xl">
-              <h2 className="font-serif text-4xl sm:text-6xl md:text-8xl leading-[1.1] text-ink mb-2">
+              <h2 className="font-prose text-4xl sm:text-6xl md:text-8xl leading-[1.1] text-ink mb-2">
                 Want to learn and grow?
               </h2>
-              <h2 className="font-serif text-4xl sm:text-6xl md:text-8xl leading-[1.1] text-accent mb-8">
+              <h2 className="font-prose text-4xl sm:text-6xl md:text-8xl leading-[1.1] text-accent mb-8">
                 Use this.
               </h2>
               <p className="text-base sm:text-xl text-ink-faint italic mb-8 sm:mb-12">

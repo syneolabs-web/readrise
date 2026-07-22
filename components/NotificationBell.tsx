@@ -68,7 +68,7 @@ export function NotificationBell({ items }: { items: Notification[] }) {
       {open && (
         <div className="animate-fade-up absolute right-0 top-9 z-50 w-80 overflow-hidden rounded-lg border border-ink-800 bg-ink-900 shadow-2xl shadow-black/40">
           <div className="border-b border-ink-800 px-4 py-2.5">
-            <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+            <p className="plate-label">
               Notifications
             </p>
           </div>

@@ -95,7 +95,7 @@ export function MicroActions({
     <>
       <section>
         <div className="flex items-center justify-between">
-          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-ink-500">
+          <h2 className="plate-label">
             This week
           </h2>
           {streak > 0 && (
@@ -136,7 +136,7 @@ export function MicroActions({
                     </p>
                   )}
                   {a.milestoneTitle && (
-                    <p className="mt-1.5 text-[10px] text-ink-600">
+                    <p className="mt-1.5 text-2xs text-ink-600">
                       from {a.milestoneTitle}
                     </p>
                   )}
@@ -160,7 +160,7 @@ export function MicroActions({
                         );
                       })}
                     </div>
-                    <span className="text-[10px] text-ink-600">
+                    <span className="text-2xs text-ink-600">
                       {a.checkedInBy.length}/{memberCount}
                     </span>
 
@@ -195,7 +195,7 @@ export function MicroActions({
 
         {past.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest text-ink-500">
+            <h2 className="plate-label">
               Past weeks
             </h2>
             <div className="mt-3 space-y-1.5">
@@ -222,7 +222,7 @@ export function MicroActions({
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-xs text-ink-400">{a.title}</p>
-                      <p className="text-[10px] text-ink-600">
+                      <p className="text-2xs text-ink-600">
                         week of {formatWeek(a.weekOf)} · {a.checkedInBy.length}/
                         {memberCount}
                       </p>

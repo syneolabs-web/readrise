@@ -269,10 +269,12 @@ export default async function DashboardPage() {
               </div>
             )}
 
-            {/* Your circles, compact */}
-            <h2 className="mt-6 text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
-              Your circles
-            </h2>
+            {/* Your circles, compact. Hidden entirely when there are none —
+                a heading over a void reads as something that failed to load
+                rather than as something you haven't done yet. */}
+            {memberships.length > 0 && (
+            <>
+            <h2 className="plate-label mt-6 block">Your circles</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {memberships.map((m) => (
                 <Link
@@ -289,6 +291,8 @@ export default async function DashboardPage() {
                 </Link>
               ))}
             </div>
+            </>
+            )}
           </section>
 
           {/* ── My progress ─────────────────────────────── */}

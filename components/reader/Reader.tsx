@@ -462,7 +462,7 @@ function FocusRecap({
             key={label}
             className="rounded-lg border border-ink-800 bg-ink-850 px-2 py-3"
           >
-            <p className="text-grad text-3xl font-semibold [font-variant-numeric:lining-nums_tabular-nums]">
+            <p className="fig text-3xl font-semibold text-accent">
               {n}
             </p>
             <p className="mt-0.5 text-2xs uppercase tracking-[0.12em] text-ink-500">

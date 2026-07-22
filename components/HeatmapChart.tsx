@@ -44,7 +44,7 @@ export function HeatmapChart({ days }: HeatmapProps) {
       <div className="min-w-fit">
         <div className="flex gap-2">
           {/* Day Labels */}
-          <div className="flex flex-col gap-[7px] text-[10px] font-medium text-ink-500 mt-[26px]">
+          <div className="flex flex-col gap-[7px] text-2xs font-medium text-ink-500 mt-[26px]">
             <div className="h-3 flex items-center justify-end pr-1"></div>
             <div className="h-3 flex items-center justify-end pr-1">Mon</div>
             <div className="h-3 flex items-center justify-end pr-1"></div>
@@ -56,7 +56,7 @@ export function HeatmapChart({ days }: HeatmapProps) {
           
           <div className="flex-1">
             {/* Month Labels */}
-            <div className="flex justify-between text-[10px] font-medium text-ink-500 mb-3 px-1">
+            <div className="flex justify-between text-2xs font-medium text-ink-500 mb-3 px-1">
               <span>90 days ago</span>
               <span>Today</span>
             </div>
@@ -79,7 +79,7 @@ export function HeatmapChart({ days }: HeatmapProps) {
         </div>
         
         {/* Legend */}
-        <div className="flex items-center justify-end gap-2 mt-5 text-[10px] font-medium text-ink-500">
+        <div className="flex items-center justify-end gap-2 mt-5 text-2xs font-medium text-ink-500">
           <span>Less</span>
           <div className="flex gap-1.5">
             <div className={`w-3 h-3 rounded-sm ${levelColors[0]}`} />

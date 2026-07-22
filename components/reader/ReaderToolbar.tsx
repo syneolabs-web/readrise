@@ -62,16 +62,17 @@ export function ReaderToolbar({
 
       <div className="min-w-0 shrink">
         <h1 className="truncate text-sm font-medium text-ink-100">{title}</h1>
-        {author && <p className="truncate text-[11px] text-ink-600">{author}</p>}
+        {author && <p className="truncate text-2xs text-ink-600">{author}</p>}
       </div>
 
       {/* ── Focus session ──────────────────────────────── */}
       <div className="ml-auto flex items-center gap-2">
         {focus ? (
           <>
-            {/* The gradient is the vibe's one loud gesture: it marks the
-                session you're building, nothing else on this bar. */}
-            <span className="bg-grad inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold tabular-nums text-on-accent">
+            {/* The one inked element on this bar while a session runs. Solid, not
+                a gradient: a gradient on a running clock implies the colour
+                means something, and it does not. */}
+            <span className="fig inline-flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1 text-xs font-semibold text-on-accent">
               <IconFocus size={13} />
               {fmt(elapsed)}
             </span>
@@ -107,9 +108,9 @@ export function ReaderToolbar({
                   size={22}
                   className={m.id === viewerId ? "ring-2 ring-accent" : ""}
                 />
-                <div className="h-1 w-10 overflow-hidden rounded-full bg-ink-800">
+                <div className="h-1 w-10 bg-ink-800">
                   <div
-                    className="h-full rounded-full transition-all duration-500"
+                    className="h-full [transition:width_var(--dur-state)_var(--ease-out)]"
                     style={{ width: `${pct}%`, background: m.avatarColor }}
                   />
                 </div>
@@ -132,7 +133,7 @@ export function ReaderToolbar({
         </Button>
         {/* Zoom is the live proof that anchoring is resolution-independent:
             highlights track the text at every scale. */}
-        <span className="w-10 text-center text-[11px] tabular-nums text-ink-500">
+        <span className="fig w-10 text-center text-2xs text-ink-500">
           {Math.round(scale * 100)}%
         </span>
         <Button
@@ -160,9 +161,9 @@ export function ReaderToolbar({
             key={currentPage}
             defaultValue={currentPage}
             aria-label="Page number"
-            className="w-10 rounded border border-ink-800 bg-ink-900 px-1 py-0.5 text-center text-xs tabular-nums text-ink-200 focus:border-accent/50 focus:outline-none"
+            className="fig w-10 rounded-sm border border-ink-800 bg-ink-900 px-1 py-0.5 text-center text-xs text-ink-200 focus:border-accent/50 focus:outline-none"
           />
-          <span className="text-xs text-ink-600">/ {pageCount}</span>
+          <span className="fig text-xs text-ink-600">/ {pageCount}</span>
         </form>
 
         <div className="mx-1 h-5 w-px bg-ink-800" />

@@ -64,7 +64,7 @@ export function AdminPanel({
   return (
     <>
       <section className="mt-6">
-        <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+        <h2 className="plate-label">
           Members · admin
         </h2>
         <Card className="mt-3 divide-y divide-ink-850">
@@ -74,7 +74,7 @@ export function AdminPanel({
               <p className="min-w-0 flex-1 truncate text-sm text-ink-200">
                 {m.name}
                 {m.role === "owner" && (
-                  <span className="ml-2 rounded border border-accent/25 bg-accent/10 px-1 py-px text-[9px] font-semibold uppercase tracking-wider text-accent">
+                  <span className="ml-2 rounded border border-accent/25 bg-accent/10 px-1 py-px text-2xs font-semibold uppercase tracking-wider text-accent">
                     Admin
                   </span>
                 )}

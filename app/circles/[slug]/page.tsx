@@ -262,7 +262,7 @@ export default async function CirclePage({
                               </p>
                             )}
                           </div>
-                          <span className="shrink-0 text-[11px] text-ink-600">
+                          <span className="shrink-0 text-2xs text-ink-600">
                             {doc._count.highlights}{" "}
                             {doc._count.highlights === 1 ? "highlight" : "highlights"}
                           </span>
@@ -276,7 +276,7 @@ export default async function CirclePage({
                               style={{ width: `${pct}%` }}
                             />
                           </div>
-                          <span className="shrink-0 text-[10px] tabular-nums text-ink-600">
+                          <span className="shrink-0 fig text-2xs text-ink-600">
                             p{mine?.currentPage ?? 1} / {doc.pageCount || "?"}
                           </span>
                           <div className="flex shrink-0 -space-x-1">

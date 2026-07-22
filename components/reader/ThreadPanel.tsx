@@ -79,17 +79,17 @@ export function ThreadPanel({
               style={{ background: COLOR_STYLES[h.color]?.solid }}
             />
             <Avatar name={h.author.name} color={h.author.avatarColor} size={16} />
-            <span className="text-[11px] font-medium text-ink-400">
+            <span className="text-2xs font-medium text-ink-400">
               {h.author.name}
             </span>
-            <span className="ml-auto text-[10px] text-ink-600">p{h.pageNumber}</span>
+            <span className="ml-auto text-2xs text-ink-600">p{h.pageNumber}</span>
           </div>
 
-          <p className="mt-1.5 border-l-2 border-ink-700 pl-2 font-serif text-[13px] leading-snug text-ink-300">
+          <p className="mt-1.5 border-l-2 border-ink-700 pl-2 font-prose text-xs leading-snug text-ink-300">
             {truncate(h.textContent, 110)}
           </p>
 
-          <div className="mt-1.5 flex items-center gap-2 text-[10px] text-ink-600">
+          <div className="mt-1.5 flex items-center gap-2 text-2xs text-ink-600">
             {h.comments.length > 0 && (
               <span>
                 {h.comments.length}{" "}
@@ -192,14 +192,14 @@ function Thread({
           </button>
           <button
             onClick={() => onJump(highlight.pageNumber)}
-            className="ml-auto text-[10px] text-ink-600 transition-colors hover:text-accent"
+            className="ml-auto text-2xs text-ink-600 transition-colors hover:text-accent"
           >
             Go to p{highlight.pageNumber}
           </button>
         </div>
 
         <blockquote
-          className="mt-3 rounded-r border-l-2 py-1.5 pl-3 font-serif text-sm leading-relaxed text-ink-200"
+          className="mt-3 rounded-r border-l-2 py-1.5 pl-3 font-prose text-sm leading-relaxed text-ink-200"
           style={{ borderColor: style.solid, background: `${style.solid}0f` }}
         >
           {highlight.textContent}
@@ -211,7 +211,7 @@ function Thread({
             color={highlight.author.avatarColor}
             size={16}
           />
-          <span className="text-[11px] text-ink-500">
+          <span className="text-2xs text-ink-500">
             {highlight.author.name} · {relativeTime(highlight.createdAt)}
           </span>
 
@@ -305,10 +305,10 @@ function CommentRow({
     <div className="group">
       <div className="flex items-center gap-2">
         <Avatar name={comment.author.name} color={comment.author.avatarColor} size={18} />
-        <span className="text-[11px] font-medium text-ink-300">
+        <span className="text-2xs font-medium text-ink-300">
           {comment.author.name}
         </span>
-        <span className="text-[10px] text-ink-600">
+        <span className="text-2xs text-ink-600">
           {relativeTime(comment.createdAt)}
         </span>
 
@@ -319,7 +319,7 @@ function CommentRow({
                 await fetch(`/api/comments/${comment.id}`, { method: "DELETE" });
                 onRefetch();
               }}
-              className="text-[10px] text-ink-600 transition-colors hover:text-red-400"
+              className="text-2xs text-ink-600 transition-colors hover:text-red-400"
             >
               Delete
             </button>
@@ -334,7 +334,7 @@ function CommentRow({
           aria-pressed={comment.votedByMe}
           aria-label={`Upvote — ${comment.voteCount} so far`}
           className={cn(
-            "ml-1 flex items-center gap-0.5 rounded-sm px-1.5 py-0.5 text-2xs tabular-nums",
+            "ml-1 flex items-center gap-0.5 rounded-sm px-1.5 py-0.5 fig text-2xs",
             "transition-colors duration-[120ms]",
             comment.votedByMe
               ? "bg-accent/15 text-accent"
@@ -346,7 +346,7 @@ function CommentRow({
         </button>
       </div>
 
-      <p className="mt-1 pl-6 text-[13px] leading-relaxed whitespace-pre-wrap text-ink-300">
+      <p className="mt-1 pl-6 text-xs leading-relaxed whitespace-pre-wrap text-ink-300">
         {comment.body}
       </p>
     </div>

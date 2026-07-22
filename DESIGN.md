@@ -81,6 +81,16 @@ concepts and now have different names.
 Geometry: measures are squared off, not pill-shaped. A rounded cap makes the
 reading ambiguous at exactly the ends where precision matters.
 
+### One deliberate exception to the side-tab rule
+
+A coloured left border on a **card** is the AI tell the detector names, and it
+is banned. A left rule on a `<blockquote>` is not the same object: it is the
+oldest typographic convention for quoted material, and here the border colour
+*is* the highlight's colour, so it carries the one piece of information that
+tells you how a passage was marked. The detector cannot tell a quotation from
+a card and will keep flagging `ThreadPanel` and `VaultList`. Those two are
+correct as they stand; anything else with a coloured side border is not.
+
 ## Motion
 
 | Token | Value | Use |

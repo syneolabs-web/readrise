@@ -53,7 +53,7 @@ export default async function ProfilePage() {
           {/* GitHub-style Streak Chart / Heatmap */}
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+              <h2 className="plate-label">
                 Activity (Last 90 Days)
               </h2>
               {progress.streak > 0 && (

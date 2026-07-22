@@ -138,10 +138,10 @@ export function ChatPanel({
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-[11px] font-medium text-ink-300">
+                        <span className="text-2xs font-medium text-ink-300">
                           {m.author.id === viewer.id ? "You" : m.author.name}
                         </span>
-                        <span className="text-[10px] text-ink-600">
+                        <span className="text-2xs text-ink-600">
                           {relativeTime(m.createdAt)}
                         </span>
                       </div>

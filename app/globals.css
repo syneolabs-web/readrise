@@ -558,3 +558,11 @@ body {
     transition: none;
   }
 }
+
+/* Scroll invitation. A slow drift down and back, not a bounce: bounce easing
+   overshoots and settles, which reads as a toy. This is a hint, so it should
+   look like breathing rather than like something demanding to be clicked. */
+@keyframes scroll-hint {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(3px); opacity: 1; }
+}

@@ -120,7 +120,7 @@ export function Leaderboard({
                   />
                   <span className="text-2xs text-ink-500">
                     {s.label}
-                    <span className="ml-1 tabular-nums text-ink-700">
+                    <span className="ml-1 fig text-ink-700">
                       ×{weights[s.key]}
                     </span>
                   </span>
@@ -200,7 +200,7 @@ export function Leaderboard({
                     <p className="flex min-w-0 flex-1 items-center gap-1.5 truncate text-sm text-ink-100">
                       {r.name}
                       {r.isAdmin && (
-                        <span className="rounded border border-accent/25 bg-accent/10 px-1 py-px text-[9px] font-semibold uppercase tracking-wider text-accent">
+                        <span className="rounded border border-accent/25 bg-accent/10 px-1 py-px text-2xs font-semibold uppercase tracking-wider text-accent">
                           Admin
                         </span>
                       )}
@@ -251,7 +251,7 @@ export function Leaderboard({
                     </div>
                   </div>
 
-                  <p className="mt-1.5 pl-8 text-2xs tabular-nums text-ink-600">
+                  <p className="mt-1.5 pl-8 fig text-2xs text-ink-600">
                     {r.pages} pages · {r.highlights} highlights · {r.discussion}{" "}
                     replies
                   </p>
@@ -296,7 +296,7 @@ export function Leaderboard({
                   />
                   {label}
                 </span>
-                <span className="tabular-nums text-ink-500">×{form[key]}</span>
+                <span className="fig text-ink-500">×{form[key]}</span>
               </div>
               <input
                 type="range"
