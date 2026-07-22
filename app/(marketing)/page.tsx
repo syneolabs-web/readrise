@@ -122,12 +122,12 @@ export default function Home() {
               <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 Two hours a day, every day, spent becoming no one in particular.
               </h2>
-              <div className="bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block text-left">
+              <div className="bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block text-left">
                 <p className="text-lg text-ink-soft leading-relaxed">
                   That&apos;s the average. Not because you&apos;re weak — because ten thousand engineers are paid to make the next flick land. It&apos;s not a moral failing. It&apos;s a design win. Someone else&apos;s.
                 </p>
               </div>
-              <div className="mt-12 text-left bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block">
+              <div className="mt-12 text-left bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block">
                 <p className="text-lg text-ink-soft leading-relaxed">
                   <span className="font-semibold text-ink">Same thumb. Same hour.<br/>Different ending.</span><br/>
                   The urge to pick up the phone is not the enemy. It just needs somewhere better to land.
@@ -145,11 +145,11 @@ export default function Home() {
               <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 The phone opens. This time it&apos;s a book.
               </h2>
-              <p className="text-base sm:text-xl text-ink-soft leading-relaxed mb-8 sm:mb-16 bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-sm inline-block">
+              <p className="text-base sm:text-xl text-ink-soft leading-relaxed mb-8 sm:mb-16 bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-sm inline-block">
                 A real one — the same PDF for everyone in your circle, laid out on warm paper. It has a last page. That is not a missing feature.
               </p>
               
-              <div className="border-l-2 border-accent pl-6 py-2 bg-paper/95 md:bg-paper/80 md:backdrop-blur-md rounded-r-xl max-w-lg">
+              <div className="border-l-2 border-accent pl-6 py-2 bg-surface/95 md:bg-surface/80 md:backdrop-blur-md rounded-r-xl max-w-lg">
                 <h4 className="text-sm font-bold uppercase tracking-widest text-ink mb-3">The gesture</h4>
                 <p className="text-lg text-ink-soft leading-relaxed">
                   A line reads you back. You mark it.<br/>
@@ -168,7 +168,7 @@ export default function Home() {
               <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 By morning, someone has answered in the margin.
               </h2>
-              <p className="text-xl text-ink-soft leading-relaxed bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm text-left inline-block">
+              <p className="text-xl text-ink-soft leading-relaxed bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm text-left inline-block">
                 Not a like. A sentence, from a friend, anchored to the paragraph that caused it. The social urge — noticed, answered, aimed at something that lasts.
               </p>
             </FadeIn>
@@ -223,11 +223,11 @@ export default function Home() {
         <section id="interlude" className="min-h-[75vh] py-14 sm:min-h-[100vh] sm:py-32 flex flex-col justify-center items-center text-center max-w-3xl mx-auto pointer-events-auto">
           <FadeIn>
             <h4 className="font-bold text-ink mb-4 text-xl">The honest part</h4>
-            <p className="text-base sm:text-xl text-ink-soft leading-relaxed mb-8 sm:mb-12 bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-sm">
+            <p className="text-base sm:text-xl text-ink-soft leading-relaxed mb-8 sm:mb-12 bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-sm">
               You can still lose two hours in here.<br/>
               Chase the tangent. Argue about one paragraph until midnight. The difference is where it lands: you&apos;ll be two hours deeper into the book, with the margins to prove it.
             </p>
-            <blockquote className="border-y border-rule py-6 my-6 sm:py-8 sm:my-8 bg-paper/90 md:bg-paper/60 md:backdrop-blur-sm px-6 rounded-2xl">
+            <blockquote className="border-y border-rule py-6 my-6 sm:py-8 sm:my-8 bg-surface/90 md:bg-surface/60 md:backdrop-blur-sm px-6 rounded-2xl">
               <p className="font-serif text-2xl sm:text-3xl md:text-4xl italic text-ink mb-6 leading-tight">
                 “A reader lives a thousand lives before he dies. The man who never reads lives only one.”
               </p>
@@ -246,7 +246,7 @@ export default function Home() {
               <h2 className="font-serif text-3xl sm:text-5xl md:text-7xl leading-[1.1] mb-4 sm:mb-8 text-ink">
                 The scroll left nothing. The shelf is still here.
               </h2>
-              <p className="text-xl text-ink-soft leading-relaxed bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block">
+              <p className="text-xl text-ink-soft leading-relaxed bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-6 rounded-xl border border-rule/50 shadow-sm inline-block">
                 Every book finished together, every highlight worth keeping, every habit that stuck — one vault, built an evening at a time out of hours that used to vanish.
               </p>
             </FadeIn>
@@ -256,7 +256,7 @@ export default function Home() {
         {/* OUTRO / CTA */}
         <section id="cta" className="min-h-[75vh] py-12 sm:min-h-[100vh] sm:py-24 flex flex-col justify-center items-center text-center pointer-events-auto">
           <FadeIn className="flex flex-col items-center">
-            <div className="bg-paper/95 md:bg-paper/80 md:backdrop-blur-md p-12 rounded-3xl border border-rule shadow-xl">
+            <div className="bg-surface/95 md:bg-surface/80 md:backdrop-blur-md p-12 rounded-3xl border border-rule shadow-xl">
               <h2 className="font-serif text-4xl sm:text-6xl md:text-8xl leading-[1.1] text-ink mb-2">
                 Want to learn and grow?
               </h2>

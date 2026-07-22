@@ -111,9 +111,9 @@ export function Manifesto() {
           background. */}
       <div
         ref={pageRef}
-        className="relative rounded-sm bg-paper px-7 py-9 text-paper-ink shadow-2xl shadow-black/50 sm:px-12 sm:py-14"
+        className="relative rounded-sm bg-surface px-7 py-9 text-surface-ink shadow-2xl shadow-black/50 sm:px-12 sm:py-14"
       >
-        <p className="mb-7 font-sans text-2xs font-semibold uppercase tracking-[0.18em] text-paper-ink/35">
+        <p className="mb-7 font-sans text-2xs font-semibold uppercase tracking-[0.18em] text-surface-ink/35">
           On why this exists
         </p>
 
@@ -148,7 +148,7 @@ export function Manifesto() {
         </div>
 
         {/* Instruction, set as a real marginal instruction rather than a badge. */}
-        <p className="mt-9 border-t border-paper-ink/10 pt-4 font-sans text-xs text-paper-ink/40">
+        <p className="mt-9 border-t border-paper-ink/10 pt-4 font-sans text-xs text-surface-ink/40">
           Select any sentence — the way you would in a book.
         </p>
       </div>

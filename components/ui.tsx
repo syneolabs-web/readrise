@@ -121,23 +121,112 @@ export function Textarea({
   );
 }
 
+/**
+ * A plate, in the atlas sense: a bounded region of record.
+ *
+ * Flatter and squarer than the card it replaces. The old 12px radius and
+ * raised fill made every region read as a floating tile, which is the
+ * arrangement this category always ships and which quietly says "each of these
+ * is a separate thing". In an atlas the regions are pages of one document, so
+ * the border does the bounding and the ground stays continuous.
+ */
 export function Card({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("rounded-xl border border-ink-800 bg-ink-900", className)}
+      className={cn(
+        "rounded-md border border-ink-800 bg-ink-900/60",
+        className
+      )}
       {...props}
     />
   );
 }
 
+/**
+ * The caption that names a quantity.
+ *
+ * Archivo Narrow in tracked caps — the register a plate caption has in print.
+ * It is deliberately quiet: a label that competes with its own figure has
+ * inverted the hierarchy of the thing it is labelling.
+ */
 export function Label({ children }: { children: React.ReactNode }) {
+  return <span className="plate-label">{children}</span>;
+}
+
+/**
+ * A figure: the primary number in a region, set to be read down a column.
+ *
+ * Tabular by construction. `Datum` exists so no surface has to remember to
+ * add `.fig` — the world's central rule is that every number in the product
+ * is tabular, and a rule everyone must remember is a rule that will be broken.
+ */
+export function Datum({
+  value,
+  label,
+  sub,
+  className,
+}: {
+  value: React.ReactNode;
+  label: string;
+  sub?: string;
+  className?: string;
+}) {
   return (
-    <span className="text-[11px] font-semibold uppercase tracking-widest text-ink-500">
-      {children}
-    </span>
+    <div className={cn("min-w-0", className)}>
+      <p className="fig font-display text-3xl font-semibold leading-none text-ink-100">
+        {value}
+      </p>
+      <p className="plate-label mt-1.5">{label}</p>
+      {sub && <p className="mt-0.5 text-2xs text-ink-500">{sub}</p>}
+    </div>
+  );
+}
+
+/**
+ * A small multiple: seven days of activity, read at a glance.
+ *
+ * Bars rather than a line because the quantity is a count of discrete days,
+ * and because a seven-point line implies a continuity that daily reading does
+ * not have. Days with activity carry the accent; the rest are the reference
+ * grid.
+ */
+export function Spark({
+  data,
+  className,
+}: {
+  data: { label: string; count: number }[];
+  className?: string;
+}) {
+  const peak = Math.max(...data.map((d) => d.count), 1);
+  return (
+    <div className={className}>
+      <div className="spark" role="img" aria-label={
+        data.map((d) => `${d.label}: ${d.count}`).join(", ")
+      }>
+        {data.map((d, i) => (
+          <i
+            key={i}
+            data-on={d.count > 0}
+            // Scale factor, not height — see the .spark rule in globals.css.
+            style={{ "--h": Math.max(0.08, d.count / peak) } as React.CSSProperties}
+          />
+        ))}
+      </div>
+      <div className="mt-1 flex gap-[2px]">
+        {data.map((d, i) => (
+          <span
+            key={i}
+            className="flex-1 text-center text-[0.65rem] leading-none text-ink-600"
+            aria-hidden
+          >
+            {d.label[0]}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 

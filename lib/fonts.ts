@@ -1,36 +1,50 @@
-import { Cormorant_Garamond, Crimson_Pro, IBM_Plex_Sans } from "next/font/google";
+import { Archivo, Archivo_Narrow, Literata } from "next/font/google";
 
 /**
- * Three faces, three distinct jobs. A reading app genuinely has two voices —
- * the book's and the tool's — and they must not sound the same.
+ * Two voices, three faces.
+ *
+ * The atlas voice (Archivo, Archivo Narrow) is the instrument: labels, column
+ * heads, and every number. Archivo is a grotesque drawn for high legibility at
+ * small sizes with genuine tabular figures — the requirement the whole world
+ * rests on, because a column of numbers that shifts as it updates is not a
+ * table, it is a rumour. Archivo Narrow carries dense label rows and column
+ * heads; the condensed cut is what separates an atlas from a dashboard.
+ *
+ * The book's voice (Literata) is the reader's: quoted passages, highlights,
+ * anything the book itself says. Drawn by TypeTogether for long-form screen
+ * reading, so it holds up at paragraph length where a display serif would not.
+ *
+ * The faces this replaced — Cormorant Garamond, Crimson Pro, IBM Plex Sans —
+ * are the exact set that every model reaches for when told "books" and "calm".
+ * Legible, but the arrangement was recognisable as a default rather than as
+ * this product.
  *
  * Self-hosted by next/font: no CDN request, no layout shift, no silent
  * fallback to the system stack.
  */
 
-/** The library. Display only — never below 24px. */
-export const display = Cormorant_Garamond({
+/** The instrument. Labels, chrome, and every figure in the product. */
+export const ui = Archivo({
   subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ui",
+  display: "swap",
+});
+
+/** Column heads and dense label rows — the atlas's own register. */
+export const display = Archivo_Narrow({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-display",
   display: "swap",
 });
 
 /** The book's voice. Quoted prose, highlights, the page itself. */
-export const prose = Crimson_Pro({
+export const prose = Literata({
   subsets: ["latin"],
-  weight: ["300", "400", "600"],
+  weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-prose",
-  display: "swap",
-});
-
-/** The tool's voice. Buttons, labels, chrome — anything the app says. */
-export const ui = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ui",
   display: "swap",
 });
 

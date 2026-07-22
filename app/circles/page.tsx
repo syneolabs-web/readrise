@@ -4,13 +4,11 @@ import { db } from "@/lib/db";
 import { getCircleActivity, getMyProgress } from "@/lib/activity";
 import { relativeTime } from "@/lib/utils";
 import { AppHeader } from "@/components/AppHeader";
-import { Avatar, Card } from "@/components/ui";
-import { StatRing } from "@/components/StatRing";
-import { WeeklyChart } from "@/components/WeeklyChart";
+import { Avatar, Card, Datum, Label, Spark } from "@/components/ui";
 import { BookCover } from "@/components/BookCover";
 import { GoalCard } from "@/components/GoalCard";
 import { computeGoal } from "@/lib/reading-goal";
-import { IconArrow, IconFlame, IconStarFilled } from "@/components/icons";
+import { IconArrow } from "@/components/icons";
 import { CircleActions } from "./CircleActions";
 
 /**
@@ -57,6 +55,22 @@ export default async function DashboardPage() {
     .filter((g) => g.goal !== null && g.goal.status !== "done")
     .slice(0, 3);
 
+  // The edition line. An atlas is dated; so is a record of a practice, and it
+  // quietly answers "is this current?" without a "last updated" label.
+  const edition = new Date().toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+
+  // Started but not finished — the honest count of what you're carrying.
+  const inFlight = memberships
+    .flatMap((m) => m.circle.documents)
+    .filter((d) => {
+      const page = d.progress[0]?.currentPage ?? 1;
+      return page > 1 && page < d.pageCount;
+    }).length;
+
   // Flatten the viewer's books across circles for the reading snapshot.
   const books = memberships
     .flatMap((m) =>
@@ -94,17 +108,41 @@ export default async function DashboardPage() {
       </AppHeader>
 
       <main className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-accent">
-              Welcome back, {user.name}
-            </p>
-            <h1 className="mt-1 font-display text-4xl font-light tracking-tight">
-              Your reading, today
-            </h1>
+        {/* The masthead states the edition, then the headline figures.
+            A dashboard that opens with a greeting and a pair of buttons has
+            spent its most valuable strip of screen on chrome; an atlas opens
+            with the record, because the record is why you came. */}
+        <header className="border-b border-ink-800 pb-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
+            <div className="min-w-0">
+              <p className="plate-label text-accent">
+                {user.name} · {edition}
+              </p>
+              <h1 className="mt-1.5 font-display text-4xl font-semibold tracking-tight text-ink-100">
+                The reading ledger
+              </h1>
+            </div>
+            {memberships.length > 0 && <CircleActions />}
           </div>
-          {memberships.length > 0 && <CircleActions />}
-        </div>
+
+          {memberships.length > 0 && (
+            <dl className="mt-5 flex flex-wrap items-end gap-x-10 gap-y-4">
+              {[
+                [inFlight, inFlight === 1 ? "Book in flight" : "Books in flight"],
+                [progress.highlights, "Highlights logged"],
+                [progress.streak, "Week streak"],
+                [memberships.length, memberships.length === 1 ? "Circle" : "Circles"],
+              ].map(([value, label]) => (
+                <div key={label as string}>
+                  <dd className="fig font-display text-2xl font-semibold leading-none text-ink-100">
+                    {value}
+                  </dd>
+                  <dt className="plate-label mt-1.5">{label}</dt>
+                </div>
+              ))}
+            </dl>
+          )}
+        </header>
 
         {memberships.length === 0 && (
           <div className="mt-8">
@@ -120,7 +158,7 @@ export default async function DashboardPage() {
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.2fr_18rem]">
           {/* ── Circle activity ─────────────────────────── */}
           <section className="order-2 min-w-0 lg:order-none">
-            <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+            <h2 className="plate-label">
               In your circles
             </h2>
             {activity.length === 0 ? (
@@ -169,7 +207,7 @@ export default async function DashboardPage() {
                 likely to decide what you open next. */}
             {goals.length > 0 && (
               <div className="mb-6">
-                <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+                <h2 className="plate-label">
                   Your reading goals
                 </h2>
                 <div className="mt-3 space-y-2.5">
@@ -187,7 +225,7 @@ export default async function DashboardPage() {
               </div>
             )}
 
-            <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+            <h2 className="plate-label">
               Pick up where you left off
             </h2>
             {books.length === 0 ? (
@@ -215,7 +253,7 @@ export default async function DashboardPage() {
                           <div className="mt-auto pt-2">
                             <div className="h-1 overflow-hidden rounded-full bg-ink-800">
                               <div
-                                className="bg-grad h-full rounded-full"
+                                className="h-full bg-accent"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>
@@ -255,28 +293,30 @@ export default async function DashboardPage() {
 
           {/* ── My progress ─────────────────────────────── */}
           <aside className="order-3 min-w-0 space-y-4 lg:order-none">
-            <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+            <h2 className="plate-label">
               What you&apos;ve built
             </h2>
-            <Card className="space-y-4 p-5">
-              <StatRing
-                value={progress.streak}
-                fraction={progress.streak ? Math.min(1, progress.streak / 8) : 0}
-                icon={<IconFlame size={18} />}
-                label="week streak"
-                sub={progress.streak ? "keep it alive" : "check in this week"}
-              />
-              <StatRing
-                value={progress.insights}
-                icon={<IconStarFilled size={16} />}
-                label="insights saved"
-                sub="your vault"
-              />
-              <div className="border-t border-ink-800 pt-4">
-                <p className="mb-2 text-2xs font-medium text-ink-400">
-                  Highlights this week
-                </p>
-                <WeeklyChart data={progress.week} />
+            {/* The record, as a plate. Rings were decoration around numbers —
+                a ring implies a target, and neither a streak nor a vault count
+                has one, so the geometry was making a claim the data doesn't.
+                Set as figures in a ruled column instead: comparable down the
+                page, honest about what they are. */}
+            <Card className="divide-y divide-ink-800">
+              <div className="grid grid-cols-2 gap-4 p-4">
+                <Datum
+                  value={progress.streak}
+                  label="Week streak"
+                  sub={progress.streak ? "unbroken" : "start this week"}
+                />
+                <Datum
+                  value={progress.insights}
+                  label="In the vault"
+                  sub="saved insights"
+                />
+              </div>
+              <div className="p-4">
+                <Label>Highlights, last 7 days</Label>
+                <Spark data={progress.week} className="mt-2.5" />
               </div>
             </Card>
 

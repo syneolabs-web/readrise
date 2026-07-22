@@ -4,10 +4,9 @@ import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { weekOf } from "@/lib/utils";
 import { AppHeader } from "@/components/AppHeader";
-import { Avatar, Card } from "@/components/ui";
-import { IconArrow, IconFlame, IconStarFilled } from "@/components/icons";
+import { Avatar, Card, Datum } from "@/components/ui";
+import { IconArrow, IconStarFilled } from "@/components/icons";
 import { CircleNav } from "@/components/CircleNav";
-import { StatRing } from "@/components/StatRing";
 import { BookCover } from "@/components/BookCover";
 import { getLeaderboard, getOpenProposal } from "@/lib/circle-governance";
 import { UploadButton } from "./UploadButton";
@@ -196,27 +195,28 @@ export default async function CirclePage({
             Extracted from the reference "My Progress" rings. Collective,
             accumulated, never competitive — the Vault as the forest you
             won't abandon (RESEARCH §5). */}
-        <div className="mt-7 grid grid-cols-2 gap-4 rounded-xl border border-ink-800 bg-ink-900 p-5 sm:grid-cols-4">
-          <StatRing
+        {/* The circle's record. Rings implied a target these quantities do
+            not have — nothing here is "out of" anything — so they are set as
+            figures in a ruled band instead, comparable across the row. */}
+        <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5 rounded-md border border-ink-800 bg-ink-900/60 p-5 sm:grid-cols-4">
+          <Datum
             value={streak}
-            fraction={streak ? Math.min(1, streak / 8) : 0}
-            icon={<IconFlame size={18} />}
-            label={`week streak`}
+            label="Week streak"
             sub={streak ? "everyone checked in" : "start one this week"}
           />
-          <StatRing
+          <Datum
             value={circle._count.vaultEntries}
-            label="insights"
+            label="Insights"
             sub="in the vault"
           />
-          <StatRing
+          <Datum
             value={circle.documents.length}
-            label={circle.documents.length === 1 ? "book" : "books"}
+            label={circle.documents.length === 1 ? "Book" : "Books"}
             sub="read together"
           />
-          <StatRing
+          <Datum
             value={totalHighlights}
-            label="highlights"
+            label="Highlights"
             sub="in the margins"
           />
         </div>
@@ -224,7 +224,7 @@ export default async function CirclePage({
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_20rem]">
           {/* ── Books ─────────────────────────────────── */}
           <section className="min-w-0">
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest text-ink-500">
+            <h2 className="plate-label">
               Reading
             </h2>
 
@@ -272,7 +272,7 @@ export default async function CirclePage({
                         <div className="mt-3 flex items-center gap-3">
                           <div className="h-1 flex-1 overflow-hidden rounded-full bg-ink-800">
                             <div
-                              className="bg-grad h-full rounded-full transition-all"
+                              className="h-full bg-accent [transition:width_var(--dur-state)_var(--ease-out)]"
                               style={{ width: `${pct}%` }}
                             />
                           </div>

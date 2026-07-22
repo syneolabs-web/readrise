@@ -23,7 +23,7 @@ export function Header() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center bg-paper/80 backdrop-blur-md border-b border-rule/50">
+    <header className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center bg-surface/80 backdrop-blur-md border-b border-rule/50">
       <Link href="/" className="flex shrink-0 items-center gap-2 hover:opacity-80 transition-opacity">
         <ReadriseLogo />
       </Link>
@@ -45,7 +45,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute top-12 right-12 w-64 p-5 rounded-2xl bg-paper border border-rule shadow-xl flex flex-col gap-5 origin-top-right"
+              className="absolute top-12 right-12 w-64 p-5 rounded-2xl bg-surface border border-rule shadow-xl flex flex-col gap-5 origin-top-right"
             >
               <div>
                 <div className="text-xs font-bold uppercase tracking-widest text-ink-faint mb-3">Theme</div>
@@ -79,7 +79,7 @@ export function Header() {
                       <button
                         key={v}
                         onClick={() => setVibe(v)}
-                        className={`w-10 h-10 rounded-full ${colors[v]} ${vibe === v ? 'ring-2 ring-offset-2 ring-ink ring-offset-paper' : ''} transition-all`}
+                        className={`w-10 h-10 rounded-full ${colors[v]} ${vibe === v ? 'ring-2 ring-offset-2 ring-ink ring-offset-surface' : ''} transition-all`}
                         aria-label={`Set vibe to ${v}`}
                       />
                     );

@@ -51,13 +51,16 @@
   --color-warn: #e0993a;
   --color-crit: #e07a5f;
 
-  /* ── Type: three faces, three jobs. See lib/fonts.ts. */
-  --font-display: var(--font-display), "Cormorant Garamond", Georgia, serif;
-  --font-prose: var(--font-prose), "Crimson Pro", Georgia, serif;
-  --font-sans: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+  /* ── Type: two voices, three faces. See lib/fonts.ts. */
+  --font-display: var(--font-display), "Archivo Narrow", ui-sans-serif, sans-serif;
+  --font-prose: var(--font-prose), Literata, Georgia, serif;
+  --font-sans: var(--font-ui), Archivo, ui-sans-serif, system-ui, sans-serif;
 
-  /* ── Type scale: 1.25 major third. */
-  --text-2xs: 0.694rem;
+  /* ── Type scale. Raised floor: the old 0.694rem (~11px) was elegant on a
+   * 27" display and failed on a laptop. Nothing in the interface is now
+   * smaller than 12px, and hierarchy is carried by weight, tracking and
+   * colour instead of by shrinking type past the point of legibility. */
+  --text-2xs: 0.75rem;
   --text-xs: 0.833rem;
   --text-sm: 0.9rem;
   --text-base: 1rem;
@@ -187,11 +190,13 @@ body {
 .bg-grad {
   background-image: linear-gradient(135deg, var(--grad-a), var(--grad-b));
 }
+/* Retired with the Reading Ledger world (see DESIGN.md).
+   A gradient-filled numeral encodes a second dimension that does not exist,
+   which is the same objection this world raises to gradients inside measures.
+   The figure carries the meaning; kept as a solid-accent alias so any
+   remaining usage degrades to the correct thing rather than to transparent. */
 .text-grad {
-  background-image: linear-gradient(100deg, var(--grad-a), var(--grad-b));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--color-accent);
 }
 
 :focus-visible {
@@ -399,7 +404,12 @@ html:not([data-theme="light"]) .pdf-page-container {
 
 /* ── New Landing Page & Login Variables ───────────────────── */
 @theme {
-  --color-paper: var(--paper);
+  /* NOTE: deliberately NOT --color-paper. That name belongs to the book's
+     page material (D13) and must stay cream on a dark ground; this is the
+     landing/auth page background, a different thing that happens to have
+     been given the same word. Aliasing them turned every book cover and the
+     PDF page near-black in dark theme. */
+  --color-surface: var(--paper);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
@@ -445,4 +455,106 @@ body {
   color: var(--ink);
   transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * THE READING LEDGER — atlas primitives
+ *
+ * THESIS: Readrise is a record of a practice, so the record is the interface.
+ * It refuses the arrangement this category always ships — cream ground, high
+ * contrast display serif, soft cards floating in whitespace — and refuses that
+ * arrangement's predictable opposite, the near-black focus app with a neon
+ * accent. Instead: a statistical atlas. Ruled rows, tabular figures, small
+ * multiples, marginal labels. Density read as respect, not as clutter.
+ *
+ * OWN-WORLD: A ruled ground rather than a card ground. Hairline rules in
+ * ink-800 do the work borders and shadows used to do; figures are tabular
+ * Archivo at a size that lets you read a column down; labels are Archivo
+ * Narrow in tracked caps, sitting in a left margin like a plate caption. The
+ * user's chosen accent stops being decoration and becomes the one data ink on
+ * the page — it marks the reader's own row and nothing else.
+ *
+ * STORY: You open it and read your own record the way you'd read a chart:
+ * where you are, against when you said you'd be there, next to the people who
+ * are reading it with you.
+ *
+ * FORM: grounded direction 5 of 7 — the statistical atlas. Seed key cba5056e.
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+/* Every figure in the product is tabular. A number that changes width as it
+ * updates makes a column jitter, which is the difference between a table and
+ * a list of numbers that happen to be stacked. */
+.fig {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* Plate caption: the marginal label that names a quantity. Narrow, tracked,
+ * quiet — it must never compete with the figure it introduces. */
+.plate-label {
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-500);
+}
+
+/* A ruled row. The atlas's structural unit, replacing the floating card:
+ * rows are separated by a hairline, not by a gap and a shadow. The rule is
+ * what makes a column of them scan as one table. */
+.ruled {
+  border-bottom: 1px solid var(--color-ink-800);
+}
+.ruled:last-child {
+  border-bottom: 0;
+}
+
+/* The reader's own row. In an atlas exactly one series is inked; everything
+ * else is the reference grid. This is the only place the accent appears in a
+ * data context, which is what makes it findable at a glance. */
+.self-row {
+  box-shadow: inset 2px 0 0 var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+}
+
+/* Measure rule: the vertical tick that marks "where you said you'd be".
+ * Ringed in the page ground so it stays legible over filled or empty track. */
+.measure-tick {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--color-ink-400);
+  box-shadow: 0 0 0 2px var(--color-ink-950);
+}
+
+/* Small multiple: a chart small enough to sit inline with text, repeated so
+ * comparison happens by eye rather than by reading numbers. */
+.spark {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 1.5rem;
+}
+.spark > i {
+  flex: 1;
+  align-self: stretch;
+  border-radius: 1px;
+  background: var(--color-ink-700);
+  /* Bars are full height and scaled down from the baseline. Transitioning
+     `height` would force layout on every frame for every bar; scaleY runs on
+     the compositor and produces the identical picture. */
+  transform-origin: bottom;
+  transform: scaleY(var(--h, 1));
+  transition: transform var(--dur-state) var(--ease-out);
+}
+.spark > i[data-on="true"] {
+  background: var(--color-accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .spark > i {
+    transition: none;
+  }
 }

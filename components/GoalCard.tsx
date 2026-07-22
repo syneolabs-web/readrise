@@ -53,7 +53,7 @@ export function GoalCard({
           {title}
         </Link>
         <span
-          className={`shrink-0 text-2xs font-semibold uppercase tracking-[0.12em] ${tone.className}`}
+          className={`plate-label shrink-0 ${tone.className}`}
         >
           {tone.label}
         </span>
@@ -63,34 +63,55 @@ export function GoalCard({
         {goal.headline}
       </p>
 
-      {/* Pages read (the fill) against time elapsed (the marker). Fill behind
-          the marker IS "behind" — shown, not stated. The marker sits on the
-          track rather than under it, and is tall enough to read at a glance;
-          floating it below reads as an unrelated speck. */}
-      <div className="relative mt-3 h-2 rounded-full bg-ink-800">
+      {/* The three quantities that actually decide tonight, given equal weight
+          and set as figures so they read across. Prose can only say one of
+          them at a time; a row says all three and lets you pick. */}
+      <div className="mt-3 grid grid-cols-3 gap-3 border-y border-ink-800 py-3">
+        <div>
+          <p className="fig text-xl font-semibold leading-none text-ink-100">
+            {goal.paceNeeded}
+          </p>
+          <p className="plate-label mt-1">Pages/day</p>
+        </div>
+        <div>
+          <p className="fig text-xl font-semibold leading-none text-ink-100">
+            {goal.pagesLeft}
+          </p>
+          <p className="plate-label mt-1">To go</p>
+        </div>
+        <div>
+          <p className="fig text-xl font-semibold leading-none text-ink-100">
+            {goal.daysLeft}
+          </p>
+          <p className="plate-label mt-1">
+            {goal.daysLeft === 1 ? "Day left" : "Days left"}
+          </p>
+        </div>
+      </div>
+
+      {/* Pages read (the fill) against time elapsed (the tick). Fill behind the
+          tick IS "behind" — shown, never stated. Squared off rather than
+          pill-shaped: this is a measure against a scale, and a rounded cap
+          makes the reading ambiguous at exactly the ends where precision
+          matters most. */}
+      <div className="relative mt-3 h-1.5 bg-ink-800">
         <div
-          className="bg-grad h-full rounded-full transition-[width] duration-500"
+          className="h-full bg-accent transition-[width] duration-500"
           style={{ width: `${pct}%` }}
         />
         <span
-          // Ringed in the card's own background so it stays legible whether it
-          // lands on the filled gradient or the empty track.
-          className="absolute -top-0.5 h-3 w-0.5 -translate-x-1/2 rounded-full bg-ink-400 ring-2 ring-ink-900"
+          className="measure-tick"
           style={{ left: `${Math.min(100, goal.timeElapsed * 100)}%` }}
           title={`${Math.round(goal.timeElapsed * 100)}% of your ${goal.totalDays} days used`}
           aria-hidden
         />
       </div>
 
-      <div className="mt-2 flex items-center justify-between text-2xs tabular-nums text-ink-500">
+      <div className="fig mt-2 flex items-center justify-between text-2xs text-ink-500">
         <span>
           p{page} / {pageCount}
         </span>
-        <span>
-          {goal.status === "overdue"
-            ? `${goal.totalDays} day goal`
-            : `${goal.daysLeft} ${goal.daysLeft === 1 ? "day" : "days"} left`}
-        </span>
+        <span>{pct}% read</span>
       </div>
 
       {goal.ritual && (

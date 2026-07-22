@@ -105,7 +105,7 @@ export function Leaderboard({
     <>
       <section className="mt-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+          <h2 className="plate-label">
             Standings
           </h2>
           <div className="flex items-center gap-3">
@@ -177,7 +177,7 @@ export function Leaderboard({
                       medals would fight the vibe palette. */}
                   {lead && (
                     <span
-                      className="bg-grad absolute inset-y-0 left-0 w-[3px]"
+                      className="absolute inset-y-0 left-0 w-[3px] bg-accent"
                       aria-hidden="true"
                     />
                   )}
@@ -185,7 +185,7 @@ export function Leaderboard({
                   <div className="flex items-center gap-3">
                     <span
                       className={cn(
-                        "w-5 shrink-0 text-center text-sm font-semibold tabular-nums",
+                        "fig w-5 shrink-0 text-center text-sm font-semibold",
                         lead ? "text-accent" : "text-ink-600"
                       )}
                     >
@@ -341,7 +341,7 @@ export function ShoutoutStrip({
   if (shoutouts.length === 0) return null;
   return (
     <section className="mt-6">
-      <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+      <h2 className="plate-label">
         Shoutouts
       </h2>
       <div className="mt-3 space-y-2">

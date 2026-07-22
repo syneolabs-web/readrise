@@ -89,7 +89,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
           type="text" 
           defaultValue={user.name}
           required
-          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
+          className="w-full px-4 py-3 bg-surface border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
         />
       </div>
 
@@ -101,7 +101,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
           type="email" 
           defaultValue={user.email}
           required
-          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
+          className="w-full px-4 py-3 bg-surface border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
         />
       </div>
 
@@ -114,7 +114,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
             <button
               type="button"
               onClick={() => setAvatarImage(null)}
-              className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg bg-ink-800 text-ink-300 transition-transform hover:scale-105 active:scale-95 snap-start ${avatarImage === null ? 'ring-4 ring-offset-2 ring-offset-paper ring-accent shadow-[0_0_15px_rgba(245,158,11,0.4)]' : 'border border-rule'}`}
+              className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg bg-ink-800 text-ink-300 transition-transform hover:scale-105 active:scale-95 snap-start ${avatarImage === null ? 'ring-4 ring-offset-2 ring-offset-surface ring-accent shadow-[0_0_15px_rgba(245,158,11,0.4)]' : 'border border-rule'}`}
               title="Use initials"
             >
               {user.name.substring(0, 2).toUpperCase()}
@@ -124,7 +124,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
                 key={img}
                 type="button"
                 onClick={() => setAvatarImage(img)}
-                className={`flex-shrink-0 w-16 h-16 rounded-full transition-transform hover:scale-105 active:scale-95 snap-start ${avatarImage === img ? 'ring-4 ring-offset-2 ring-offset-paper ring-accent shadow-[0_0_15px_rgba(245,158,11,0.4)]' : 'ring-1 ring-rule'}`}
+                className={`flex-shrink-0 w-16 h-16 rounded-full transition-transform hover:scale-105 active:scale-95 snap-start ${avatarImage === img ? 'ring-4 ring-offset-2 ring-offset-surface ring-accent shadow-[0_0_15px_rgba(245,158,11,0.4)]' : 'ring-1 ring-rule'}`}
               >
                 <img src={img} className="w-full h-full object-cover rounded-full" alt="Avatar option" />
               </button>
@@ -141,7 +141,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
                   key={c.value}
                   type="button"
                   onClick={() => setAvatarColor(c.value)}
-                  className={`w-10 h-10 rounded-full transition-transform hover:scale-110 active:scale-95 ${avatarColor === c.value ? 'ring-4 ring-offset-2 ring-offset-paper ring-accent' : 'ring-1 ring-rule'}`}
+                  className={`w-10 h-10 rounded-full transition-transform hover:scale-110 active:scale-95 ${avatarColor === c.value ? 'ring-4 ring-offset-2 ring-offset-surface ring-accent' : 'ring-1 ring-rule'}`}
                   style={{ backgroundColor: c.value }}
                   title={c.name}
                 />
@@ -159,14 +159,14 @@ export function ProfileForm({ user }: { user: SessionUser }) {
           type="password" 
           placeholder="••••••••" 
           minLength={8}
-          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
+          className="w-full px-4 py-3 bg-surface border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
         />
       </div>
 
       <button 
         type="submit"
         disabled={isSubmitting}
-        className="w-full py-3.5 px-4 bg-ink text-paper hover:bg-ink/90 font-medium rounded-xl shadow-lg shadow-ink/10 [transition:transform_var(--dur-press)_var(--ease-out),background-color_var(--dur-micro)_ease] active:scale-[0.98] mt-4 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+        className="w-full py-3.5 px-4 bg-ink text-surface hover:bg-ink/90 font-medium rounded-xl shadow-lg shadow-ink/10 [transition:transform_var(--dur-press)_var(--ease-out),background-color_var(--dur-micro)_ease] active:scale-[0.98] mt-4 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
       >
         {isSubmitting ? 'Saving...' : 'Save Changes'}
       </button>
