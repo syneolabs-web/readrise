@@ -89,7 +89,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
           type="text" 
           defaultValue={user.name}
           required
-          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
         />
       </div>
 
@@ -101,7 +101,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
           type="email" 
           defaultValue={user.email}
           required
-          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
         />
       </div>
 
@@ -159,14 +159,14 @@ export function ProfileForm({ user }: { user: SessionUser }) {
           type="password" 
           placeholder="••••••••" 
           minLength={8}
-          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all"
+          className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease]"
         />
       </div>
 
       <button 
         type="submit"
         disabled={isSubmitting}
-        className="w-full py-3.5 px-4 bg-ink text-paper hover:bg-ink/90 font-medium rounded-xl shadow-lg shadow-ink/10 transition-all active:scale-[0.98] mt-4 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+        className="w-full py-3.5 px-4 bg-ink text-paper hover:bg-ink/90 font-medium rounded-xl shadow-lg shadow-ink/10 [transition:transform_var(--dur-press)_var(--ease-out),background-color_var(--dur-micro)_ease] active:scale-[0.98] mt-4 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
       >
         {isSubmitting ? 'Saving...' : 'Save Changes'}
       </button>

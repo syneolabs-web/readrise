@@ -112,7 +112,7 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   placeholder="name@example.com" 
-                  className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all invalid:focus:ring-red-500/50 invalid:focus:border-red-500"
+                  className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease] invalid:focus:ring-red-500/50 invalid:focus:border-red-500"
                 />
               </div>
               <div className="space-y-1.5">
@@ -127,13 +127,13 @@ export default function LoginPage() {
                   required
                   autoComplete="current-password"
                   placeholder="••••••••" 
-                  className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all invalid:focus:ring-red-500/50 invalid:focus:border-red-500"
+                  className="w-full px-4 py-3 bg-paper border border-rule rounded-xl text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 [transition:border-color_var(--dur-micro)_ease,box-shadow_var(--dur-micro)_ease] invalid:focus:ring-red-500/50 invalid:focus:border-red-500"
                 />
               </div>
               <button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 px-4 bg-ink text-paper hover:bg-ink/90 font-medium rounded-xl shadow-lg shadow-ink/10 transition-all active:scale-[0.98] mt-2 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                className="w-full py-3.5 px-4 bg-ink text-paper hover:bg-ink/90 font-medium rounded-xl shadow-lg shadow-ink/10 [transition:transform_var(--dur-press)_var(--ease-out),background-color_var(--dur-micro)_ease] active:scale-[0.98] mt-2 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
               >
                 {isSubmitting ? (
                   <>

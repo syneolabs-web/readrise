@@ -248,7 +248,7 @@ export default async function CirclePage({
 
                   return (
                     <Link key={doc.id} href={`/read/${doc.id}`} className="min-w-0">
-                      <Card className="group flex gap-4 p-4 transition-colors hover:border-ink-700 hover:bg-ink-850">
+                      <Card className="pressable group flex gap-4 p-4 hover:border-ink-700 hover:bg-ink-850">
                         <BookCover title={doc.title} author={doc.author} />
                         <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-4">

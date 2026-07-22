@@ -77,6 +77,22 @@
   --dur-micro: 120ms;
   --dur-state: 240ms;
   --dur-narrative: 400ms;
+
+  /* Motion curves.
+   *
+   * The built-in CSS easings are too weak to read as intentional — `ease-out`
+   * at 200ms looks like nothing happened. These are the stronger variants.
+   *
+   * `ease-in` is deliberately absent: it delays the initial movement, which is
+   * exactly the moment the user is watching, so it makes an interface feel
+   * sluggish at any duration. Entering and exiting elements use --ease-out;
+   * things moving on screen use --ease-in-out. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Press feedback. Short enough to feel like a physical response rather than
+   * an animation you watch. */
+  --dur-press: 140ms;
 }
 
 /* ── Vibes, dark theme ──────────────────────────────────────
@@ -276,6 +292,73 @@ html:not([data-theme="light"]) .pdf-page-container {
 
 .animate-fade-up {
   animation: fade-up var(--dur-state) var(--ease-out-quint);
+}
+
+/* Modal entrance.
+ *
+ * Scale starts at 0.96, never 0: nothing in the physical world appears out of
+ * nothing, and an element growing from zero reads as a special effect rather
+ * than as something arriving. Paired with a backdrop fade, because a backdrop
+ * that snaps to opaque while its panel eases in is the jarring half of the
+ * transition — the two have to be one gesture.
+ *
+ * transform-origin stays centered here. A modal is not anchored to a trigger,
+ * so it has no edge to grow from; popovers are the opposite case. */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-modal-in {
+  animation: modal-in var(--dur-state) var(--ease-out);
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-backdrop-in {
+  animation: backdrop-in var(--dur-state) var(--ease-out);
+}
+
+/* Pressable surfaces that are links, not buttons.
+ *
+ * A book card is the most-tapped thing in the app and it is an <a>, so it
+ * never inherited the Button's press feedback. On a phone there is no hover
+ * state at all, which means without this a tap has NO visual acknowledgement
+ * between touch and navigation — on a slow connection that reads as a dead
+ * card, and people tap again.
+ *
+ * Hover lift is gated behind a real pointer: touch devices synthesise hover on
+ * tap, so an ungated :hover sticks after the finger lifts and leaves the card
+ * looking permanently focused. */
+.pressable {
+  transition: transform var(--dur-press) var(--ease-out),
+    border-color var(--dur-micro) ease, background-color var(--dur-micro) ease;
+}
+.pressable:active {
+  transform: scale(0.985);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pressable:hover {
+    transform: translateY(-1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pressable,
+  .pressable:active,
+  .pressable:hover {
+    transform: none;
+  }
 }
 
 @keyframes rise-in {

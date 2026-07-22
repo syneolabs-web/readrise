@@ -203,7 +203,7 @@ export default async function DashboardPage() {
                   const pct = b.pageCount ? (b.page / b.pageCount) * 100 : 0;
                   return (
                     <Link key={b.id} href={`/read/${b.id}`} className="min-w-0">
-                      <Card className="group flex h-full gap-3 p-3 transition-colors hover:border-ink-700 hover:bg-ink-850">
+                      <Card className="pressable group flex h-full gap-3 p-3 hover:border-ink-700 hover:bg-ink-850">
                         <BookCover title={b.title} author={b.author} width={46} />
                         <div className="flex min-w-0 flex-1 flex-col">
                           <h3 className="truncate text-sm font-medium text-ink-100 transition-colors group-hover:text-accent">
@@ -240,7 +240,7 @@ export default async function DashboardPage() {
                 <Link
                   key={m.id}
                   href={`/circles/${m.circle.slug}`}
-                  className="group inline-flex items-center gap-2 rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 transition-colors hover:border-ink-700 hover:bg-ink-850"
+                  className="pressable group inline-flex items-center gap-2 rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 hover:border-ink-700 hover:bg-ink-850"
                 >
                   <span className="text-xs font-medium text-ink-200 group-hover:text-accent">
                     {m.circle.name}

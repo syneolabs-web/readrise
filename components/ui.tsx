@@ -61,8 +61,17 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors",
-        "disabled:cursor-not-allowed disabled:opacity-45",
+        "inline-flex items-center justify-center gap-1.5 rounded-lg font-medium",
+        // Named properties, never `all`: `transition: all` also animates
+        // layout-affecting properties, which costs frames and produces
+        // transitions nobody asked for when an unrelated class changes.
+        "[transition:transform_var(--dur-press)_var(--ease-out),background-color_var(--dur-micro)_ease,border-color_var(--dur-micro)_ease,color_var(--dur-micro)_ease]",
+        // Press feedback. Every pressable surface must confirm it heard the
+        // input — without it a button feels like a picture of a button. Kept
+        // subtle (0.97) so it reads as depression, not as a bounce.
+        "active:scale-[0.97]",
+        // Disabled elements must not appear to respond.
+        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
         size === "sm" ? "px-2.5 py-1 text-xs" : "px-3.5 py-2 text-sm",
         variant === "primary" &&

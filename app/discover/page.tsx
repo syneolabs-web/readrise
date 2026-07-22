@@ -107,7 +107,7 @@ export default async function DiscoverPage() {
                 <Link
                   key={b.id}
                   href={`/circles/${b.circleSlug}`}
-                  className="flex items-center gap-3 p-3 transition-colors hover:bg-ink-850"
+                  className="pressable flex items-center gap-3 p-3 hover:bg-ink-850"
                 >
                   <span className="w-4 text-center font-display text-lg font-semibold text-ink-600 [font-variant-numeric:lining-nums]">
                     {i + 1}
