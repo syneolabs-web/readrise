@@ -109,7 +109,7 @@ export function Modal({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="animate-modal-in relative w-full max-w-sm rounded-xl border border-ink-800 bg-ink-900 p-5 shadow-2xl outline-none"
+        className="animate-modal-in relative w-full max-w-sm rounded-[4px] border border-ink-800 bg-ink-900 p-6 shadow-2xl outline-none"
       >
         <h2 className="text-base font-semibold text-ink-100">{title}</h2>
         {description && (

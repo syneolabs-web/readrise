@@ -61,7 +61,8 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-1.5 rounded-lg font-medium",
+        // Squared, as on the cover: a paperback has no pill buttons.
+        "inline-flex items-center justify-center gap-1.5 rounded-[3px] font-semibold",
         // Named properties, never `all`: `transition: all` also animates
         // layout-affecting properties, which costs frames and produces
         // transitions nobody asked for when an unrelated class changes.
@@ -73,13 +74,15 @@ export function Button({
         // Disabled elements must not appear to respond.
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-        size === "sm" ? "px-2.5 py-1 text-xs" : "px-3.5 py-2 text-sm",
+        size === "sm" ? "px-2.5 py-1.5 text-xs" : "px-4 py-2.5 text-sm",
+        // Primary is printed in the series colour — the visitor's own vibe,
+        // flat, exactly as the landing's "Start a circle".
         variant === "primary" &&
-          "bg-accent text-on-accent hover:bg-accent/90 font-semibold",
-        variant === "ghost" && "text-ink-300 hover:bg-ink-800 hover:text-ink-100",
+          "bg-series text-series-ink hover:brightness-[0.94]",
+        variant === "ghost" && "text-ink-300 hover:bg-ink-850 hover:text-ink-100",
         variant === "outline" &&
-          "border border-ink-700 text-ink-200 hover:border-ink-600 hover:bg-ink-850",
-        variant === "danger" && "text-red-400 hover:bg-red-500/10",
+          "border border-ink-700 text-ink-200 hover:border-ink-400 hover:text-ink-100",
+        variant === "danger" && "text-crit hover:bg-crit/10",
         className
       )}
       {...props}
@@ -94,9 +97,9 @@ export function Input({
   return (
     <input
       className={cn(
-        "w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-ink-100",
-        "placeholder:text-ink-500",
-        "focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30",
+        "w-full rounded-[3px] border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-ink-100",
+        "placeholder:text-ink-600",
+        "focus:border-ink-300 focus:outline-none",
         className
       )}
       {...props}
@@ -111,9 +114,9 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        "w-full resize-none rounded-lg border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-ink-100",
-        "placeholder:text-ink-500",
-        "focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30",
+        "w-full resize-none rounded-[3px] border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-ink-100",
+        "placeholder:text-ink-600",
+        "focus:border-ink-300 focus:outline-none",
         className
       )}
       {...props}
@@ -137,7 +140,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-md border border-ink-800 bg-ink-900/60",
+        "rounded-[3px] border border-ink-800 bg-ink-900/60",
         className
       )}
       {...props}
@@ -154,6 +157,18 @@ export function Card({
  */
 export function Label({ children }: { children: React.ReactNode }) {
   return <span className="plate-label">{children}</span>;
+}
+
+/**
+ * A section's running head: tracked wide caps over a ruled list. Quieter
+ * than the content it names, louder than a caption.
+ */
+export function SectionHead({ id, title }: { id?: string; title: string }) {
+  return (
+    <h2 id={id} className="cover-label text-xs font-bold uppercase tracking-[0.14em] text-ink-400">
+      {title}
+    </h2>
+  );
 }
 
 /**

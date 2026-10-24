@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Card } from "@/components/ui";
-import { IconFlame } from "@/components/icons";
+import { SectionHead } from "@/components/ui";
 import type { getPublicStanding } from "@/lib/circle-governance";
 
 /**
@@ -18,43 +17,27 @@ export function PublicStanding({
   if (!standing.tier || standing.entries.length === 0) return null;
 
   return (
-    <section>
-      <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
-        Public activity
-      </h2>
-      <Card className="mt-3 p-4">
-        <div className="flex items-center gap-2">
-          <span className="text-accent">
-            <IconFlame size={15} />
-          </span>
-          <span className="rounded-full border border-accent/25 bg-accent/10 px-2 py-0.5 text-2xs font-semibold uppercase tracking-wider text-accent">
-            {standing.tier}
-          </span>
-          <span className="text-xs text-ink-500">
-            {standing.totalScore} points across{" "}
-            {standing.circles === 1 ? "1 public circle" : `${standing.circles} public circles`}
-          </span>
-        </div>
-
-        <div className="mt-3 space-y-1.5">
-          {standing.entries.map((e) => (
-            <Link
-              key={e.circleSlug}
-              href={`/circles/${e.circleSlug}`}
-              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors duration-[120ms] hover:bg-ink-850"
-            >
-              <span className="font-semibold tabular-nums text-ink-200">
-                #{e.rank}
-              </span>
-              <span className="text-ink-600">of {e.of}</span>
-              <span className="truncate text-ink-300">{e.circleName}</span>
-              <span className="ml-auto shrink-0 tabular-nums text-ink-600">
-                {e.score}
-              </span>
+    <section aria-labelledby="public-standing">
+      <SectionHead id="public-standing" title="In public circles" />
+      <p className="mt-3 text-sm text-ink-400">
+        <span className="cover-label rounded-[3px] bg-series px-2 py-0.5 text-xs font-bold text-series-ink">
+          {standing.tier}
+        </span>{" "}
+        <span className="fig">{standing.totalScore}</span> points across{" "}
+        {standing.circles === 1 ? "1 public circle" : `${standing.circles} public circles`}
+      </p>
+      <ul className="mt-3 border-t border-ink-800">
+        {standing.entries.map((e) => (
+          <li key={e.circleSlug} className="border-b border-ink-800">
+            <Link href={`/circles/${e.circleSlug}`} className="group flex items-center gap-3 py-2.5 text-sm">
+              <span className="fig cover-label w-10 font-bold text-ink-100">#{e.rank}</span>
+              <span className="fig text-xs text-ink-500">of {e.of}</span>
+              <span className="truncate text-ink-300 group-hover:text-ink-100 group-hover:underline">{e.circleName}</span>
+              <span className="fig ml-auto shrink-0 text-xs text-ink-500">{e.score} pts</span>
             </Link>
-          ))}
-        </div>
-      </Card>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

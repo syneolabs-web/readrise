@@ -57,17 +57,18 @@ export function InviteCode({
 
   return (
     <>
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" onClick={() => copy("link")}>
+          {copied === "link" ? "Link copied" : "Copy invite link"}
+        </Button>
         <button
           onClick={() => copy("code")}
           title="Copy the invite code"
-          className="rounded-md border border-ink-700 px-2.5 py-1.5 font-mono text-xs tracking-widest text-ink-200 transition-colors duration-[120ms] hover:border-accent/50 hover:text-accent"
+          aria-label={`Invite code ${code}. Copy it.`}
+          className="fig cover-label rounded-[3px] border border-dashed border-ink-600 px-3 py-1.5 text-sm font-bold tracking-[0.2em] text-ink-100 transition-colors duration-[120ms] hover:border-ink-300"
         >
-          {copied === "code" ? "Copied!" : code}
+          {copied === "code" ? "Copied" : code}
         </button>
-        <Button variant="ghost" size="sm" onClick={() => copy("link")}>
-          {copied === "link" ? "Link copied" : "Copy invite link"}
-        </Button>
         {isOwner && (
           <Button variant="ghost" size="sm" onClick={() => setConfirming(true)}>
             New code

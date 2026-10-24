@@ -4,10 +4,11 @@ import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { weekOf } from "@/lib/utils";
 import { AppHeader } from "@/components/AppHeader";
-import { Avatar, Card, Datum } from "@/components/ui";
+import { Avatar, Datum, SectionHead } from "@/components/ui";
 import { IconArrow, IconStarFilled } from "@/components/icons";
 import { CircleNav } from "@/components/CircleNav";
 import { BookCover } from "@/components/BookCover";
+import { FriendsRail } from "@/components/FriendsRail";
 import { getLeaderboard, getOpenProposal } from "@/lib/circle-governance";
 import { UploadButton } from "./UploadButton";
 import { MicroActions } from "./MicroActions";
@@ -16,6 +17,21 @@ import { PublishVote } from "./PublishVote";
 import { Leaderboard, ShoutoutStrip } from "./Leaderboard";
 import { AdminPanel } from "./AdminPanel";
 
+/**
+ * A circle's home.
+ *
+ * Ordered by how often each thing is used. It used to open with the motion
+ * to go public — an action a circle takes at most once — and pushed the book
+ * everyone is reading below the fold. Now:
+ *
+ * 1. The circle: who's in it, and how to bring someone else in.
+ * 2. What you're reading together, with everyone's place in it, beside this
+ *    week's habit — the READ and COMMIT halves of the loop, side by side.
+ * 3. The circle's record, then (for public circles) standings and shoutouts.
+ * 4. Circle settings at the foot: the invite key and the go-public vote.
+ *    An OPEN vote is the exception — it needs everyone's answer, so it
+ *    moves to the top until it closes.
+ */
 export default async function CirclePage({
   params,
 }: {
@@ -58,9 +74,10 @@ export default async function CirclePage({
 
   const thisWeek = weekOf();
   const memberCount = circle.memberships.length;
+  const members = circle.memberships.map((m) => m.user);
 
-  // The circle's accumulated work, for the stat rings. All real, all
-  // collective — nothing competitive or global (D3).
+  // The circle's accumulated work. All real, all collective — nothing
+  // competitive or global (D19).
   const totalHighlights = circle.documents.reduce(
     (sum, d) => sum + d._count.highlights,
     0
@@ -105,206 +122,192 @@ export default async function CirclePage({
       : Promise.resolve([]),
   ]);
 
+  const vote = (
+    <PublishVote
+      circleId={circle.id}
+      isPublic={circle.isPublic}
+      proposal={proposal}
+      viewerId={user.id}
+      memberCount={memberCount}
+    />
+  );
+
   return (
     <>
       <AppHeader user={user}>
         <CircleNav slug={slug} name={circle.name} active="books" />
       </AppHeader>
 
-      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">{circle.name}</h1>
-            <div className="mt-2 flex items-center gap-2">
-              <div className="flex -space-x-1.5">
-                {circle.memberships.map((m) => (
-                  <Avatar
-                    key={m.id}
-                    name={m.user.name}
-                    color={m.user.avatarColor}
-                    size={22}
-                    className="ring-2 ring-ink-950"
-                  />
-                ))}
+      <main className="mx-auto max-w-6xl px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-10">
+        {/* ── The circle ───────────────────────────────────── */}
+        <header className="border-b border-ink-800 pb-7">
+          <p className="plate-label">
+            {circle.isPublic ? "Public circle" : "Private circle"} · {memberCount}{" "}
+            {memberCount === 1 ? "member" : "members"}
+          </p>
+          <div className="mt-3 flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
+            <div className="min-w-0">
+              <h1 className="cover-title text-[length:clamp(2.2rem,5.6vw,4rem)] text-ink-100">
+                {circle.name}
+              </h1>
+              {circle.tagline && (
+                <p className="mt-2 max-w-[56ch] font-prose text-lg italic text-ink-300">
+                  {circle.tagline}
+                </p>
+              )}
+              <div className="mt-4 flex items-center gap-2.5">
+                <div className="flex -space-x-1.5">
+                  {circle.memberships.map((m) => (
+                    <Avatar
+                      key={m.id}
+                      name={m.user.name}
+                      color={m.user.avatarColor}
+                      size={26}
+                      className="ring-2 ring-ink-950"
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-ink-400">
+                  {circle.memberships
+                    .map((m) => (m.userId === user.id ? "you" : m.user.name.split(" ")[0]))
+                    .join(", ")}
+                </span>
               </div>
-              <span className="text-xs text-ink-500">
-                {circle.memberships.map((m) => m.user.name).join(", ")}
-              </span>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <InviteCode
-              code={circle.inviteCode}
-              circleId={circle.id}
-              isOwner={isAdmin}
-            />
             <UploadButton circleId={circle.id} />
           </div>
-        </div>
+        </header>
 
-        {/* ── Governance ─────────────────────────────────
-            Private circles see the motion to go public; public ones see the
-            standings, the shoutouts, and (for the admin) moderation. */}
-        <PublishVote
-          circleId={circle.id}
-          isPublic={circle.isPublic}
-          proposal={proposal}
-          viewerId={user.id}
-          memberCount={memberCount}
-        />
+        {/* An open vote needs every member's answer — it leads until it closes. */}
+        {proposal && <div className="mt-6">{vote}</div>}
 
-        {circle.isPublic && (
-          <>
-            <ShoutoutStrip
-              shoutouts={shoutouts.map((s) => ({
-                id: s.id,
-                note: s.note,
-                toName: s.to.name,
-                toColor: s.to.avatarColor,
-                fromName: s.from.name,
-                text: s.highlight?.textContent ?? null,
-              }))}
-            />
-            <Leaderboard
-              circleId={circle.id}
-              rows={standings}
-              isAdmin={isAdmin}
-              config={{
-                lbEnabled: circle.lbEnabled,
-                lbWeightPages: circle.lbWeightPages,
-                lbWeightHighlights: circle.lbWeightHighlights,
-                lbWeightDiscussion: circle.lbWeightDiscussion,
-              }}
-            />
-            {isAdmin && (
-              <AdminPanel
-                circleId={circle.id}
-                viewerId={user.id}
-                members={circle.memberships.map((m) => ({
-                  userId: m.userId,
-                  name: m.user.name,
-                  avatarColor: m.user.avatarColor,
-                  role: m.role,
-                }))}
-              />
-            )}
-          </>
-        )}
+        <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_21rem] lg:gap-14">
+          <div className="min-w-0 space-y-12">
+            {/* ── Reading together ─────────────────────────── */}
+            <section aria-labelledby="reading">
+              <SectionHead id="reading" title="Reading together" />
 
-        {/* ── What the circle has built ────────────────
-            Extracted from the reference "My Progress" rings. Collective,
-            accumulated, never competitive — the Vault as the forest you
-            won't abandon (RESEARCH §5). */}
-        {/* The circle's record. Rings implied a target these quantities do
-            not have — nothing here is "out of" anything — so they are set as
-            figures in a ruled band instead, comparable across the row. */}
-        <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5 rounded-md border border-ink-800 bg-ink-900/60 p-5 sm:grid-cols-4">
-          <Datum
-            value={streak}
-            label="Week streak"
-            sub={streak ? "everyone checked in" : "start one this week"}
-          />
-          <Datum
-            value={circle._count.vaultEntries}
-            label="Insights"
-            sub="in the vault"
-          />
-          <Datum
-            value={circle.documents.length}
-            label={circle.documents.length === 1 ? "Book" : "Books"}
-            sub="read together"
-          />
-          <Datum
-            value={totalHighlights}
-            label="Highlights"
-            sub="in the margins"
-          />
-        </div>
-
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_20rem]">
-          {/* ── Books ─────────────────────────────────── */}
-          <section className="min-w-0">
-            <h2 className="plate-label">
-              Reading
-            </h2>
-
-            {circle.documents.length === 0 ? (
-              <Card className="mt-3 border-dashed">
-                <div className="flex flex-col items-center gap-1.5 px-6 py-14 text-center">
-                  <p className="text-sm font-medium text-ink-300">No books yet</p>
-                  <p className="max-w-xs text-xs leading-relaxed text-ink-500">
-                    Upload a PDF to start reading together. Everyone&apos;s highlights
-                    show up in the margins, live.
+              {circle.documents.length === 0 ? (
+                <div className="mt-3 border-y border-ink-800 py-8">
+                  <p className="cover-label text-xl font-bold text-ink-100">
+                    Bring the first book.
                   </p>
+                  <p className="mt-2 max-w-[48ch] text-sm leading-relaxed text-ink-400">
+                    Upload a PDF and it&apos;s on everyone&apos;s shelf. Highlights
+                    land on the exact words, and friends answer in the margin, live.
+                  </p>
+                  <div className="mt-5">
+                    <UploadButton circleId={circle.id} />
+                  </div>
                 </div>
-              </Card>
-            ) : (
-              <div className="mt-3 space-y-3">
-                {circle.documents.map((doc) => {
-                  const mine = doc.progress.find((p) => p.userId === user.id);
-                  const pct = doc.pageCount
-                    ? ((mine?.currentPage ?? 1) / doc.pageCount) * 100
-                    : 0;
+              ) : (
+                <ul className="mt-3 border-t border-ink-800">
+                  {circle.documents.map((doc) => {
+                    const mine = doc.progress.find((p) => p.userId === user.id);
+                    const page = mine?.currentPage ?? 1;
+                    const done = doc.pageCount > 0 && page >= doc.pageCount;
 
-                  return (
-                    <Link key={doc.id} href={`/read/${doc.id}`} className="min-w-0">
-                      <Card className="pressable group flex gap-4 p-4 hover:border-ink-700 hover:bg-ink-850">
-                        <BookCover title={doc.title} author={doc.author} />
-                        <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="min-w-0">
-                            <h3 className="truncate font-medium text-ink-100 transition-colors group-hover:text-accent">
-                              {doc.title}
-                            </h3>
-                            {doc.author && (
-                              <p className="truncate text-xs text-ink-600">
-                                {doc.author}
-                              </p>
-                            )}
-                          </div>
-                          <span className="shrink-0 text-2xs text-ink-600">
-                            {doc._count.highlights}{" "}
-                            {doc._count.highlights === 1 ? "highlight" : "highlights"}
-                          </span>
-                        </div>
+                    return (
+                      <li key={doc.id} className="border-b border-ink-800 py-6">
+                        <div className="flex gap-5">
+                          <Link href={`/read/${doc.id}`} className="pressable shrink-0" tabIndex={-1} aria-hidden="true">
+                            <BookCover title={doc.title} author={doc.author} width={84} />
+                          </Link>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                              <h3 className="min-w-0">
+                                <Link
+                                  href={`/read/${doc.id}`}
+                                  className="cover-label text-xl font-bold leading-tight text-ink-100 hover:underline"
+                                >
+                                  {doc.title}
+                                </Link>
+                              </h3>
+                              <span className="fig shrink-0 text-xs text-ink-500">
+                                {doc._count.highlights}{" "}
+                                {doc._count.highlights === 1 ? "highlight" : "highlights"}
+                              </span>
+                            </div>
+                            {doc.author && <p className="mt-0.5 text-sm text-ink-400">{doc.author}</p>}
 
-                        {/* Progress Match, compact */}
-                        <div className="mt-3 flex items-center gap-3">
-                          <div className="h-1 flex-1 overflow-hidden rounded-full bg-ink-800">
-                            <div
-                              className="h-full bg-accent [transition:width_var(--dur-state)_var(--ease-out)]"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                          <span className="shrink-0 fig text-2xs text-ink-600">
-                            p{mine?.currentPage ?? 1} / {doc.pageCount || "?"}
-                          </span>
-                          <div className="flex shrink-0 -space-x-1">
-                            {circle.memberships.map((m) => {
-                              const p = doc.progress.find((x) => x.userId === m.userId);
-                              return (
-                                <Avatar
-                                  key={m.id}
-                                  name={`${m.user.name} — p${p?.currentPage ?? 1}`}
-                                  color={m.user.avatarColor}
-                                  size={16}
-                                  className="ring-2 ring-ink-900"
-                                />
-                              );
-                            })}
+                            {memberCount > 1 ? (
+                              <FriendsRail
+                                members={members}
+                                progress={doc.progress}
+                                pageCount={doc.pageCount}
+                                viewerId={user.id}
+                                className="mt-4 max-w-md"
+                              />
+                            ) : null}
+
+                            <div className="mt-4 flex flex-wrap items-center gap-3">
+                              <Link
+                                href={`/read/${doc.id}`}
+                                className="cover-label inline-flex items-center gap-2 rounded-[3px] bg-series px-4 py-2.5 text-sm font-bold text-series-ink transition-transform duration-[140ms] active:scale-[0.97]"
+                              >
+                                {done ? "Read again" : page <= 1 ? "Start reading" : `Continue from p${page}`}
+                                <IconArrow size={14} />
+                              </Link>
+                              <span className="fig text-xs text-ink-500">
+                                {done
+                                  ? "You've finished it"
+                                  : `${doc.pageCount - page} ${doc.pageCount - page === 1 ? "page" : "pages"} to go`}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  );
-                })}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+
+            {/* ── The circle's record ──────────────────────── */}
+            <section aria-labelledby="record">
+              <SectionHead id="record" title="What this circle has built" />
+              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-ink-800 py-5 sm:grid-cols-4">
+                <Datum value={streak} label="Week streak" sub={streak ? "everyone checked in" : "starts this week"} />
+                <Datum value={circle._count.vaultEntries} label="Insights" sub="in the vault" />
+                <Datum
+                  value={circle.documents.length}
+                  label={circle.documents.length === 1 ? "Book" : "Books"}
+                  sub="read together"
+                />
+                <Datum value={totalHighlights} label="Highlights" sub="in the margins" />
               </div>
-            )}
-          </section>
+            </section>
 
-          {/* ── Sidebar ───────────────────────────────── */}
-          <div className="space-y-6">
+            {/* ── Public circles: standings and shoutouts ──── */}
+            {circle.isPublic && (
+              <section className="space-y-8">
+                <ShoutoutStrip
+                  shoutouts={shoutouts.map((s) => ({
+                    id: s.id,
+                    note: s.note,
+                    toName: s.to.name,
+                    toColor: s.to.avatarColor,
+                    fromName: s.from.name,
+                    text: s.highlight?.textContent ?? null,
+                  }))}
+                />
+                <Leaderboard
+                  circleId={circle.id}
+                  rows={standings}
+                  isAdmin={isAdmin}
+                  config={{
+                    lbEnabled: circle.lbEnabled,
+                    lbWeightPages: circle.lbWeightPages,
+                    lbWeightHighlights: circle.lbWeightHighlights,
+                    lbWeightDiscussion: circle.lbWeightDiscussion,
+                  }}
+                />
+              </section>
+            )}
+          </div>
+
+          {/* ── This week, and the vault ─────────────────────── */}
+          <aside className="min-w-0 space-y-10">
             <MicroActions
               circleId={circle.id}
               documents={circle.documents.map((d) => ({ id: d.id, title: d.title }))}
@@ -317,38 +320,74 @@ export default async function CirclePage({
                 milestoneTitle: a.milestone?.title ?? null,
                 checkedInBy: a.checkins.map((c) => c.userId),
               }))}
-              members={circle.memberships.map((m) => m.user)}
+              members={members}
               viewerId={user.id}
               thisWeek={thisWeek}
               memberCount={memberCount}
             />
 
-            <Link href={`/circles/${slug}/vault`}>
-              <Card className="group p-4 transition-colors hover:border-accent/40 hover:bg-ink-850">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-start gap-2.5">
-                    <span className="mt-0.5 text-accent">
-                      <IconStarFilled size={14} />
-                    </span>
-                    <div>
-                      <h3 className="text-sm font-medium text-ink-100 transition-colors duration-[120ms] group-hover:text-accent">
-                        Insight Vault
-                      </h3>
-                      <p className="mt-0.5 text-xs text-ink-500">
-                        {circle._count.vaultEntries}{" "}
-                        {circle._count.vaultEntries === 1 ? "insight" : "insights"}{" "}
-                        across every book
-                      </p>
-                    </div>
-                  </div>
-                  <span className="shrink-0 text-ink-600 transition-transform duration-[120ms] group-hover:translate-x-0.5">
-                    <IconArrow size={14} />
+            <Link
+              href={`/circles/${slug}/vault`}
+              className="group block border-y border-ink-800 py-4"
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span className="flex items-start gap-3">
+                  <span className="mt-0.5 text-accent">
+                    <IconStarFilled size={16} />
                   </span>
-                </div>
-              </Card>
+                  <span>
+                    <span className="cover-label block text-base font-bold text-ink-100 group-hover:underline">
+                      The vault
+                    </span>
+                    <span className="mt-0.5 block text-sm text-ink-400">
+                      {circle._count.vaultEntries}{" "}
+                      {circle._count.vaultEntries === 1 ? "insight" : "insights"} kept, across every book
+                    </span>
+                  </span>
+                </span>
+                <span className="shrink-0 text-ink-500 transition-transform duration-[120ms] group-hover:translate-x-0.5">
+                  <IconArrow size={16} />
+                </span>
+              </span>
             </Link>
-          </div>
+          </aside>
         </div>
+
+        {/* ── Circle settings ─────────────────────────────────
+            Things a circle does rarely. Kept on the page — every member
+            should be able to find the invite key and see how going public
+            works — but no longer in front of the book. */}
+        <section aria-labelledby="settings" className="mt-16 border-t border-ink-800 pt-8">
+          <SectionHead id="settings" title="Circle settings" />
+          <div className="mt-5 grid gap-10 lg:grid-cols-2">
+            <div>
+              <h3 className="cover-label text-base font-bold text-ink-100">Invite someone</h3>
+              <p className="mt-1.5 max-w-[48ch] text-sm leading-relaxed text-ink-400">
+                Send the link — it shows them which circle asked, and keeps the
+                code through their sign-up. Or read the code out loud.
+              </p>
+              <div className="mt-4">
+                <InviteCode code={circle.inviteCode} circleId={circle.id} isOwner={isAdmin} />
+              </div>
+            </div>
+            {!proposal && !circle.isPublic && <div>{vote}</div>}
+          </div>
+
+          {circle.isPublic && isAdmin && (
+            <div className="mt-10">
+              <AdminPanel
+                circleId={circle.id}
+                viewerId={user.id}
+                members={circle.memberships.map((m) => ({
+                  userId: m.userId,
+                  name: m.user.name,
+                  avatarColor: m.user.avatarColor,
+                  role: m.role,
+                }))}
+              />
+            </div>
+          )}
+        </section>
       </main>
     </>
   );

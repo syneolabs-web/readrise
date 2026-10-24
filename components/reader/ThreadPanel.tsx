@@ -319,7 +319,7 @@ function CommentRow({
                 await fetch(`/api/comments/${comment.id}`, { method: "DELETE" });
                 onRefetch();
               }}
-              className="text-2xs text-ink-600 transition-colors hover:text-red-400"
+              className="text-2xs text-ink-600 transition-colors hover:text-crit"
             >
               Delete
             </button>

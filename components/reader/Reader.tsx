@@ -135,12 +135,61 @@ export function Reader({
     };
   }, [documentId]);
 
-  // Auto-focus the scroll container when document loads so keyboard arrows work
+  // Open where you left off, then take focus so the keyboard pages the book.
+  //
+  // The reader used to open every book at page 1 even though it knew your
+  // page — "Pick up where you left off" on the dashboard landed you on the
+  // title page. Slots are placeholder-sized from the first page's aspect
+  // before they render, so the target's offset is already stable one frame
+  // after the slots mount.
   useEffect(() => {
-    if (doc && scrollRef.current) {
-      scrollRef.current.focus();
-    }
+    const el = scrollRef.current;
+    if (!doc || !el) return;
+    const raf = requestAnimationFrame(() => {
+      if (initialPage > 1) {
+        el.querySelector(`[data-page-slot="${initialPage}"]`)?.scrollIntoView({ block: "start" });
+      }
+      el.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(raf);
+    // initialPage is the server's value at load; later progress must not re-jump.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc]);
+
+  // Reading keys work wherever focus has wandered — after clicking zoom, a
+  // highlight or the toolbar, focus sits on a button and the page container
+  // no longer receives arrows. Typing in a field (a reply, the page box, the
+  // lounge) is left alone.
+  useEffect(() => {
+    const keys: Record<string, (h: number) => number> = {
+      ArrowDown: () => 64,
+      ArrowUp: () => -64,
+      PageDown: (h) => h * 0.9,
+      PageUp: (h) => -h * 0.9,
+      " ": (h) => h * 0.9,
+    };
+    function onKey(e: KeyboardEvent) {
+      const el = scrollRef.current;
+      if (!el || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target instanceof HTMLElement ? e.target : null;
+      if (t === el) return; // the container scrolls itself natively
+      if (t?.closest("input, textarea, select, [contenteditable], aside, [role=dialog]")) return;
+      // Space activates a focused button or link; never steal that.
+      if (e.key === " " && t?.closest("button, a")) return;
+      if (e.key === "Home" || e.key === "End") {
+        e.preventDefault();
+        el.scrollTo({ top: e.key === "Home" ? 0 : el.scrollHeight, behavior: "smooth" });
+        return;
+      }
+      const step = keys[e.key];
+      if (!step) return;
+      e.preventDefault();
+      const dy = e.key === " " && e.shiftKey ? -step(el.clientHeight) : step(el.clientHeight);
+      el.scrollBy({ top: dy, behavior: "smooth" });
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   // ── Live sync ───────────────────────────────────────────────
   const refetch = useCallback(async () => {
@@ -339,7 +388,7 @@ export function Reader({
         >
           {error ? (
             <div className="flex h-full items-center justify-center">
-              <p className="text-sm text-red-400">{error}</p>
+              <p role="alert" className="text-sm text-crit">{error}</p>
             </div>
           ) : !doc ? (
             <div className="flex h-full items-center justify-center">
@@ -401,9 +450,10 @@ export function Reader({
       {!focus && !sheetOpen && (
         <button
           onClick={() => setSheetOpen(true)}
-          className="fixed bottom-4 right-4 z-30 rounded-full bg-accent px-4 py-3 text-xs font-semibold text-white shadow-lg lg:hidden"
+          className="cover-label fixed bottom-4 right-4 z-30 rounded-[3px] bg-series px-4 py-3 text-sm font-bold text-series-ink shadow-[0_12px_28px_-12px_rgba(0,0,0,0.55)] transition-transform duration-[140ms] active:scale-[0.97] lg:hidden"
+          style={{ marginBottom: "env(safe-area-inset-bottom)" }}
         >
-          Threads{highlights.length ? ` (${highlights.length})` : ""}
+          Threads{highlights.length ? ` · ${highlights.length}` : ""}
         </button>
       )}
 
@@ -460,9 +510,9 @@ function FocusRecap({
         ).map(([n, label]) => (
           <div
             key={label}
-            className="rounded-lg border border-ink-800 bg-ink-850 px-2 py-3"
+            className="rounded-[3px] border border-ink-800 bg-ink-850 px-2 py-3"
           >
-            <p className="fig text-3xl font-semibold text-accent">
+            <p className="fig font-display text-3xl font-bold text-ink-100">
               {n}
             </p>
             <p className="mt-0.5 text-2xs uppercase tracking-[0.12em] text-ink-500">

@@ -240,7 +240,7 @@ export function UploadButton({ circleId }: { circleId: string }) {
             />
           </div>
 
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && <p role="alert" className="text-xs text-crit">{error}</p>}
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="ghost" size="sm" onClick={reset}>
               Cancel

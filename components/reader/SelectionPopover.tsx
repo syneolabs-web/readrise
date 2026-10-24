@@ -71,7 +71,7 @@ export function SelectionPopover({
       ref={ref}
       role="dialog"
       aria-label="Highlight this passage"
-      className="animate-fade-up fixed z-40 -translate-x-1/2 rounded-lg border border-ink-700 bg-ink-850 p-2 shadow-2xl shadow-black/60"
+      className="animate-fade-up fixed z-40 -translate-x-1/2 rounded-[4px] border border-ink-700 bg-ink-850 p-2 shadow-2xl shadow-black/60"
       style={{ left: pos.left, top: pos.top }}
       // The popover must not steal the selection it's acting on.
       onMouseDown={(e) => e.preventDefault()}

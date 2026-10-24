@@ -14,11 +14,13 @@ import { cn } from "@/lib/utils";
  * script in app/layout.tsx.
  */
 
+// The four vibes are the four series colours the landing prints its covers
+// in, so the swatch shows the exact flat colour you'll get.
 const VIBES = [
-  { id: "ember", label: "Ember", a: "#f0b429", b: "#f4703e" },
-  { id: "tide", label: "Tide", a: "#22d3ee", b: "#818cf8" },
-  { id: "bloom", label: "Bloom", a: "#f472b6", b: "#c084fc" },
-  { id: "meadow", label: "Meadow", a: "#4ade80", b: "#a3e635" },
+  { id: "ember", label: "Orange", swatch: "bg-series-orange" },
+  { id: "tide", label: "Blue", swatch: "bg-series-blue" },
+  { id: "bloom", label: "Cerise", swatch: "bg-series-cerise" },
+  { id: "meadow", label: "Green", swatch: "bg-series-green" },
 ] as const;
 
 type Vibe = (typeof VIBES)[number]["id"];
@@ -81,7 +83,7 @@ export function ThemeMenu() {
       </button>
 
       {open && (
-        <div className="animate-fade-up absolute right-0 top-9 z-50 w-52 rounded-lg border border-ink-800 bg-ink-900 p-3 shadow-2xl shadow-black/40">
+        <div className="animate-fade-up absolute right-0 top-9 z-50 w-52 rounded-[4px] border border-ink-800 bg-ink-900 p-3 shadow-2xl shadow-black/40">
           <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
             Theme
           </p>
@@ -123,12 +125,10 @@ export function ThemeMenu() {
                 title={v.label}
                 className={cn(
                   "aspect-square rounded-full transition-transform duration-[120ms] hover:scale-110",
+                  v.swatch,
                   vibe === v.id &&
                     "ring-2 ring-ink-100 ring-offset-2 ring-offset-ink-900 scale-110"
                 )}
-                style={{
-                  backgroundImage: `linear-gradient(135deg, ${v.a}, ${v.b})`,
-                }}
               />
             ))}
           </div>

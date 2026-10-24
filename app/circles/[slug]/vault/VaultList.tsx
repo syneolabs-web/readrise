@@ -187,7 +187,7 @@ export function VaultList({
                 ) : null}
 
                 {e.note && (
-                  <p className="mt-3 rounded-lg bg-ink-850 px-3 py-2 text-xs leading-relaxed text-ink-300">
+                  <p className="mt-3 rounded-[3px] bg-ink-850 px-3 py-2 text-xs leading-relaxed text-ink-300">
                     {e.note}
                   </p>
                 )}

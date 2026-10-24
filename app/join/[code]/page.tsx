@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Button, Card } from "@/components/ui";
+import { Button } from "@/components/ui";
+import { AuthShell } from "@/components/AuthShell";
 
 /**
  * The invite link: /join/ABCD1234
@@ -36,11 +37,11 @@ export default async function JoinByCodePage({
   if (!circle) {
     return (
       <Shell>
-        <h1 className="font-display text-3xl font-light text-ink-100">
+        <h1 className="cover-title text-[length:clamp(2rem,7vw,2.8rem)] text-ink-100">
           That invite doesn&apos;t work
         </h1>
-        <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-ink-400">
-          The code <span className="font-mono tracking-widest">{code}</span>{" "}
+        <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-ink-400">
+          The code <span className="fig font-semibold tracking-widest text-ink-200">{code}</span>{" "}
           doesn&apos;t match any circle. It may have been rotated by the owner —
           ask them for a fresh link.
         </p>
@@ -56,10 +57,8 @@ export default async function JoinByCodePage({
   if (!user) {
     return (
       <Shell>
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-accent">
-          You&apos;ve been invited
-        </p>
-        <h1 className="mt-3 font-display text-4xl font-light text-ink-100">
+        <p className="plate-label">You&apos;ve been invited to</p>
+        <h1 className="cover-title mt-3 text-[length:clamp(2.4rem,8vw,3.4rem)] text-ink-100">
           {circle.name}
         </h1>
         {circle.tagline && (
@@ -72,11 +71,11 @@ export default async function JoinByCodePage({
           {circle._count.documents === 1 ? "book" : "books"}
         </p>
         <div className="mt-7 flex flex-wrap items-center gap-3">
-          <Link href={`/login?next=${encodeURIComponent(`/join/${code}`)}`}>
-            <Button>Sign in to join</Button>
-          </Link>
           <Link href={`/signup?next=${encodeURIComponent(`/join/${code}`)}`}>
-            <Button variant="outline">Create an account</Button>
+            <Button>Create an account to join</Button>
+          </Link>
+          <Link href={`/login?next=${encodeURIComponent(`/join/${code}`)}`}>
+            <Button variant="outline">I already have one</Button>
           </Link>
         </div>
       </Shell>
@@ -90,10 +89,10 @@ export default async function JoinByCodePage({
   if (banned) {
     return (
       <Shell>
-        <h1 className="font-display text-3xl font-light text-ink-100">
+        <h1 className="cover-title text-[length:clamp(2rem,7vw,2.8rem)] text-ink-100">
           You can&apos;t rejoin this circle
         </h1>
-        <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-ink-400">
+        <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-ink-400">
           You were removed from {circle.name}. If you think that was a mistake,
           talk to whoever runs it.
         </p>
@@ -119,8 +118,6 @@ export default async function JoinByCodePage({
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <Card className="w-full max-w-lg p-8 sm:p-10">{children}</Card>
-    </main>
+    <AuthShell>{children}</AuthShell>
   );
 }

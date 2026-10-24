@@ -20,7 +20,10 @@ export async function AppHeader({
 
   return (
     <>
-    <header className="sticky top-0 z-30 border-b border-ink-800 bg-ink-950/85 backdrop-blur">
+    {/* The 3px rule along the top edge is the book's series colour — the
+        same band the landing's cover is printed in, carried into every page. */}
+    <header className="sticky top-0 z-30 border-t-[3px] border-b border-t-series border-b-ink-800 bg-ink-950/90 backdrop-blur">
+
       {/*
         Wraps to two rows on a phone.
 
@@ -33,7 +36,7 @@ export async function AppHeader({
         screen readers.
       */}
       <div className="flex flex-wrap items-center gap-x-3 px-4 py-2 sm:h-14 sm:flex-nowrap sm:gap-x-4 sm:px-6 sm:py-0">
-        <Link href="/circles" className="flex shrink-0 items-center gap-2">
+        <Link href="/circles" aria-label="Readrise home" className="flex shrink-0 items-center gap-2">
           <ReadriseLogo />
         </Link>
 

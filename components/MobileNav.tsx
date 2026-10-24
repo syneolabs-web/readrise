@@ -46,14 +46,16 @@ export function MobileNav() {
                 href={t.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center gap-1 py-3 text-2xs font-medium transition-colors",
-                  active ? "text-accent" : "text-ink-500"
+                  "cover-label relative flex flex-col items-center py-3.5 text-xs font-bold transition-colors",
+                  active ? "text-ink-100" : "text-ink-500"
                 )}
               >
+                {/* The same series-colour rule that marks the current page in
+                    the desktop nav, at the top edge where the thumb isn't. */}
                 <span
                   className={cn(
-                    "h-1 w-1 rounded-full",
-                    active ? "bg-accent" : "bg-transparent"
+                    "absolute inset-x-6 top-0 h-[3px] bg-series transition-transform duration-[240ms]",
+                    active ? "scale-x-100" : "scale-x-0"
                   )}
                   aria-hidden
                 />

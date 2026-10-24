@@ -1,16 +1,29 @@
-import { pickAvatarColor, truncate } from "@/lib/utils";
+import { truncate } from "@/lib/utils";
 
 /**
- * A typographic book cover — a little cream "book" with the title in the
- * display serif and a coloured spine.
+ * A typographic book cover, printed as a series paperback: a colour band,
+ * the paper band carrying the title, a colour band at the foot.
  *
- * The references lean on real cover art; our books are uploaded PDFs with no
- * artwork, so we render an honest typographic cover instead. It reuses the
- * paper material (the same cream as the reading surface), which makes each
- * card read as a tiny book — the "paper as material" identity carried into
- * the shelf. The spine colour is deterministic from the title, so a book keeps
- * the same identity everywhere it appears.
+ * Our books are uploaded PDFs with no artwork, so the cover is honest
+ * typography (D20) — now in the same grammar as the landing's shelf, so a
+ * book on your dashboard looks like the books on the cover that brought you
+ * here. The band colour is one of the four series colours, chosen
+ * deterministically from the title, so a book keeps its colour everywhere it
+ * appears. It is content colour, like a spine — not the viewer's vibe.
  */
+const SERIES = [
+  { band: "bg-series-orange", ink: "text-[var(--series-orange-ink)]" },
+  { band: "bg-series-blue", ink: "text-[var(--series-blue-ink)]" },
+  { band: "bg-series-cerise", ink: "text-[var(--series-cerise-ink)]" },
+  { band: "bg-series-green", ink: "text-[var(--series-green-ink)]" },
+] as const;
+
+export function seriesFor(title: string) {
+  let h = 0;
+  for (let i = 0; i < title.length; i++) h = (h * 31 + title.charCodeAt(i)) >>> 0;
+  return SERIES[h % SERIES.length]!;
+}
+
 export function BookCover({
   title,
   author,
@@ -20,36 +33,36 @@ export function BookCover({
   author?: string | null;
   width?: number;
 }) {
-  const spine = pickAvatarColor(title);
-  const height = Math.round(width * 1.4);
+  const s = seriesFor(title);
+  const height = Math.round(width * 1.5);
+  const big = width >= 80;
 
   return (
     <div
-      className="relative shrink-0 overflow-hidden rounded-sm bg-paper shadow-md shadow-black/40"
+      className="relative flex shrink-0 flex-col overflow-hidden bg-paper shadow-[0_8px_18px_-10px_rgba(0,0,0,0.55),0_1px_2px_rgba(0,0,0,0.15)] ring-1 ring-black/10"
       style={{ width, height }}
       aria-hidden="true"
     >
-      {/* The spine. */}
-      <span
-        className="absolute inset-y-0 left-0 w-[3px]"
-        style={{ background: spine }}
-      />
-      <div className="flex h-full flex-col justify-between py-2 pl-2.5 pr-1.5">
-        <p
-          className="font-display font-semibold leading-[1.05] text-paper-ink"
-          style={{ fontSize: Math.max(7, width * 0.15) }}
+      {/* spine shading, as on a real paperback */}
+      <span className="absolute inset-y-0 left-0 z-10 w-[3px] bg-black/10" />
+      <span className={`${s.band} block`} style={{ height: height * 0.2 }} />
+      <span className="flex flex-1 flex-col justify-center px-[9%]">
+        <span
+          className="cover-title block text-paper-ink"
+          style={{ fontSize: Math.max(7, width * (big ? 0.12 : 0.14)), lineHeight: 1 }}
         >
-          {truncate(title, 42)}
-        </p>
-        {author && (
-          <p
-            className="font-prose italic leading-tight text-paper-ink/55"
-            style={{ fontSize: Math.max(6, width * 0.11) }}
+          {truncate(title, big ? 48 : 30)}
+        </span>
+        {author && big && (
+          <span
+            className="mt-1.5 block leading-tight text-paper-ink/60"
+            style={{ fontSize: Math.max(6, width * 0.075) }}
           >
-            {truncate(author, 24)}
-          </p>
+            {truncate(author, 28)}
+          </span>
         )}
-      </div>
+      </span>
+      <span className={`${s.band} block`} style={{ height: height * 0.14 }} />
     </div>
   );
 }

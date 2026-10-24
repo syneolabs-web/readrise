@@ -14,39 +14,40 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+/**
+ * The truth is what the pre-paint script in app/layout.tsx already stamped on
+ * <html>, read from the same `pdx-*` keys ThemeMenu writes. This provider used
+ * to keep its own `readrise-*` keys and hide the whole tree until mount, so a
+ * choice made in the app didn't carry to the landing and every first paint
+ * was blank until hydration.
+ */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light');
+  const [theme, setThemeState] = useState<Theme>('dark');
   const [vibe, setVibeState] = useState<Vibe>('ember');
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const savedTheme = (localStorage.getItem('readrise-theme') as Theme) || 'light';
-    const savedVibe = (localStorage.getItem('readrise-vibe') as Vibe) || 'ember';
+    const d = document.documentElement;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setThemeState(savedTheme);
-    setVibeState(savedVibe);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    document.documentElement.setAttribute('data-vibe', savedVibe);
-    setMounted(true);
+    setThemeState(d.dataset.theme === 'light' ? 'light' : 'dark');
+    const v = d.dataset.vibe as Vibe;
+    if (['ember', 'tide', 'bloom', 'meadow'].includes(v)) setVibeState(v);
   }, []);
 
   const setTheme = (t: Theme) => {
     setThemeState(t);
-    localStorage.setItem('readrise-theme', t);
+    localStorage.setItem('pdx-theme', t);
     document.documentElement.setAttribute('data-theme', t);
   };
 
   const setVibe = (v: Vibe) => {
     setVibeState(v);
-    localStorage.setItem('readrise-vibe', v);
+    localStorage.setItem('pdx-vibe', v);
     document.documentElement.setAttribute('data-vibe', v);
   };
 
   return (
     <ThemeContext.Provider value={{ theme, vibe, setTheme, setVibe }}>
-      <div className={!mounted ? "invisible" : ""}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 }

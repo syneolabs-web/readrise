@@ -120,7 +120,7 @@ export function Leaderboard({
                   />
                   <span className="text-2xs text-ink-500">
                     {s.label}
-                    <span className="ml-1 fig text-ink-700">
+                    <span className="ml-1 fig text-ink-500">
                       ×{weights[s.key]}
                     </span>
                   </span>

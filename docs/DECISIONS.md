@@ -184,6 +184,55 @@ vault of books assembles in the finale. Craft rules that are load-bearing:
 - Brand on the landing is **Readrise** (user's rename via their own mockups
   and antigravity edits).
 
+**D31 — [SUPERSEDES the WebGL story landing above] The landing is a
+paperback.** Per user direction (October 2026: "growth & joy" over the
+doomscroll story, and a visual world chosen from presented options), the
+landing became *The Paperback* (DESIGN.md, last section): series-colour bands
+where the four vibes are the four classic paperback series colours, a cover
+hero with BOTH real actions (start a circle, and a working invite-code field
+→ `/join/CODE`, since half the visitors arrive from a friend's link), a
+scroll-scrubbed night→day wipe over the two illustrations, and a pinned demo
+of the whole loop on a real Walden page. Why the WebGL scene went: it drew
+primitive characters, hid the page until hydration, fetched a remote HDR
+(contradicting its own "no remote HDRs" rule), and never showed the product.
+Video was planned but the Higgsfield account had no credits; the picture
+fields are built so a clip can replace an image later. Loop/autoplay
+restraint (D15) still holds: every motion is scroll-driven or fires once.
+The old scene files (`components/story-scene.tsx`, `character-model.tsx`,
+`components/marketing/{StoryScene,Overlay,ClientExperience,AmbientBackground}`,
+`app/(marketing)/Manifesto.tsx`) are no longer imported.
+
+Fixed alongside: `ThemeProvider` kept its own `readrise-*` storage keys while
+the pre-paint script and `ThemeMenu` used `pdx-*`, so the landing and the app
+disagreed about theme, and it rendered the whole tree `invisible` until
+mount. It now reads the stamped `<html>` attributes and writes `pdx-*`.
+
+**D32 — The app is the inside of the paperback.** User direction (October
+2026): the signed-in app should feel like the same product as the new
+landing. One token set now (the landing's `--cover-*` and the auth pages'
+`--paper/--ink/...` became aliases of the ink ramp), one variable Archivo
+(Narrow retired), the vibe's series colour as the accent, the colophon as the
+logo. Page order follows frequency of use: home leads with tonight's page and
+a Continue button, then this week's habit with an inline check-in; a circle
+leads with the book read together beside the habit, and its rare admin
+actions moved to a "Circle settings" footer (an open vote still leads).
+Bugs found and fixed on the way, each worth remembering:
+- **B5** The reader opened every book at page 1 although it knew your page —
+  "Pick up where you left off" landed on the title page.
+- **B6** Login, signup and profile read `data.message`; the API returns
+  `{ error }`. Every failure showed a generic fallback (a duplicate email on
+  signup said "Failed to sign up").
+- **B7** Switching between login and signup dropped `?next=/join/CODE`, so a
+  friend arriving from an invite lost the invite by picking the other form.
+- **B8** Choosing "use my initials" on the profile sent `avatarImage:
+  undefined` (= "no change"), so you could never go back from a picture.
+- **B9** Reading keys died once focus left the page column (any toolbar
+  click). A window-level handler now pages the book unless you're typing.
+- Contrast: `ink-600`, used for timestamps app-wide, was ~2:1; the ramp now
+  guarantees ≥ 3.8:1 for 600 and ≥ 4.5:1 for 500.
+Also retired: the profile's permanently pulsing streak badge (D15), the
+first-run banner's neon glow, and a dead "Forgot password?" link to `#`.
+
 ## The character asset pipeline (Blender)
 
 **D22 — Characters are the user's sculpt trilogy, processed by a scripted

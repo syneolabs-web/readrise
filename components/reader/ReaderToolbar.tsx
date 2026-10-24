@@ -14,8 +14,19 @@ function fmt(seconds: number): string {
 }
 
 /**
+ * The running head: what a printed book carries across the top of every
+ * page — the title, where you are — and nothing that competes with the text.
+ *
  * Progress Match lives here rather than on a settings page: seeing that your
  * friend is 40 pages ahead is only motivating if you see it while reading.
+ *
+ * On a phone the bar used to be 442px of controls in a 390px screen: the page
+ * counter and theme menu were cut off and the title collapsed to nothing.
+ * Now the title always keeps its line, zoom and the friends' positions
+ * appear from `sm`/`md` up, and Focus shrinks to its icon.
+ *
+ * Under the bar, one rule in the series colour shows how far into the book
+ * you are — the same "show, don't narrate" progress as everywhere else.
  */
 export function ReaderToolbar({
   title,
@@ -49,103 +60,105 @@ export function ReaderToolbar({
   onEndFocus: () => void;
 }) {
   const sorted = [...members].sort((a, b) => b.currentPage - a.currentPage);
+  const pct = pageCount ? Math.min(100, (currentPage / pageCount) * 100) : 0;
 
   return (
-    <header className="z-20 flex h-14 shrink-0 items-center gap-4 border-b border-ink-800 bg-ink-950 px-4">
-      <Link
-        href={`/circles/${circleSlug}`}
-        className="inline-flex shrink-0 items-center gap-1 rounded-sm text-xs text-ink-500 transition-colors duration-[120ms] hover:text-ink-200"
-      >
-        <IconBack size={13} />
-        Circle
-      </Link>
+    <header className="relative z-20 shrink-0 border-b border-ink-800 bg-ink-950">
+      <div className="flex h-14 items-center gap-2 px-3 sm:gap-4 sm:px-4">
+        <Link
+          href={`/circles/${circleSlug}`}
+          aria-label="Back to the circle"
+          className="cover-label inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[3px] px-1.5 text-xs font-semibold text-ink-400 transition-colors duration-[120ms] hover:text-ink-100"
+        >
+          <IconBack size={15} />
+          <span className="hidden sm:inline">Circle</span>
+        </Link>
 
-      <div className="min-w-0 shrink">
-        <h1 className="truncate text-sm font-medium text-ink-100">{title}</h1>
-        {author && <p className="truncate text-2xs text-ink-600">{author}</p>}
-      </div>
+        <div className="min-w-0 flex-1">
+          <h1 className="cover-label truncate text-sm font-bold text-ink-100">{title}</h1>
+          {author && <p className="truncate text-2xs text-ink-500">{author}</p>}
+        </div>
 
-      {/* ── Focus session ──────────────────────────────── */}
-      <div className="ml-auto flex items-center gap-2">
+        {/* ── Progress Match ─────────────────────────────────
+            Not rendered during focus: other people's positions are periphery,
+            and periphery leaves the room when deep work starts (RESEARCH §3). */}
+        {!focus && (
+          <div className="hidden items-center gap-2.5 border-r border-ink-800 pr-4 md:flex">
+            {sorted.map((m) => {
+              const p = pageCount ? (m.currentPage / pageCount) * 100 : 0;
+              const me = m.id === viewerId;
+              return (
+                <div
+                  key={m.id}
+                  className="flex items-center gap-1.5"
+                  title={`${me ? "You" : m.name} — page ${m.currentPage} of ${pageCount}`}
+                >
+                  <Avatar
+                    name={m.name}
+                    color={m.avatarColor}
+                    size={22}
+                    className={me ? "ring-2 ring-accent ring-offset-1 ring-offset-ink-950" : ""}
+                  />
+                  <div className="h-1 w-9 bg-ink-800">
+                    <div
+                      className="h-full [transition:width_var(--dur-state)_var(--ease-out)]"
+                      style={{ width: `${p}%`, background: m.avatarColor }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── Focus session ──────────────────────────────── */}
         {focus ? (
-          <>
-            {/* The one inked element on this bar while a session runs. Solid, not
-                a gradient: a gradient on a running clock implies the colour
-                means something, and it does not. */}
-            <span className="fig inline-flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1 text-xs font-semibold text-on-accent">
+          <div className="flex shrink-0 items-center gap-2">
+            {/* The one inked element on this bar while a session runs. */}
+            <span className="fig inline-flex items-center gap-1.5 rounded-[3px] bg-series px-2.5 py-1.5 text-xs font-bold text-series-ink">
               <IconFocus size={13} />
               {fmt(elapsed)}
             </span>
             <Button variant="outline" size="sm" onClick={onEndFocus}>
-              End session
+              End<span className="hidden sm:inline">&nbsp;session</span>
             </Button>
-          </>
+          </div>
         ) : (
-          <Button variant="outline" size="sm" onClick={onStartFocus}>
-            <IconFocus size={13} />
-            Focus
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onStartFocus}
+            aria-label="Start a focus session"
+            className="shrink-0"
+          >
+            <IconFocus size={14} />
+            <span className="hidden sm:inline">Focus</span>
           </Button>
         )}
-      </div>
 
-      {/* ── Progress Match ─────────────────────────────────
-          Not rendered during focus: other people's positions are periphery,
-          and periphery leaves the room when deep work starts (RESEARCH §3). */}
-      {!focus && (
-      <div className="hidden items-center gap-3 md:flex">
-        <div className="flex items-center gap-2">
-          {sorted.map((m) => {
-            const pct = pageCount ? (m.currentPage / pageCount) * 100 : 0;
-            return (
-              <div
-                key={m.id}
-                className="group relative flex items-center gap-1.5"
-                title={`${m.name} — page ${m.currentPage} of ${pageCount}`}
-              >
-                <Avatar
-                  name={m.name}
-                  color={m.avatarColor}
-                  size={22}
-                  className={m.id === viewerId ? "ring-2 ring-accent" : ""}
-                />
-                <div className="h-1 w-10 bg-ink-800">
-                  <div
-                    className="h-full [transition:width_var(--dur-state)_var(--ease-out)]"
-                    style={{ width: `${pct}%`, background: m.avatarColor }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="h-5 w-px bg-ink-800" />
-      </div>
-      )}
-
-      <div className="flex shrink-0 items-center gap-1.5">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onScale(Math.max(0.6, +(scale - 0.15).toFixed(2)))}
-          aria-label="Zoom out"
-        >
-          <IconMinus size={14} />
-        </Button>
         {/* Zoom is the live proof that anchoring is resolution-independent:
-            highlights track the text at every scale. */}
-        <span className="fig w-10 text-center text-2xs text-ink-500">
-          {Math.round(scale * 100)}%
-        </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onScale(Math.min(3, +(scale + 0.15).toFixed(2)))}
-          aria-label="Zoom in"
-        >
-          <IconPlus size={14} />
-        </Button>
-
-        <div className="mx-1 h-5 w-px bg-ink-800" />
+            highlights track the text at every scale. Phones pinch instead. */}
+        <div className="hidden shrink-0 items-center sm:flex">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onScale(Math.max(0.6, +(scale - 0.15).toFixed(2)))}
+            aria-label="Zoom out"
+          >
+            <IconMinus size={14} />
+          </Button>
+          <span className="fig w-10 text-center text-2xs text-ink-500">
+            {Math.round(scale * 100)}%
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onScale(Math.min(3, +(scale + 0.15).toFixed(2)))}
+            aria-label="Zoom in"
+          >
+            <IconPlus size={14} />
+          </Button>
+        </div>
 
         <form
           onSubmit={(e) => {
@@ -154,20 +167,36 @@ export function ReaderToolbar({
             const page = Number(input);
             if (page >= 1 && page <= pageCount) onJump(page);
           }}
-          className="flex items-center gap-1"
+          className="flex shrink-0 items-center gap-1"
         >
           <input
             name="page"
             key={currentPage}
             defaultValue={currentPage}
-            aria-label="Page number"
-            className="fig w-10 rounded-sm border border-ink-800 bg-ink-900 px-1 py-0.5 text-center text-xs text-ink-200 focus:border-accent/50 focus:outline-none"
+            inputMode="numeric"
+            aria-label={`Page number, of ${pageCount}`}
+            className="fig h-8 w-10 rounded-[3px] border border-ink-700 bg-ink-900 px-1 text-center text-xs text-ink-100 focus:border-ink-300 focus:outline-none"
           />
-          <span className="fig text-xs text-ink-600">/ {pageCount}</span>
+          <span className="fig text-xs text-ink-500">/{pageCount}</span>
         </form>
 
-        <div className="mx-1 h-5 w-px bg-ink-800" />
+        {/* Kept on phones: switching to dark pages is a night-reading need. */}
         <ThemeMenu />
+      </div>
+
+      {/* Where you are in the book, as one printed rule. */}
+      <div
+        className="absolute inset-x-0 -bottom-px h-[3px] bg-transparent"
+        role="progressbar"
+        aria-label="Your place in the book"
+        aria-valuemin={1}
+        aria-valuemax={pageCount}
+        aria-valuenow={currentPage}
+      >
+        <div
+          className="h-full bg-series [transition:width_var(--dur-state)_var(--ease-out)]"
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </header>
   );
