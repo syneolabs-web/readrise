@@ -23,8 +23,8 @@ const STORAGE_DIR = process.env.STORAGE_DIR || "./storage";
 const BUCKET = "documents";
 export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024; // 50MB
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SECRET_KEY = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const useSupabase = Boolean(SUPABASE_URL && SECRET_KEY);
 
@@ -47,7 +47,7 @@ function assertStorageConfigured(): void {
   if (useSupabase || process.env.NODE_ENV !== "production") return;
 
   const missing = [
-    !SUPABASE_URL && "NEXT_PUBLIC_SUPABASE_URL",
+    !SUPABASE_URL && "SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL)",
     !SECRET_KEY && "SUPABASE_SECRET_KEY",
   ].filter(Boolean);
 
