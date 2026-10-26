@@ -1,5 +1,22 @@
 # UI/UX audit & future plan
 
+> **Status, October 2026 (verified in the browser):**
+> - **P0-1 fixed** — wheel and PageDown scroll the reader; reading keys now
+>   also work after focus leaves the page (window handler, D32/B9); the
+>   reader opens at your saved page (B5).
+> - **P0-2 fixed** — threads are a bottom sheet below `lg`; the toolbar fits
+>   a 390px phone (it was 442px wide).
+> - **P1-3 fixed** — one token vocabulary; the second set are aliases (D32).
+> - **P1-4 done** — `AuthForm.tsx` no longer exists; login/signup share
+>   `components/AuthShell.tsx`.
+> - **P1-6 decided** — notifications were adopted by D21; the bell stays,
+>   and the home page shows the same items under "Addressed to you".
+> - **P2-7 fixed** — home is reordered: tonight's book leads on every width.
+> - **P2-9 done** — standings already explain an all-zero board.
+> - **P2-8 / P2-10 open** (repo weight, leaderboard query cost).
+> - **P1-5 partly** — the UI says Readrise everywhere; seed emails and the
+>   package name still say Prodoxity.
+
 > Snapshot taken July 2026, after the public-circles work. Every finding below
 > was verified in the codebase or the browser — nothing here is a guess. Items
 > are ranked by what a real user would hit first, not by how interesting they

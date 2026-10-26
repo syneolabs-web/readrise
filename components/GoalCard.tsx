@@ -94,9 +94,9 @@ export function GoalCard({
           pill-shaped: this is a measure against a scale, and a rounded cap
           makes the reading ambiguous at exactly the ends where precision
           matters most. */}
-      <div className="relative mt-3 h-1.5 bg-ink-800">
+      <div className="relative mt-3 h-2 rounded-full overflow-hidden bg-ink-800">
         <div
-          className="h-full bg-accent transition-[width] duration-500"
+          className="h-full rounded-full bg-accent transition-[width] duration-500 shadow-sm"
           style={{ width: `${pct}%` }}
         />
         <span

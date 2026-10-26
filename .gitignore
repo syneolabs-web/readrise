@@ -32,3 +32,6 @@ new changes/
 graphify-out/cache/
 .vercel
 .env*
+.codex/
+.impeccable/
+*.local.json

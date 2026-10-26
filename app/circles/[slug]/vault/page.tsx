@@ -55,14 +55,19 @@ export default async function VaultPage({
         <CircleNav slug={slug} name={circle.name} active="vault" />
       </AppHeader>
 
-      <main className="mx-auto max-w-3xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Insight Vault</h1>
-          <p className="mt-1 max-w-xl text-sm leading-relaxed text-ink-500">
-            Everything {circle.name} decided was worth keeping, indexed across every
-            book. Your circle&apos;s second brain — searchable, permanent, private.
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-10">
+        <header className="border-b border-ink-800 pb-7">
+          <p className="plate-label">
+            {circle.name} · {entries.length} {entries.length === 1 ? "insight" : "insights"}
           </p>
-        </div>
+          <h1 className="cover-title mt-3 text-[length:clamp(2.2rem,5.6vw,3.6rem)] text-ink-100">
+            The vault
+          </h1>
+          <p className="mt-3 max-w-[56ch] text-base leading-relaxed text-ink-400">
+            Everything {circle.name} decided was worth keeping, across every book
+            you&apos;ve read together. Searchable, permanent, private to the circle.
+          </p>
+        </header>
 
         <VaultList
           viewerId={user.id}

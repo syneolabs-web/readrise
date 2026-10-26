@@ -1,14 +1,19 @@
-import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { getHeatmap, getMyProgress } from "@/lib/activity";
 import { AppHeader } from "@/components/AppHeader";
+import { AppNav } from "@/components/AppNav";
 import { HeatmapChart } from "@/components/HeatmapChart";
 import { ProfileForm } from "./ProfileForm";
-import { Card } from "@/components/ui";
-import { IconFlame } from "@/components/icons";
+import { Avatar, Datum, SectionHead } from "@/components/ui";
 import { getPublicStanding } from "@/lib/circle-governance";
 import { PublicStanding } from "@/components/PublicStanding";
 
+/**
+ * You: your record first (the practice), your settings after (the account).
+ * The streak used to sit in a glowing, permanently pulsing badge — a loop
+ * animation (banned, D15) on the exact number the product promises never to
+ * dramatise. It's a figure in the record now, like every other figure.
+ */
 export default async function ProfilePage() {
   const user = await requireUser();
   const [heatmapData, progress, standing] = await Promise.all([
@@ -20,66 +25,45 @@ export default async function ProfilePage() {
   return (
     <>
       <AppHeader user={user}>
-        <nav className="hidden items-center gap-1 sm:flex">
-          <Link
-            href="/circles"
-            className="rounded-md px-2.5 py-1 text-xs font-medium text-ink-500 transition-colors duration-[120ms] hover:bg-ink-900 hover:text-ink-300"
-          >
-            Home
-          </Link>
-          <Link
-            href="/discover"
-            className="rounded-md px-2.5 py-1 text-xs font-medium text-ink-500 transition-colors duration-[120ms] hover:bg-ink-900 hover:text-ink-300"
-          >
-            Discover
-          </Link>
-          <span className="rounded-md bg-ink-800 px-2.5 py-1 text-xs font-medium text-ink-100">
-            Profile
-          </span>
-        </nav>
+        <AppNav active="profile" />
       </AppHeader>
 
-      <main className="mx-auto max-w-3xl px-4 py-8 pb-24 sm:px-6 sm:py-12 sm:pb-12">
-        <div className="mb-8">
-          <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-accent">
-            Account
-          </p>
-          <h1 className="mt-1 font-display text-4xl font-light tracking-tight">
-            Your Profile
-          </h1>
-        </div>
+      <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-10">
+        <header className="flex flex-wrap items-center gap-5 border-b border-ink-800 pb-8">
+          <Avatar name={user.name} color={user.avatarColor} image={user.avatarImage} size={72} />
+          <div className="min-w-0">
+            <p className="plate-label">Your record</p>
+            <h1 className="cover-title mt-2 text-[length:clamp(2.2rem,5.6vw,3.6rem)] text-ink-100">{user.name}</h1>
+          </div>
+        </header>
 
-        <div className="space-y-8">
-          {/* GitHub-style Streak Chart / Heatmap */}
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="plate-label">
-                Activity (Last 90 Days)
-              </h2>
-              {progress.streak > 0 && (
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-bold border border-accent/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                  <IconFlame size={14} className="animate-pulse" />
-                  <span>{progress.streak} Week Streak</span>
-                </div>
-              )}
-            </div>
-            <Card className="p-6">
-              <HeatmapChart days={heatmapData} />
-            </Card>
-          </section>
+        <section aria-labelledby="record" className="mt-10">
+          <SectionHead id="record" title="What you've built" />
+          <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-ink-800 py-5 sm:grid-cols-4">
+            <Datum value={progress.streak} label="Week streak" sub={progress.streak ? "unbroken" : "starts this week"} />
+            <Datum value={progress.highlights} label="Highlights" sub="all time" />
+            <Datum value={progress.insights} label="In the vault" sub="saved insights" />
+            <Datum value={progress.books} label={progress.books === 1 ? "Book" : "Books"} sub="opened" />
+          </div>
+        </section>
 
+        <section aria-labelledby="days" className="mt-12">
+          <SectionHead id="days" title="The last 90 days" />
+          <div className="mt-4">
+            <HeatmapChart days={heatmapData} />
+          </div>
+        </section>
+
+        <div className="mt-12">
           <PublicStanding standing={standing} />
-
-          {/* Settings Form */}
-          <section>
-            <h2 className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500 mb-3">
-              Personal Information
-            </h2>
-            <Card className="p-6 sm:p-8">
-              <ProfileForm user={user} />
-            </Card>
-          </section>
         </div>
+
+        <section aria-labelledby="account" className="mt-14 border-t border-ink-800 pt-8">
+          <SectionHead id="account" title="Account" />
+          <div className="mt-6">
+            <ProfileForm user={user} />
+          </div>
+        </section>
       </main>
     </>
   );

@@ -1,19 +1,32 @@
 import {
+  Activity,
   ArrowLeft,
   ArrowRight,
+  Award,
+  Bookmark,
+  BookOpen,
+  Calendar,
   Check,
+  CheckCircle2,
   ChevronUp,
   Flame,
   Focus,
   Highlighter,
+  Library,
   Lock,
   Megaphone,
+  MessageSquare,
   Minus,
   Plus,
+  Sparkles,
   Star,
+  Target,
   Trash2,
+  TrendingUp,
   Upload,
+  Users,
   X,
+  Zap,
 } from "lucide-react";
 
 /**
@@ -71,6 +84,19 @@ export const IconBack = make(ArrowLeft);
 export const IconHighlighter = make(Highlighter);
 export const IconFocus = make(Focus);
 export const IconMegaphone = make(Megaphone);
+export const IconBookOpen = make(BookOpen);
+export const IconSparkles = make(Sparkles);
+export const IconTrendingUp = make(TrendingUp);
+export const IconAward = make(Award);
+export const IconMessage = make(MessageSquare);
+export const IconCheckCircle = make(CheckCircle2);
+export const IconBookmark = make(Bookmark);
+export const IconUsers = make(Users);
+export const IconTarget = make(Target);
+export const IconActivity = make(Activity);
+export const IconLibrary = make(Library);
+export const IconCalendar = make(Calendar);
+export const IconZap = make(Zap);
 
 /** Filled star for the vaulted state — fill is the state, not a second icon. */
 export function IconStarFilled({ size = ICON.md, className, label }: IconProps) {

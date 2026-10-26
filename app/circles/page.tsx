@@ -1,27 +1,37 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getCircleActivity, getMyProgress } from "@/lib/activity";
-import { relativeTime } from "@/lib/utils";
+import { getCircleActivity, getMyProgress, getNotifications } from "@/lib/activity";
+import { weekOf } from "@/lib/utils";
 import { AppHeader } from "@/components/AppHeader";
-import { Avatar, Card, Datum, Label, Spark } from "@/components/ui";
-import { BookCover } from "@/components/BookCover";
+import { AppNav } from "@/components/AppNav";
 import { GoalCard } from "@/components/GoalCard";
 import { computeGoal } from "@/lib/reading-goal";
-import { IconArrow } from "@/components/icons";
 import { CircleActions } from "./CircleActions";
+import { ReadingHeroCard } from "@/components/dashboard/ReadingHeroCard";
+import { ReadingLoopDiagram } from "@/components/dashboard/ReadingLoopDiagram";
+import { HabitMatrixCard } from "@/components/dashboard/HabitMatrixCard";
+import { ShelfShowcase } from "@/components/dashboard/ShelfShowcase";
+import { ReadingStatsLedger } from "@/components/dashboard/ReadingStatsLedger";
+import { ActivityFeedTimeline } from "@/components/dashboard/ActivityFeedTimeline";
+import { CircleOrbitCard } from "@/components/dashboard/CircleOrbitCard";
+import { IconSparkles } from "@/components/icons";
 
 /**
- * The home after login: an activity dashboard (per the reference direction).
- * Three panels — what your circles are doing, what you're reading, and what
- * you've built. All from circles you belong to; discovery lives on /discover.
+ * Modernized Diagrammatic Home Dashboard:
+ * 1. Command Stage / Hero: Compact 2-column card with actions & stats.
+ * 2. Circle Reading Loop: Streamlined, collapsible 5-stage tracker.
+ * 3. Primary Column: Circle Activity Stream front-and-center + Shared Bookshelf.
+ * 4. Sidebar: Weekly Habit challenge + Personal Ledger + Circles Orbit.
  */
 export default async function DashboardPage() {
   const user = await requireUser();
+  const thisWeek = weekOf();
 
-  const [activity, progress, memberships] = await Promise.all([
-    getCircleActivity(user.id),
+  const [activity, progress, notifications, memberships] = await Promise.all([
+    getCircleActivity(user.id, 10),
     getMyProgress(user.id),
+    getNotifications(user.id, 3),
     db.membership.findMany({
       where: { userId: user.id },
       include: {
@@ -29,9 +39,21 @@ export default async function DashboardPage() {
           include: {
             documents: {
               orderBy: { createdAt: "desc" },
-              include: { progress: { where: { userId: user.id } } },
+              include: {
+                progress: {
+                  include: { user: { select: { id: true, name: true, avatarColor: true } } },
+                },
+              },
             },
-            _count: { select: { memberships: true } },
+            memberships: {
+              include: { user: { select: { id: true, name: true, avatarColor: true } } },
+              orderBy: { joinedAt: "asc" },
+            },
+            actions: {
+              where: { weekOf: thisWeek },
+              orderBy: { createdAt: "asc" },
+              include: { checkins: { select: { userId: true } } },
+            },
           },
         },
       },
@@ -39,309 +61,242 @@ export default async function DashboardPage() {
     }),
   ]);
 
-  // Goals belong to whoever uploaded the book — they made the commitment, so
-  // it's their home it shows up on. Finished goals drop off rather than
-  // lingering as a to-do that's already done.
-  const goals = memberships
-    .flatMap((m) => m.circle.documents)
-    .filter((d) => d.uploadedById === user.id)
-    .map((d) => ({
-      documentId: d.id,
-      title: d.title,
-      pageCount: d.pageCount,
-      page: d.progress[0]?.currentPage ?? 1,
-      goal: computeGoal({ ...d, currentPage: d.progress[0]?.currentPage ?? 1 }),
-    }))
-    .filter((g) => g.goal !== null && g.goal.status !== "done")
-    .slice(0, 3);
-
-  // The edition line. An atlas is dated; so is a record of a practice, and it
-  // quietly answers "is this current?" without a "last updated" label.
   const edition = new Date().toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long",
   });
 
-  // Started but not finished — the honest count of what you're carrying.
-  const inFlight = memberships
-    .flatMap((m) => m.circle.documents)
-    .filter((d) => {
-      const page = d.progress[0]?.currentPage ?? 1;
-      return page > 1 && page < d.pageCount;
-    }).length;
-
-  // Flatten the viewer's books across circles for the reading snapshot.
-  const books = memberships
-    .flatMap((m) =>
-      m.circle.documents.map((d) => ({
+  // Every book you can read, with your page in it.
+  const books = memberships.flatMap((m) =>
+    m.circle.documents.map((d) => {
+      const mine = d.progress.find((p) => p.userId === user.id);
+      return {
         id: d.id,
         title: d.title,
         author: d.author,
         pageCount: d.pageCount,
-        page: d.progress[0]?.currentPage ?? 1,
-        circleName: m.circle.name,
-      }))
-    )
-    .slice(0, 6);
+        page: mine?.currentPage ?? 1,
+        touched: mine?.updatedAt ?? null,
+        circle: m.circle,
+        doc: d,
+      };
+    })
+  );
+
+  // Tonight's book: the unfinished one you touched most recently; failing
+  // that, the newest one you haven't opened.
+  const unfinished = books.filter((b) => !b.pageCount || b.page < b.pageCount);
+  const current =
+    [...unfinished]
+      .filter((b) => b.touched)
+      .sort((a, b) => b.touched!.getTime() - a.touched!.getTime())[0] ??
+    unfinished[0] ??
+    null;
+
+  const currentGoal = current
+    ? computeGoal({ ...current.doc, currentPage: current.page })
+    : null;
+
+  // Goals for books you brought, except the one already leading the page.
+  const goals = books
+    .filter((b) => b.doc.uploadedById === user.id && b.id !== current?.id)
+    .map((b) => ({ b, goal: computeGoal({ ...b.doc, currentPage: b.page }) }))
+    .filter((g) => g.goal && g.goal.status !== "done")
+    .slice(0, 2);
+
+  const habits = memberships.flatMap((m) =>
+    m.circle.actions.map((a) => ({
+      id: a.id,
+      title: a.title,
+      circle: m.circle,
+      members: m.circle.memberships.map((x) => x.user),
+      checked: a.checkins.map((c) => c.userId),
+    }))
+  );
+
+  const hasCircles = memberships.length > 0;
+  const firstCircleSlug = memberships[0]?.circle.slug;
+  const isHabitDone = habits.some((h) => h.checked.includes(user.id));
 
   return (
     <>
       <AppHeader user={user}>
-        <nav className="hidden items-center gap-1 sm:flex">
-          <span className="rounded-md bg-ink-800 px-2.5 py-1 text-xs font-medium text-ink-100">
-            Home
-          </span>
-          <Link
-            href="/discover"
-            className="rounded-md px-2.5 py-1 text-xs font-medium text-ink-500 transition-colors duration-[120ms] hover:bg-ink-900 hover:text-ink-300"
-          >
-            Discover
-          </Link>
-          <Link
-            href="/profile"
-            className="rounded-md px-2.5 py-1 text-xs font-medium text-ink-500 transition-colors duration-[120ms] hover:bg-ink-900 hover:text-ink-300"
-          >
-            Profile
-          </Link>
-        </nav>
+        <AppNav active="home" />
       </AppHeader>
 
-      <main className="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
-        {/* The masthead states the edition, then the headline figures.
-            A dashboard that opens with a greeting and a pair of buttons has
-            spent its most valuable strip of screen on chrome; an atlas opens
-            with the record, because the record is why you came. */}
-        <header className="border-b border-ink-800 pb-5">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
-            <div className="min-w-0">
-              <p className="plate-label text-accent">
-                {user.name} · {edition}
-              </p>
-              <h1 className="mt-1.5 font-display text-4xl font-semibold tracking-tight text-ink-100">
-                The reading ledger
-              </h1>
+      <main className="mx-auto max-w-6xl px-4 pb-20 pt-4 sm:px-6 sm:pb-14 sm:pt-6">
+        {!hasCircles ? (
+          <FirstRun name={user.name} />
+        ) : (
+          <div className="space-y-5 sm:space-y-6">
+            {/* 1. Command Stage / Hero Card */}
+            <section aria-labelledby="tonight">
+              <ReadingHeroCard
+                current={current}
+                currentGoal={currentGoal}
+                user={user}
+                edition={edition}
+                friendsLineText={
+                  current
+                    ? friendsLine(current.doc.progress, user.id, current.page)
+                    : "Conquered your shelf!"
+                }
+                progress={progress}
+              />
+            </section>
+
+            {/* 2. The Social Reading Loop (Compact Streamlined Diagram) */}
+            <section aria-label="Reading loop cycle">
+              <ReadingLoopDiagram
+                stats={{
+                  books: books.length,
+                  highlights: progress.highlights,
+                  activity: activity.length,
+                  habitsDone: isHabitDone,
+                  insights: progress.insights,
+                }}
+              />
+            </section>
+
+            {/* 3. Main Dashboard Grid (Balanced 2 Columns) */}
+            <div className="grid gap-5 lg:grid-cols-[1fr_20rem] lg:gap-6 items-start">
+              {/* Left Column: Circle Activity Stream + Shared Bookshelf */}
+              <div className="min-w-0 space-y-5 sm:space-y-6">
+                {/* Circle Activity Stream */}
+                <section aria-labelledby="activity">
+                  <ActivityFeedTimeline
+                    activity={activity}
+                    notifications={notifications}
+                  />
+                </section>
+
+                {/* Shared Bookshelf */}
+                <section aria-labelledby="shelf">
+                  <ShelfShowcase
+                    books={books}
+                    firstCircleSlug={firstCircleSlug}
+                  />
+                </section>
+
+                {/* Goals for books you brought */}
+                {goals.length > 0 && (
+                  <section aria-labelledby="goals" className="space-y-3">
+                    <h2 id="goals" className="cover-label text-2xs font-bold uppercase tracking-[0.14em] text-ink-400">
+                      Reading Goals
+                    </h2>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {goals.map(({ b, goal }) => (
+                        <GoalCard
+                          key={b.id}
+                          goal={goal!}
+                          documentId={b.id}
+                          title={b.title}
+                          page={b.page}
+                          pageCount={b.pageCount}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </div>
+
+              {/* Right Column: Weekly Habit + Reader's Ledger + Circles Orbit */}
+              <aside className="min-w-0 space-y-5 sm:space-y-6">
+                {/* Weekly Habit Matrix */}
+                <section aria-labelledby="week">
+                  <HabitMatrixCard
+                    habits={habits}
+                    userId={user.id}
+                    firstCircleSlug={firstCircleSlug}
+                  />
+                </section>
+
+                {/* Personal Ledger */}
+                <section aria-labelledby="built">
+                  <ReadingStatsLedger progress={progress} />
+                </section>
+
+                {/* Your Circles Orbit */}
+                <section aria-labelledby="circles">
+                  <CircleOrbitCard memberships={memberships} />
+                </section>
+              </aside>
             </div>
-            {memberships.length > 0 && <CircleActions />}
-          </div>
-
-          {memberships.length > 0 && (
-            <dl className="mt-5 flex flex-wrap items-end gap-x-10 gap-y-4">
-              {[
-                [inFlight, inFlight === 1 ? "Book in flight" : "Books in flight"],
-                [progress.highlights, "Highlights logged"],
-                [progress.streak, "Week streak"],
-                [memberships.length, memberships.length === 1 ? "Circle" : "Circles"],
-              ].map(([value, label]) => (
-                <div key={label as string}>
-                  <dd className="fig font-display text-2xl font-semibold leading-none text-ink-100">
-                    {value}
-                  </dd>
-                  <dt className="plate-label mt-1.5">{label}</dt>
-                </div>
-              ))}
-            </dl>
-          )}
-        </header>
-
-        {memberships.length === 0 && (
-          <div className="mt-8">
-            <CircleActions variant="banner" />
           </div>
         )}
-
-        {/* Stacks below lg. The source order is activity → reading → built,
-            which is right on desktop where all three are side by side, but
-            wrong stacked: it buries your books and goals under a feed you have
-            to scroll past. `order-*` puts reading first on small screens
-            without disturbing the desktop columns. */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.2fr_18rem]">
-          {/* ── Circle activity ─────────────────────────── */}
-          <section className="order-2 min-w-0 lg:order-none">
-            <h2 className="plate-label">
-              In your circles
-            </h2>
-            {activity.length === 0 ? (
-              <Card className="mt-3 border-dashed p-5">
-                <p className="text-xs leading-relaxed text-ink-500">
-                  Quiet so far. Highlight something, start a thread, and your
-                  circle&apos;s activity shows up here.
-                </p>
-              </Card>
-            ) : (
-              <ol className="mt-3 space-y-4 border-l border-ink-800 pl-4">
-                {activity.slice(0, 10).map((a) => (
-                  <li key={a.id} className="relative">
-                    <span
-                      className="absolute -left-[21px] top-1 h-2 w-2 rounded-full bg-accent ring-4 ring-ink-950"
-                      aria-hidden="true"
-                    />
-                    <Link href={a.href} className="group block">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <Avatar
-                          name={a.actor.name}
-                          color={a.actor.avatarColor}
-                          image={(a.actor as any).avatarImage}
-                          size={18}
-                        />
-                        <p className="min-w-0 break-words text-xs text-ink-300">
-                          <span className="font-medium text-ink-100">
-                            {a.actor.name}
-                          </span>{" "}
-                          {a.summary}
-                        </p>
-                      </div>
-                      <p className="mt-1 pl-6 text-2xs text-ink-600">
-                        {a.circle.name} · {relativeTime(a.at)}
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </section>
-
-          {/* ── Reading snapshot ────────────────────────── */}
-          <section className="order-1 min-w-0 lg:order-none">
-            {/* Goals sit above the shelf: a deadline you set is the thing most
-                likely to decide what you open next. */}
-            {goals.length > 0 && (
-              <div className="mb-6">
-                <h2 className="plate-label">
-                  Your reading goals
-                </h2>
-                <div className="mt-3 space-y-2.5">
-                  {goals.map((g) => (
-                    <GoalCard
-                      key={g.documentId}
-                      goal={g.goal!}
-                      documentId={g.documentId}
-                      title={g.title}
-                      page={g.page}
-                      pageCount={g.pageCount}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <h2 className="plate-label">
-              Pick up where you left off
-            </h2>
-            {books.length === 0 ? (
-              <Card className="mt-3 border-dashed p-8 text-center">
-                <p className="text-sm font-medium text-ink-300">No books yet</p>
-                <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-ink-500">
-                  Open a circle and upload a PDF to start reading together.
-                </p>
-              </Card>
-            ) : (
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                {books.map((b) => {
-                  const pct = b.pageCount ? (b.page / b.pageCount) * 100 : 0;
-                  return (
-                    <Link key={b.id} href={`/read/${b.id}`} className="min-w-0">
-                      <Card className="pressable group flex h-full gap-3 p-3 hover:border-ink-700 hover:bg-ink-850">
-                        <BookCover title={b.title} author={b.author} width={46} />
-                        <div className="flex min-w-0 flex-1 flex-col">
-                          <h3 className="truncate text-sm font-medium text-ink-100 transition-colors group-hover:text-accent">
-                            {b.title}
-                          </h3>
-                          <p className="truncate text-2xs text-ink-600">
-                            {b.circleName}
-                          </p>
-                          <div className="mt-auto pt-2">
-                            <div className="h-1 overflow-hidden rounded-full bg-ink-800">
-                              <div
-                                className="h-full bg-accent"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                            <p className="mt-1 text-2xs tabular-nums text-ink-600">
-                              p{b.page} / {b.pageCount || "?"}
-                            </p>
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Your circles, compact. Hidden entirely when there are none —
-                a heading over a void reads as something that failed to load
-                rather than as something you haven't done yet. */}
-            {memberships.length > 0 && (
-            <>
-            <h2 className="plate-label mt-6 block">Your circles</h2>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {memberships.map((m) => (
-                <Link
-                  key={m.id}
-                  href={`/circles/${m.circle.slug}`}
-                  className="pressable group inline-flex items-center gap-2 rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 hover:border-ink-700 hover:bg-ink-850"
-                >
-                  <span className="text-xs font-medium text-ink-200 group-hover:text-accent">
-                    {m.circle.name}
-                  </span>
-                  <span className="text-2xs text-ink-600">
-                    {m.circle._count.memberships}
-                  </span>
-                </Link>
-              ))}
-            </div>
-            </>
-            )}
-          </section>
-
-          {/* ── My progress ─────────────────────────────── */}
-          <aside className="order-3 min-w-0 space-y-4 lg:order-none">
-            <h2 className="plate-label">
-              What you&apos;ve built
-            </h2>
-            {/* The record, as a plate. Rings were decoration around numbers —
-                a ring implies a target, and neither a streak nor a vault count
-                has one, so the geometry was making a claim the data doesn't.
-                Set as figures in a ruled column instead: comparable down the
-                page, honest about what they are. */}
-            <Card className="divide-y divide-ink-800">
-              <div className="grid grid-cols-2 gap-4 p-4">
-                <Datum
-                  value={progress.streak}
-                  label="Week streak"
-                  sub={progress.streak ? "unbroken" : "start this week"}
-                />
-                <Datum
-                  value={progress.insights}
-                  label="In the vault"
-                  sub="saved insights"
-                />
-              </div>
-              <div className="p-4">
-                <Label>Highlights, last 7 days</Label>
-                <Spark data={progress.week} className="mt-2.5" />
-              </div>
-            </Card>
-
-            <Link href="/discover">
-              <Card className="group flex items-center justify-between gap-3 p-4 transition-colors hover:border-accent/40 hover:bg-ink-850">
-                <div>
-                  <h3 className="text-sm font-medium text-ink-100 transition-colors group-hover:text-accent">
-                    Discover circles
-                  </h3>
-                  <p className="mt-0.5 text-2xs text-ink-500">
-                    Public reading circles to join
-                  </p>
-                </div>
-                <span className="text-ink-600 transition-transform duration-[120ms] group-hover:translate-x-0.5">
-                  <IconArrow size={14} />
-                </span>
-              </Card>
-            </Link>
-          </aside>
-        </div>
       </main>
     </>
+  );
+}
+
+/** One line about the others, in the product's no-shame register. */
+function friendsLine(
+  progress: { userId: string; currentPage: number; user: { name: string } }[],
+  viewerId: string,
+  mine: number
+): string {
+  const others = progress.filter((p) => p.userId !== viewerId);
+  if (others.length === 0) return "You're the first one in. Your friends will see where you got to.";
+  const ahead = others.filter((p) => p.currentPage > mine).sort((a, b) => b.currentPage - a.currentPage);
+  if (ahead.length > 0) {
+    const a = ahead[0]!;
+    return `${a.user.name.split(" ")[0]} is on page ${a.currentPage} — there's a margin waiting for you.`;
+  }
+  return "You're out in front. Leave a note in the margin for whoever reaches it next.";
+}
+
+/**
+ * Modernized First Run Experience.
+ */
+function FirstRun({ name }: { name: string }) {
+  return (
+    <section aria-labelledby="first" className="py-6 sm:py-10">
+      <div className="relative overflow-hidden rounded-3xl border border-ink-800/80 bg-ink-900 p-6 sm:p-10 shadow-sm">
+        <div className="inline-flex items-center gap-2 rounded-full border border-ink-800 bg-ink-850 px-3 py-1 text-2xs font-semibold text-ink-300">
+          <IconSparkles size={13} className="text-accent" />
+          <span>Welcome, {name.split(" ")[0]}</span>
+        </div>
+
+        <h1 id="first" className="cover-title mt-3 max-w-[20ch] text-[length:clamp(2rem,4.5vw,3.4rem)] font-bold text-ink-100 leading-tight">
+          Every circle starts with one book and two friends.
+        </h1>
+
+        <p className="mt-3 max-w-[54ch] text-xs leading-relaxed text-ink-400 sm:text-sm">
+          Readrise turns solitary book reading into an intimate, shared conversation with people who notice when you read.
+        </p>
+
+        {/* 3 Step Cards */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-ink-800/70 bg-ink-950/40 p-4">
+            <span className="font-display text-xs font-bold text-accent">01</span>
+            <h3 className="cover-label mt-1.5 text-sm font-bold text-ink-100">Start a circle</h3>
+            <p className="mt-1 text-xs leading-relaxed text-ink-400">
+              Name it after the book or the idea. Keep it small — two or three people who notice.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-ink-800/70 bg-ink-950/40 p-4">
+            <span className="font-display text-xs font-bold text-accent">02</span>
+            <h3 className="cover-label mt-1.5 text-sm font-bold text-ink-100">Bring a book</h3>
+            <p className="mt-1 text-xs leading-relaxed text-ink-400">
+              Upload any PDF. Everyone reads the same pages, and highlights land on the exact words.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-ink-800/70 bg-ink-950/40 p-4">
+            <span className="font-display text-xs font-bold text-accent">03</span>
+            <h3 className="cover-label mt-1.5 text-sm font-bold text-ink-100">Send the link</h3>
+            <p className="mt-1 text-xs leading-relaxed text-ink-400">
+              Your invite link shows friends which circle asked them, and survives their sign-up.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <CircleActions variant="banner" />
+        </div>
+      </div>
+    </section>
   );
 }

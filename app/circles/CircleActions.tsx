@@ -46,35 +46,30 @@ export function CircleActions({ variant = "default" }: { variant?: "default" | "
   return (
     <>
       {variant === "banner" ? (
-        <div className="relative overflow-hidden rounded-2xl border border-accent/40 bg-ink-900/50 p-8 shadow-[0_0_40px_-10px_rgba(245,158,11,0.2)] before:absolute before:inset-0 before:-z-10 before:bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.1),transparent_50%)]">
-          <h2 className="font-display text-3xl font-light text-ink-100">
-            <span className="rounded bg-accent/20 px-2 py-0.5 text-accent shadow-[0_0_15px_rgba(245,158,11,0.3)]">Start</span> Your First Reading Circle
-          </h2>
-          <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-400">
-            Invite 2-5 friends for deep reading and shared accountability.
-          </p>
-          <div className="mt-6 flex items-center gap-6">
-            <button
-              onClick={() => setOpen("create")}
-              className="group flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold text-ink-950 shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all hover:scale-105 hover:bg-accent/90"
-            >
-              <span className="text-lg leading-none">+</span> Create Circle
-            </button>
-            <button
-              onClick={() => setOpen("join")}
-              className="text-sm font-medium text-ink-400 underline decoration-ink-600 underline-offset-4 transition-colors hover:text-ink-200"
-            >
-              Join with Code
-            </button>
-          </div>
+        // First run: the two ways in, at full size. Printed flat like the
+        // landing's actions — the old neon glow and gradient wash were the
+        // one place the app still looked like a different product.
+        <div className="flex flex-wrap items-center gap-4">
+          <button
+            onClick={() => setOpen("create")}
+            className="cover-label inline-flex items-center gap-2 rounded-full bg-series px-7 py-3.5 text-base font-bold text-series-ink shadow-[0_4px_16px_-2px_var(--series)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          >
+            Start a circle
+          </button>
+          <button
+            onClick={() => setOpen("join")}
+            className="cover-label rounded-full border border-ink-700/80 px-6 py-3.5 text-base font-semibold text-ink-200 transition-all duration-150 hover:border-ink-400 hover:bg-ink-850/50 hover:text-ink-100 cursor-pointer shadow-sm"
+          >
+            I have an invite code
+          </button>
         </div>
       ) : (
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={() => setOpen("create")}>
+            New circle
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setOpen("join")}>
             Join with code
-          </Button>
-          <Button size="sm" onClick={() => setOpen("create")}>
-            New circle
           </Button>
         </div>
       )}
@@ -98,7 +93,7 @@ export function CircleActions({ variant = "default" }: { variant?: "default" | "
             className={open === "join" ? "font-mono tracking-[0.2em] uppercase" : ""}
             required
           />
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && <p role="alert" className="text-xs text-crit">{error}</p>}
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="ghost" size="sm" onClick={close}>
               Cancel

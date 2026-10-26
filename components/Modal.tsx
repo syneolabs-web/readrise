@@ -109,11 +109,11 @@ export function Modal({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="animate-modal-in relative w-full max-w-sm rounded-xl border border-ink-800 bg-ink-900 p-5 shadow-2xl outline-none"
+        className="animate-modal-in relative w-full max-w-md rounded-3xl border border-ink-700/60 bg-ink-900/95 p-7 shadow-2xl backdrop-blur-2xl outline-none"
       >
-        <h2 className="text-base font-semibold text-ink-100">{title}</h2>
+        <h2 className="cover-title text-xl font-bold text-ink-100">{title}</h2>
         {description && (
-          <p className="mt-1 mb-4 text-xs leading-relaxed text-ink-500">
+          <p className="mt-1.5 mb-5 text-sm leading-relaxed text-ink-400">
             {description}
           </p>
         )}

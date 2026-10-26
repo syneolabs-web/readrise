@@ -28,7 +28,7 @@ export function MobileNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-800 bg-ink-950/95 backdrop-blur sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-800/80 bg-ink-950/90 backdrop-blur-xl shadow-lg sm:hidden"
       // Keeps the bar clear of the iOS home indicator.
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
@@ -46,14 +46,15 @@ export function MobileNav() {
                 href={t.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center gap-1 py-3 text-2xs font-medium transition-colors",
-                  active ? "text-accent" : "text-ink-500"
+                  "cover-label relative flex flex-col items-center py-3.5 text-xs font-bold transition-colors",
+                  active ? "text-ink-100" : "text-ink-500"
                 )}
               >
+                {/* The series-colour indicator with rounded ends */}
                 <span
                   className={cn(
-                    "h-1 w-1 rounded-full",
-                    active ? "bg-accent" : "bg-transparent"
+                    "absolute inset-x-6 top-0 h-[3px] rounded-full bg-series shadow-sm transition-transform duration-[240ms]",
+                    active ? "scale-x-100" : "scale-x-0"
                   )}
                   aria-hidden
                 />

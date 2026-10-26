@@ -30,13 +30,15 @@ export function HeatmapChart({ days }: HeatmapProps) {
     return cols;
   }, [paddedDays]);
 
+  // One data ink — the viewer's own accent — at four strengths. It was
+  // hard-coded amber, which ignored the vibe the reader chose.
   const levelColors: Record<number, string> = {
     [-1]: 'bg-transparent',
-    0: 'bg-ink-850 dark:bg-ink-900',
-    1: 'bg-amber-500/30',
-    2: 'bg-amber-500/50',
-    3: 'bg-amber-500/80',
-    4: 'bg-amber-500',
+    0: 'bg-ink-850',
+    1: 'bg-accent/30',
+    2: 'bg-accent/55',
+    3: 'bg-accent/80',
+    4: 'bg-accent',
   };
 
   return (
@@ -69,7 +71,7 @@ export function HeatmapChart({ days }: HeatmapProps) {
                     <div
                       key={day.date}
                       title={day.level >= 0 ? `${day.count} activities on ${day.date}` : undefined}
-                      className={`w-3 h-3 rounded-sm ${levelColors[day.level]} transition-colors hover:ring-2 hover:ring-ink-500`}
+                      className={`w-3 h-3 rounded-[2px] ${levelColors[day.level]} transition-colors hover:ring-2 hover:ring-ink-500`}
                     />
                   ))}
                 </div>
@@ -82,11 +84,11 @@ export function HeatmapChart({ days }: HeatmapProps) {
         <div className="flex items-center justify-end gap-2 mt-5 text-2xs font-medium text-ink-500">
           <span>Less</span>
           <div className="flex gap-1.5">
-            <div className={`w-3 h-3 rounded-sm ${levelColors[0]}`} />
-            <div className={`w-3 h-3 rounded-sm ${levelColors[1]}`} />
-            <div className={`w-3 h-3 rounded-sm ${levelColors[2]}`} />
-            <div className={`w-3 h-3 rounded-sm ${levelColors[3]}`} />
-            <div className={`w-3 h-3 rounded-sm ${levelColors[4]}`} />
+            <div className={`w-3 h-3 rounded-[2px] ${levelColors[0]}`} />
+            <div className={`w-3 h-3 rounded-[2px] ${levelColors[1]}`} />
+            <div className={`w-3 h-3 rounded-[2px] ${levelColors[2]}`} />
+            <div className={`w-3 h-3 rounded-[2px] ${levelColors[3]}`} />
+            <div className={`w-3 h-3 rounded-[2px] ${levelColors[4]}`} />
           </div>
           <span>More</span>
         </div>

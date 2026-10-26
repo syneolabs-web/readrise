@@ -14,11 +14,13 @@ import { cn } from "@/lib/utils";
  * script in app/layout.tsx.
  */
 
+// The four vibes are the four series colours the landing prints its covers
+// in, so the swatch shows the exact flat colour you'll get.
 const VIBES = [
-  { id: "ember", label: "Ember", a: "#f0b429", b: "#f4703e" },
-  { id: "tide", label: "Tide", a: "#22d3ee", b: "#818cf8" },
-  { id: "bloom", label: "Bloom", a: "#f472b6", b: "#c084fc" },
-  { id: "meadow", label: "Meadow", a: "#4ade80", b: "#a3e635" },
+  { id: "ember", label: "Orange", swatch: "bg-series-orange" },
+  { id: "tide", label: "Blue", swatch: "bg-series-blue" },
+  { id: "bloom", label: "Cerise", swatch: "bg-series-cerise" },
+  { id: "meadow", label: "Green", swatch: "bg-series-green" },
 ] as const;
 
 type Vibe = (typeof VIBES)[number]["id"];
@@ -81,15 +83,15 @@ export function ThemeMenu() {
       </button>
 
       {open && (
-        <div className="animate-fade-up absolute right-0 top-9 z-50 w-52 rounded-lg border border-ink-800 bg-ink-900 p-3 shadow-2xl shadow-black/40">
-          <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+        <div className="animate-fade-up absolute right-0 top-10 z-50 w-56 rounded-2xl border border-ink-700/60 bg-ink-900/95 p-3.5 shadow-2xl shadow-black/50 backdrop-blur-2xl">
+          <p className="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-ink-400">
             Theme
           </p>
-          <div className="mt-2 grid grid-cols-2 gap-1">
+          <div className="mt-2 grid grid-cols-2 gap-1.5">
             {(
               [
-                ["dark", "Dark", <Moon key="m" size={13} strokeWidth={1.75} />],
-                ["light", "Light", <Sun key="s" size={13} strokeWidth={1.75} />],
+                ["dark", "Dark", <Moon key="m" size={13} strokeWidth={2} />],
+                ["light", "Light", <Sun key="s" size={13} strokeWidth={2} />],
               ] as const
             ).map(([id, label, icon]) => (
               <button
@@ -97,10 +99,10 @@ export function ThemeMenu() {
                 onClick={() => setThemeAndApply(id)}
                 aria-pressed={theme === id}
                 className={cn(
-                  "inline-flex items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-xs font-medium",
-                  "transition-colors duration-[120ms]",
+                  "inline-flex items-center justify-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold",
+                  "transition-all duration-[120ms] cursor-pointer",
                   theme === id
-                    ? "border-accent/50 bg-accent/10 text-ink-100"
+                    ? "border-accent bg-accent/15 text-ink-100 shadow-sm"
                     : "border-ink-800 text-ink-400 hover:border-ink-700 hover:text-ink-200"
                 )}
               >
@@ -110,10 +112,10 @@ export function ThemeMenu() {
             ))}
           </div>
 
-          <p className="mt-3 text-2xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+          <p className="mt-3.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-ink-400">
             Vibe
           </p>
-          <div className="mt-2 grid grid-cols-4 gap-1.5">
+          <div className="mt-2 grid grid-cols-4 gap-2">
             {VIBES.map((v) => (
               <button
                 key={v.id}
@@ -122,17 +124,15 @@ export function ThemeMenu() {
                 aria-label={`${v.label} vibe`}
                 title={v.label}
                 className={cn(
-                  "aspect-square rounded-full transition-transform duration-[120ms] hover:scale-110",
+                  "aspect-square rounded-full transition-transform duration-[120ms] hover:scale-110 cursor-pointer",
+                  v.swatch,
                   vibe === v.id &&
-                    "ring-2 ring-ink-100 ring-offset-2 ring-offset-ink-900 scale-110"
+                    "ring-2 ring-ink-100 ring-offset-2 ring-offset-ink-900 scale-105 shadow-sm"
                 )}
-                style={{
-                  backgroundImage: `linear-gradient(135deg, ${v.a}, ${v.b})`,
-                }}
               />
             ))}
           </div>
-          <p className="mt-2.5 text-2xs leading-relaxed text-ink-600">
+          <p className="mt-3 text-[0.7rem] leading-relaxed text-ink-500">
             Your room, your colours. The book stays the book.
           </p>
         </div>

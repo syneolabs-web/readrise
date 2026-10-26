@@ -71,31 +71,31 @@ export function SelectionPopover({
       ref={ref}
       role="dialog"
       aria-label="Highlight this passage"
-      className="animate-fade-up fixed z-40 -translate-x-1/2 rounded-lg border border-ink-700 bg-ink-850 p-2 shadow-2xl shadow-black/60"
+      className="animate-fade-up fixed z-40 -translate-x-1/2 rounded-2xl border border-ink-700/80 bg-ink-900/95 p-3 shadow-2xl shadow-black/70 backdrop-blur-xl"
       style={{ left: pos.left, top: pos.top }}
       // The popover must not steal the selection it's acting on.
       onMouseDown={(e) => e.preventDefault()}
     >
-      <p className="mb-2 max-w-[230px] px-1 font-prose text-xs leading-snug text-ink-500">
+      <p className="mb-2 max-w-[240px] px-1 font-prose text-xs leading-snug text-ink-400">
         &ldquo;{truncate(text, 72)}&rdquo;
       </p>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         {/* Primary action. One click: selection → highlight. */}
         <button
           onClick={() => onCommit(activeColor)}
           autoFocus
-          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold text-on-accent transition-transform duration-[120ms] hover:brightness-110 active:scale-95"
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-on-accent transition-all duration-[120ms] hover:brightness-110 active:scale-95 shadow-sm cursor-pointer"
           style={{ background: COLOR_STYLES[activeColor].solid }}
         >
           <IconHighlighter size={13} />
           Highlight
         </button>
 
-        <div className="mx-0.5 h-5 w-px bg-ink-700" aria-hidden="true" />
+        <div className="mx-0.5 h-4 w-px bg-ink-700/60" aria-hidden="true" />
 
         {/* Colour row. Picking one commits in that colour. */}
-        <div className="flex items-center gap-1" role="group" aria-label="Colour">
+        <div className="flex items-center gap-1.5" role="group" aria-label="Colour">
           {colors.map((c) => (
             <button
               key={c}
@@ -106,9 +106,9 @@ export function SelectionPopover({
               aria-label={`Highlight ${c}`}
               aria-pressed={c === activeColor}
               className={cn(
-                "h-5 w-5 rounded-full transition-transform duration-[120ms]",
+                "h-5 w-5 rounded-full transition-transform duration-[120ms] cursor-pointer",
                 "hover:scale-115 active:scale-95",
-                c === activeColor && "ring-2 ring-ink-300 ring-offset-2 ring-offset-ink-850"
+                c === activeColor && "ring-2 ring-ink-100 ring-offset-2 ring-offset-ink-900 scale-105"
               )}
               style={{ background: COLOR_STYLES[c].solid }}
             />
@@ -117,7 +117,7 @@ export function SelectionPopover({
 
         <button
           onClick={onDismiss}
-          className="ml-1 rounded-sm px-1.5 text-2xs text-ink-500 transition-colors duration-[120ms] hover:text-ink-200"
+          className="ml-1 rounded-full px-2 py-0.5 text-2xs font-semibold text-ink-500 transition-colors duration-[120ms] hover:bg-ink-800 hover:text-ink-200 cursor-pointer"
         >
           Esc
         </button>

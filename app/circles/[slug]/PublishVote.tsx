@@ -66,9 +66,9 @@ export function PublishVote({
 
   if (!proposal) {
     return (
-      <Card className="mt-6 border-dashed p-5">
-        <h2 className="text-sm font-semibold text-ink-100">Go public?</h2>
-        <p className="mt-1.5 max-w-[58ch] text-xs leading-relaxed text-ink-500">
+      <div>
+        <h3 className="cover-label text-base font-bold text-ink-100">Make this circle public?</h3>
+        <p className="mt-1.5 max-w-[52ch] text-sm leading-relaxed text-ink-400">
           A public circle appears in Discover and anyone can join. Everything
           you&apos;ve already written here — every highlight, every thread —
           becomes visible to strangers. It takes a{" "}
@@ -81,14 +81,14 @@ export function PublishVote({
         <Button
           size="sm"
           variant="outline"
-          className="mt-3"
+          className="mt-4"
           disabled={busy}
           onClick={() => post("/api/circles/publish", { circleId })}
         >
           Start the vote
         </Button>
-        {error && <p className="mt-2 text-xs text-crit">{error}</p>}
-      </Card>
+        {error && <p role="alert" className="mt-2 text-xs text-crit">{error}</p>}
+      </div>
     );
   }
 
@@ -97,16 +97,16 @@ export function PublishVote({
   const no = proposal.votes.filter((v) => !v.approve).length;
 
   return (
-    <Card className="mt-6 border-accent/30 p-5">
-      <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-sm font-semibold text-ink-100">
+    <Card className="border-l-0 border-t-[3px] border-t-series p-5">
+      <div className="flex flex-wrap items-center gap-3">
+        <h2 className="cover-label text-lg font-bold text-ink-100">
           Vote: make this circle public
         </h2>
-        <span className="rounded-full border border-accent/25 bg-accent/10 px-2 py-0.5 text-2xs font-semibold uppercase tracking-wider text-accent">
-          {yes}/{proposal.memberCount} yes
+        <span className="fig cover-label rounded-full bg-series px-3 py-1 text-xs font-bold text-series-ink shadow-sm">
+          {yes} of {proposal.memberCount} yes
         </span>
       </div>
-      <p className="mt-1.5 text-xs text-ink-500">
+      <p className="mt-1.5 text-sm text-ink-400">
         Proposed by {proposal.proposedBy.name}. Needs every member to agree —
         one no ends it.
       </p>

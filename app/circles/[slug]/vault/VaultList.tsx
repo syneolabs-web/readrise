@@ -92,8 +92,8 @@ export function VaultList({
               onClick={() => setFilter(key)}
               className={
                 filter === key
-                  ? "rounded-md bg-ink-800 px-2.5 py-1.5 text-xs font-medium text-ink-100"
-                  : "rounded-md px-2.5 py-1.5 text-xs font-medium text-ink-500 transition-colors hover:text-ink-300"
+                  ? "rounded-full bg-series px-3.5 py-1.5 text-xs font-bold text-series-ink shadow-sm"
+                  : "rounded-full border border-ink-800 bg-ink-900/60 px-3.5 py-1.5 text-xs font-semibold text-ink-400 transition-colors hover:text-ink-200"
               }
             >
               {label}
@@ -187,7 +187,7 @@ export function VaultList({
                 ) : null}
 
                 {e.note && (
-                  <p className="mt-3 rounded-lg bg-ink-850 px-3 py-2 text-xs leading-relaxed text-ink-300">
+                  <p className="mt-3 rounded-[3px] bg-ink-850 px-3 py-2 text-xs leading-relaxed text-ink-300">
                     {e.note}
                   </p>
                 )}

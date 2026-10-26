@@ -31,7 +31,7 @@ export function LoginIllustrations() {
         className="w-full max-w-sm flex items-center justify-start self-start"
       >
         <div className="relative w-48 h-48 rounded-3xl overflow-hidden shadow-2xl border border-ink-100/10 mix-blend-screen dark:mix-blend-normal">
-          <Image src="/avatar_scrolling.png" alt="Scrolling alone" fill className="object-cover" />
+          <Image src="/avatar_scrolling.webp" alt="Scrolling alone" fill className="object-cover" />
         </div>
         <div className="ml-6">
           <h3 className="text-xl font-light text-ink-100">Endless Scroll</h3>
@@ -51,7 +51,7 @@ export function LoginIllustrations() {
           <p className="text-sm text-ink-100/50 mt-2 font-prose">Growing together.</p>
         </div>
         <div className="relative w-48 h-48 rounded-3xl overflow-hidden shadow-2xl border border-ink-100/10 mix-blend-screen dark:mix-blend-normal">
-          <Image src="/avatar_innovating.png" alt="Reading and connecting" fill className="object-cover" />
+          <Image src="/avatar_reading.webp" alt="Reading and connecting" fill className="object-cover" />
         </div>
       </motion.div>
     </div>

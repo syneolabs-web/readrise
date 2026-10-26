@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Avatar, Button, Card, Input, Textarea } from "@/components/ui";
+import { Avatar, Button, Input, SectionHead, Textarea } from "@/components/ui";
+import { CheckinButton } from "@/components/CheckinButton";
 import { IconCheck, IconFlame } from "@/components/icons";
 import { Modal } from "@/components/Modal";
 import { useRealtime } from "@/hooks/useRealtime";
@@ -86,125 +87,100 @@ export function MicroActions({
     }
   }
 
-  async function toggle(id: string) {
-    await fetch(`/api/actions/${id}/checkin`, { method: "POST" });
-    router.refresh();
-  }
-
   return (
     <>
       <section>
         <div className="flex items-center justify-between">
-          <h2 className="plate-label">
-            This week
-          </h2>
+          <SectionHead title="This week's habit" />
           {streak > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs font-medium text-accent">
-              <IconFlame size={12} />
-              {streak} week{streak === 1 ? "" : "s"}
+            <span className="fig cover-label inline-flex items-center gap-1 text-xs font-bold text-accent">
+              <IconFlame size={13} />
+              {streak} week{streak === 1 ? "" : "s"} together
             </span>
           )}
         </div>
 
         {current.length === 0 ? (
-          <Card className="mt-3 border-dashed p-4">
-            <p className="text-xs leading-relaxed text-ink-500">
-              No commitment this week. What&apos;s one concrete thing the chapter
-              says you should actually do?
+          <div className="mt-3 border-y border-ink-800 py-5">
+            <p className="text-sm leading-relaxed text-ink-300">
+              No habit this week. What&apos;s one concrete thing the chapter says
+              you should actually do?
             </p>
-            <Button size="sm" className="mt-3 w-full" onClick={() => setOpen(true)}>
+            <Button size="sm" className="mt-4" onClick={() => setOpen(true)}>
               Commit to something
             </Button>
-          </Card>
+          </div>
         ) : (
-          <div className="mt-3 space-y-2">
-            {current.map((a) => {
-              const done = a.checkedInBy.includes(viewerId);
-              const all = a.checkedInBy.length === memberCount;
+          <div className="mt-3">
+            <ul className="border-t border-ink-800">
+              {current.map((a) => {
+                const done = a.checkedInBy.includes(viewerId);
 
-              return (
-                <Card
-                  key={a.id}
-                  className={cn("p-4", all && "border-accent/30 bg-accent/[0.04]")}
-                >
-                  <p className="text-sm font-medium leading-snug text-ink-100">
-                    {a.title}
-                  </p>
-                  {a.detail && (
-                    <p className="mt-1.5 text-xs leading-relaxed text-ink-500">
-                      {a.detail}
+                return (
+                  <li key={a.id} className="border-b border-ink-800 py-4">
+                    <p className="cover-label text-lg font-bold leading-snug text-ink-100">
+                      {a.title}
                     </p>
-                  )}
-                  {a.milestoneTitle && (
-                    <p className="mt-1.5 text-2xs text-ink-600">
-                      from {a.milestoneTitle}
-                    </p>
-                  )}
+                    {a.detail && (
+                      <p className="mt-1.5 text-sm leading-relaxed text-ink-400">
+                        {a.detail}
+                      </p>
+                    )}
+                    {a.milestoneTitle && (
+                      <p className="mt-1.5 text-xs text-ink-500">
+                        from {a.milestoneTitle}
+                      </p>
+                    )}
 
-                  {/* Who's in, who isn't. The social pressure IS the feature. */}
-                  <div className="mt-3 flex items-center gap-2">
-                    <div className="flex -space-x-1">
-                      {members.map((m) => {
-                        const checked = a.checkedInBy.includes(m.id);
-                        return (
-                          <Avatar
-                            key={m.id}
-                            name={`${m.name} — ${checked ? "done" : "not yet"}`}
-                            color={m.avatarColor}
-                            size={20}
-                            className={cn(
-                              "ring-2 ring-ink-900 transition-opacity",
-                              !checked && "opacity-25 grayscale"
-                            )}
-                          />
-                        );
-                      })}
+                    {/* Who's in, who isn't. The social pressure IS the feature. */}
+                    <div className="mt-4 flex items-center gap-2.5">
+                      <div className="flex -space-x-1.5">
+                        {members.map((m) => {
+                          const checked = a.checkedInBy.includes(m.id);
+                          return (
+                            <Avatar
+                              key={m.id}
+                              name={`${m.name} — ${checked ? "done" : "not yet"}`}
+                              color={m.avatarColor}
+                              size={22}
+                              className={cn(
+                                "ring-2 ring-ink-950 transition-opacity",
+                                !checked && "opacity-30 grayscale"
+                              )}
+                            />
+                          );
+                        })}
+                      </div>
+                      <span className="fig text-xs text-ink-500">
+                        {a.checkedInBy.length} of {memberCount}
+                      </span>
+                      <CheckinButton actionId={a.id} done={done} className="ml-auto" />
                     </div>
-                    <span className="text-2xs text-ink-600">
-                      {a.checkedInBy.length}/{memberCount}
-                    </span>
-
-                    <button
-                      onClick={() => toggle(a.id)}
-                      aria-pressed={done}
-                      className={cn(
-                        "ml-auto inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold",
-                        "transition-colors duration-[120ms]",
-                        done
-                          ? "bg-accent/15 text-accent hover:bg-accent/25"
-                          : "border border-ink-700 text-ink-400 hover:border-ink-600 hover:bg-ink-850 hover:text-ink-200"
-                      )}
-                    >
-                      {done && <IconCheck size={12} />}
-                      {done ? "Done" : "Mark done"}
-                    </button>
-                  </div>
-                </Card>
-              );
-            })}
+                  </li>
+                );
+              })}
+            </ul>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="w-full"
+              className="mt-2"
               onClick={() => setOpen(true)}
             >
-              + Add another
+              + Add another habit
             </Button>
           </div>
         )}
 
         {past.length > 0 && (
-          <div className="mt-6">
-            <h2 className="plate-label">
-              Past weeks
-            </h2>
-            <div className="mt-3 space-y-1.5">
+          <div className="mt-8">
+            <SectionHead title="Past weeks" />
+            <div className="mt-3 border-t border-ink-800">
               {past.slice(0, 5).map((a) => {
                 const all = a.checkedInBy.length === memberCount;
                 return (
                   <div
                     key={a.id}
-                    className="flex items-center gap-2 rounded-lg border border-ink-900 px-3 py-2"
+                    className="flex items-center gap-3 border-b border-ink-800 py-2.5"
                   >
                     {/* Shape carries the state as well as colour, so this
                         still reads without colour vision. */}
@@ -221,8 +197,8 @@ export function MicroActions({
                       {all && <IconCheck size={9} />}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs text-ink-400">{a.title}</p>
-                      <p className="text-2xs text-ink-600">
+                      <p className="truncate text-sm text-ink-300">{a.title}</p>
+                      <p className="fig text-xs text-ink-500">
                         week of {formatWeek(a.weekOf)} · {a.checkedInBy.length}/
                         {memberCount}
                       </p>
@@ -259,7 +235,7 @@ export function MicroActions({
             <select
               value={form.documentId}
               onChange={(e) => setForm((f) => ({ ...f, documentId: e.target.value }))}
-              className="w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-ink-100 focus:border-accent/60 focus:outline-none"
+              className="w-full rounded-[3px] border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-ink-100 focus:border-ink-300 focus:outline-none"
             >
               <option value="">Not tied to a book</option>
               {documents.map((d) => (
@@ -269,7 +245,7 @@ export function MicroActions({
               ))}
             </select>
           )}
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && <p role="alert" className="text-xs text-crit">{error}</p>}
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(false)}>
               Cancel

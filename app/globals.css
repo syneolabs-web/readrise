@@ -18,25 +18,35 @@
  * same ramp, so every component styled through tokens adapts with no edits.
  */
 @theme {
-  /* ── Ground: warm near-black. Long reading on cold blue-grey fatigues. */
-  --color-ink-950: #0c0a09;
-  --color-ink-900: #12100e;
-  --color-ink-850: #1a1715;
-  --color-ink-800: #221e1b;
-  --color-ink-700: #302a26;
-  --color-ink-600: #4a423c;
-  --color-ink-500: #6b615a;
-  --color-ink-400: #928780;
-  --color-ink-300: #b8ada5;
-  --color-ink-200: #ddd4cd;
-  --color-ink-100: #f0eae5;
+  /* ── Ground: warm night-printed stock. Long reading on cold blue-grey
+     fatigues. The same paper the landing's cover band is printed on — the
+     app is the inside of that book (DESIGN.md, "The Paperback").
+     950–800 are grounds and rules; 700 is inactive track; 600 and up are
+     TEXT and every one of them clears a contrast floor on 950: 600 ≥ 3.8:1
+     (meta captions only), 500 ≥ 4.5:1, 400 and up comfortably more. The old
+     600 sat at ~2:1 and was used for timestamps across the app. */
+  --color-ink-950: #0c0d0e;
+  --color-ink-900: #131518;
+  --color-ink-850: #1a1d22;
+  --color-ink-800: #262930;
+  --color-ink-700: #3a3f4a;
+  --color-ink-600: #6b7280;
+  --color-ink-500: #9ca3af;
+  --color-ink-400: #cbd5e1;
+  --color-ink-300: #e2e8f0;
+  --color-ink-200: #f1f5f9;
+  --color-ink-100: #f8fafc;
 
-  /* ── Accent (ember default). Redefined per vibe/theme below. */
-  --color-accent: #f0b429;
-  --color-accent-deep: #b47d0a;
-  --color-on-accent: #0c0a09;
-  --grad-a: #f0b429;
-  --grad-b: #f4703e;
+  /* ── Accent: the vibe's series colour, tuned to be readable AS TEXT on the
+     ground (ember default). Flat fills of the true series colour use
+     bg-series / text-series-ink instead. Redefined per vibe/theme below. */
+  --color-accent: #ff6b45;
+  --color-accent-deep: #e04b20;
+  --color-on-accent: #ffffff;
+  /* Gradients are retired (the Paperback prints flat). Both stops resolve to
+     the accent so any remaining .bg-grad degrades to a flat fill. */
+  --grad-a: var(--color-accent);
+  --grad-b: var(--color-accent);
 
   /* ── Paper: the reading surface, a material not a backdrop.
      Theme-aware (redefined under light below): warm cream so a page is never
@@ -51,8 +61,9 @@
   --color-warn: #e0993a;
   --color-crit: #e07a5f;
 
-  /* ── Type: two voices, three faces. See lib/fonts.ts. */
-  --font-display: var(--font-display), "Archivo Narrow", ui-sans-serif, sans-serif;
+  /* ── Type: two voices, two faces. See lib/fonts.ts. `display` is the same
+     variable Archivo as the UI, set wide (see .font-display below). */
+  --font-display: var(--font-ui), Archivo, ui-sans-serif, sans-serif;
   --font-prose: var(--font-prose), Literata, Georgia, serif;
   --font-sans: var(--font-ui), Archivo, ui-sans-serif, system-ui, sans-serif;
 
@@ -99,47 +110,40 @@
 }
 
 /* ── Vibes, dark theme ──────────────────────────────────────
- * Bright accent on dark ground; on-accent stays near-black. */
+ * The series colour lifted to a tint that reads as text on the night stock
+ * (all ≥ 6:1); on-accent stays the ground colour. */
 :root[data-vibe="tide"] {
-  --color-accent: #22d3ee;
-  --color-accent-deep: #0e7490;
-  --grad-a: #22d3ee;
-  --grad-b: #818cf8;
+  --color-accent: #6ea4e6;
+  --color-accent-deep: #4f8bd6;
 }
 :root[data-vibe="bloom"] {
-  --color-accent: #f472b6;
-  --color-accent-deep: #be185d;
-  --grad-a: #f472b6;
-  --grad-b: #c084fc;
+  --color-accent: #f06292;
+  --color-accent-deep: #e0457a;
 }
 :root[data-vibe="meadow"] {
-  --color-accent: #4ade80;
-  --color-accent-deep: #15803d;
-  --grad-a: #4ade80;
-  --grad-b: #a3e635;
+  --color-accent: #4cc38a;
+  --color-accent-deep: #34a873;
 }
 
 /* ── Light theme: warm paper inversion of the ink ramp ──────
- * Accents flip to their DEEP variants so text-accent stays readable on
- * paper, and on-accent flips to white so buttons keep contrast. */
+ * Accents become the series colours at a depth that reads as text on paper
+ * (all ≥ 4.9:1), and on-accent flips to white so buttons keep contrast. */
 :root[data-theme="light"] {
-  --color-ink-950: #f7f3ec;
-  --color-ink-900: #efe9df;
-  --color-ink-850: #e7e0d3;
-  --color-ink-800: #d8cfc0;
-  --color-ink-700: #c2b7a6;
-  --color-ink-600: #9c9081;
-  --color-ink-500: #766b5e;
-  --color-ink-400: #5b5145;
-  --color-ink-300: #443c32;
-  --color-ink-200: #2d2721;
-  --color-ink-100: #1b1712;
+  --color-ink-950: #faf8f5;
+  --color-ink-900: #ffffff;
+  --color-ink-850: #f3efe8;
+  --color-ink-800: #e5dfd5;
+  --color-ink-700: #c7baa7;
+  --color-ink-600: #867866;
+  --color-ink-500: #6b5e4d;
+  --color-ink-400: #4e4233;
+  --color-ink-300: #332a1f;
+  --color-ink-200: #1f1811;
+  --color-ink-100: #100c08;
 
-  --color-accent: #a16207;
-  --color-accent-deep: #854d0e;
+  --color-accent: #e04b1e;
+  --color-accent-deep: #c43b12;
   --color-on-accent: #ffffff;
-  --grad-a: #b45309;
-  --grad-b: #c2410c;
 
   --color-good: #2f7d4f;
   --color-warn: #b45309;
@@ -151,22 +155,22 @@
   --color-paper-ink: #1b1712;
 }
 :root[data-theme="light"][data-vibe="tide"] {
-  --color-accent: #0e7490;
-  --color-accent-deep: #155e75;
-  --grad-a: #0891b2;
-  --grad-b: #6366f1;
+  --color-accent: #1d5fa8;
+  --color-accent-deep: #174c87;
 }
 :root[data-theme="light"][data-vibe="bloom"] {
-  --color-accent: #be185d;
-  --color-accent-deep: #9d174d;
-  --grad-a: #db2777;
-  --grad-b: #9333ea;
+  --color-accent: #c8255f;
+  --color-accent-deep: #a51d4e;
 }
 :root[data-theme="light"][data-vibe="meadow"] {
-  --color-accent: #15803d;
-  --color-accent-deep: #166534;
-  --grad-a: #16a34a;
-  --grad-b: #65a30d;
+  --color-accent: #0f7442;
+  --color-accent-deep: #0b5d35;
+}
+
+/* Display headings: the same Archivo, set wide — the cover's register, at
+   the app's quieter scale. */
+.font-display {
+  font-stretch: 112%;
 }
 
 html {
@@ -402,18 +406,20 @@ html:not([data-theme="light"]) .pdf-page-container {
   }
 }
 
-/* ── New Landing Page & Login Variables ───────────────────── */
+/* ── The legacy second vocabulary, now pure aliases ─────────
+ * Login, signup and a few older components were written against a parallel
+ * set of names (--paper, --ink, --ink-soft, --rule…) with their own values,
+ * and on ember-dark that block even overrode the accent. Two vocabularies with
+ * two sets of values meant the auth pages and the app could never quite
+ * match (UX-AUDIT P1-3). They are now aliases of the one ramp, so either
+ * spelling paints the same colour; new code should use the ink-* ramp. */
 @theme {
   /* NOTE: deliberately NOT --color-paper. That name belongs to the book's
-     page material (D13) and must stay cream on a dark ground; this is the
-     landing/auth page background, a different thing that happens to have
-     been given the same word. Aliasing them turned every book cover and the
-     PDF page near-black in dark theme. */
+     page material (D13) and must stay cream on a dark ground. */
   --color-surface: var(--paper);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
-  --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-glass: var(--glass);
   --color-rule: var(--rule);
@@ -422,37 +428,21 @@ html:not([data-theme="light"]) .pdf-page-container {
 }
 
 :root {
-  --paper: #fdfaf4;
-  --raised: #ffffff;
-  --sunk: #f4ecdb;
-  --rule: #e0d9ce;
-  --ink: #1a1614;
-  --ink-soft: #574e47;
-  --ink-faint: #8a7f76;
-  --accent: #d97706; /* Ember */
-  --accent-soft: rgba(217, 119, 6, 0.15);
-  --glass: rgba(148, 163, 184, 0.3);
+  --paper: var(--color-ink-950);
+  --raised: var(--color-ink-900);
+  --sunk: var(--color-ink-850);
+  --rule: var(--color-ink-800);
+  --ink: var(--color-ink-100);
+  --ink-soft: var(--color-ink-400);
+  --ink-faint: var(--color-ink-500);
+  --accent: var(--color-accent);
+  --accent-soft: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  --glass: color-mix(in srgb, var(--color-ink-100) 8%, transparent);
 }
-
-:root[data-theme="dark"] {
-  --paper: #0c0a09;
-  --raised: #16120f;
-  --sunk: #050403;
-  --rule: #2a2420;
-  --ink: #f0eae5;
-  --ink-soft: #b3a89f;
-  --ink-faint: #6d635b;
-  --glass: rgba(255, 255, 255, 0.1);
-}
-
-:root[data-vibe="ember"] { --accent: #d97706; --accent-soft: rgba(217, 119, 6, 0.15); }
-:root[data-vibe="tide"] { --accent: #2563eb; --accent-soft: rgba(37, 99, 235, 0.15); }
-:root[data-vibe="bloom"] { --accent: #c026d3; --accent-soft: rgba(192, 38, 211, 0.15); }
-:root[data-vibe="meadow"] { --accent: #16a34a; --accent-soft: rgba(22, 163, 74, 0.15); }
 
 body {
-  background-color: var(--paper);
-  color: var(--ink);
+  background-color: var(--color-ink-950);
+  color: var(--color-ink-100);
   transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
 }
@@ -493,6 +483,7 @@ body {
  * quiet — it must never compete with the figure it introduces. */
 .plate-label {
   font-family: var(--font-display);
+  font-stretch: 112%;
   font-size: var(--text-2xs);
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -557,6 +548,143 @@ body {
   .spark > i {
     transition: none;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * THE PAPERBACK — the landing's world (app/(marketing), components/landing)
+ *
+ * The landing is a paperback you open: flat series-colour bands, a paper
+ * band between them, wide heavy grotesk titles, hairline rules. The four
+ * vibes ARE the four classic series colours — orange, blue, cerise, green —
+ * so the visitor's vibe choice recolours the cover they are holding.
+ * Band colours are a material (like --color-paper), flat and unmodulated:
+ * no gradients, no glass.
+ * ══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --series-orange: #ff5e36;
+  --series-orange-ink: #ffffff;
+  --series-blue: #2563eb;
+  --series-blue-ink: #ffffff;
+  --series-cerise: #e11d48;
+  --series-cerise-ink: #ffffff;
+  --series-green: #059669;
+  --series-green-ink: #ffffff;
+
+  /* The cover's paper band and its ink: the app's own ink ramp, so the cover
+     and the pages inside it are printed on the same stock in both themes.
+     The colour bands stay exactly as printed in dark and light, because the
+     cover is an object, not a theme. */
+  --cover-paper: var(--color-ink-950);
+  --cover-paper-2: var(--color-ink-900);
+  --cover-ink: var(--color-ink-100);
+  --cover-ink-soft: var(--color-ink-400);
+  --cover-rule: var(--color-ink-800);
+
+  --series: var(--series-orange);
+  --series-ink: var(--series-orange-ink);
+}
+:root[data-vibe="tide"] { --series: var(--series-blue); --series-ink: var(--series-blue-ink); }
+:root[data-vibe="bloom"] { --series: var(--series-cerise); --series-ink: var(--series-cerise-ink); }
+:root[data-vibe="meadow"] { --series: var(--series-green); --series-ink: var(--series-green-ink); }
+
+@theme {
+  --color-series: var(--series);
+  --color-series-ink: var(--series-ink);
+  --color-series-orange: var(--series-orange);
+  --color-series-blue: var(--series-blue);
+  --color-series-cerise: var(--series-cerise);
+  --color-series-green: var(--series-green);
+  --color-cover-paper: var(--cover-paper);
+  --color-cover-paper-2: var(--cover-paper-2);
+  --color-cover-ink: var(--cover-ink);
+  --color-cover-ink-soft: var(--cover-ink-soft);
+  --color-cover-rule: var(--cover-rule);
+}
+
+.paperback {
+  background: var(--cover-paper);
+  color: var(--cover-ink);
+}
+.paperback ::selection {
+  background: var(--series);
+  color: var(--series-ink);
+}
+.paperback :focus-visible {
+  outline: 2px solid var(--cover-ink);
+  outline-offset: 3px;
+}
+
+/* Cover title: the wide heavy grotesk of a Marber-grid paperback. In the
+   components layer so utilities (font-bold, whitespace-nowrap, tracking-*)
+   can still override them — unlayered CSS would beat every utility. */
+@layer components {
+  .cover-title {
+    font-family: var(--font-ui), sans-serif;
+    font-weight: 800;
+    font-stretch: 118%;
+    letter-spacing: -0.035em;
+    line-height: 0.92;
+    text-wrap: balance;
+  }
+  .cover-label {
+    font-family: var(--font-ui), sans-serif;
+    font-weight: 600;
+    font-stretch: 112%;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* The cover's one entrance: bands print in from their edges, title lines rise
+   out of their own baseline, the picture is uncovered bottom-up like a dust
+   jacket sliding off. CSS, not JS, so it runs on first paint before hydration
+   and the page is never blank while React loads. */
+@keyframes band-down {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes band-up {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes line-rise {
+  from { transform: translateY(108%); }
+  to { transform: translateY(0); }
+}
+@keyframes picture-in {
+  from { clip-path: inset(100% 0 0 0); transform: scale(1.08); }
+  to { clip-path: inset(0 0 0 0); transform: scale(1); }
+}
+@keyframes note-in {
+  from { opacity: 0; transform: translateY(14px) rotate(-2deg); }
+  to { opacity: 1; transform: translateY(0) rotate(-2deg); }
+}
+@keyframes soft-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes highlight-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.anim-highlight {
+  transform-origin: left center;
+  animation: highlight-draw 700ms var(--ease-in-out) both;
+}
+.anim-band-down { animation: band-down 900ms var(--ease-in-out) both; }
+.anim-band-up { animation: band-up 900ms var(--ease-in-out) both; }
+.anim-line-rise { animation: line-rise 1000ms var(--ease-out) both; }
+.anim-picture-in { animation: picture-in 1400ms var(--ease-out) both; }
+.anim-note-in { animation: note-in 700ms var(--ease-out) both; }
+.anim-soft-in { animation: soft-in 800ms var(--ease-out) both; }
+
+/* Dot leaders for a contents page: the dots fill whatever space the title
+   leaves before the page number. */
+.leader {
+  flex: 1;
+  min-width: 1.5rem;
+  margin: 0 0.5rem;
+  border-bottom: 2px dotted var(--cover-rule);
+  transform: translateY(-0.3em);
 }
 
 /* Scroll invitation. A slow drift down and back, not a bounce: bounce easing

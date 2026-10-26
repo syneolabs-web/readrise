@@ -21,6 +21,7 @@ var v=localStorage.getItem("pdx-vibe");
 if(["ember","tide","bloom","meadow"].indexOf(v)<0){v="ember";}
 var d=document.documentElement;
 d.dataset.theme=t;d.dataset.vibe=v;
+d.classList.toggle("dark", t !== "light");
 }catch(e){}})();`;
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -33,7 +34,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <ThemeProvider>
           {children}
         </ThemeProvider>
