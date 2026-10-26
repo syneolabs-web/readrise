@@ -175,6 +175,13 @@
 
 html {
   color-scheme: dark;
+  font-size: 89%; /* Calibrates root scale so 100% browser zoom matches 90% view register */
+}
+@media (min-width: 1600px) {
+  html { font-size: 92%; }
+}
+@media (max-width: 640px) {
+  html { font-size: 93%; }
 }
 html[data-theme="light"] {
   color-scheme: light;
