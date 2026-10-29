@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { db } from "./db";
 import { getSessionUserId } from "./session";
 import type { MemberRole } from "./types";
@@ -30,21 +31,21 @@ export type SessionUser = {
   avatarImage: string | null;
 };
 
-export async function getCurrentUser(): Promise<SessionUser | null> {
+export const getCurrentUser = cache(async function getCurrentUser(): Promise<SessionUser | null> {
   const userId = await getSessionUserId();
   if (!userId) return null;
   return db.user.findUnique({
     where: { id: userId },
     select: { id: true, email: true, name: true, avatarColor: true, avatarImage: true },
   });
-}
+});
 
-/** For pages: bounce to login. */
-export async function requireUser(): Promise<SessionUser> {
+/** For pages: bounce to login. Deduplicated across request lifecycle via React.cache. */
+export const requireUser = cache(async function requireUser(): Promise<SessionUser> {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   return user;
-}
+});
 
 /** For API routes: throw instead of redirecting. */
 export async function requireUserApi(): Promise<SessionUser> {

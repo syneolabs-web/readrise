@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { db } from "./db";
 import { weekOf } from "./utils";
 
@@ -26,14 +27,14 @@ export type ActivityItem = {
   documentId?: string;
 };
 
-/** Circle ids the user belongs to. */
-async function myCircleIds(userId: string): Promise<string[]> {
+/** Circle ids the user belongs to. Deduplicated per request lifecycle. */
+export const myCircleIds = cache(async function myCircleIds(userId: string): Promise<string[]> {
   const rows = await db.membership.findMany({
     where: { userId },
     select: { circleId: true },
   });
   return rows.map((r) => r.circleId);
-}
+});
 
 /**
  * The Circle Activity Feed: recent things people did across the viewer's
@@ -156,8 +157,9 @@ export type Notification = {
  * Notifications: things that happened TO the viewer — replies on their
  * highlights, and their highlights being saved to a vault. Deliberately
  * narrow: not a firehose of everything, just what's addressed to you.
+ * Deduplicated per request lifecycle via React.cache.
  */
-export async function getNotifications(
+export const getNotifications = cache(async function getNotifications(
   userId: string,
   limit = 15
 ): Promise<Notification[]> {
@@ -204,18 +206,24 @@ export async function getNotifications(
   }
 
   return items.sort((a, b) => (a.at < b.at ? 1 : -1)).slice(0, limit);
-}
+});
 
-/** My Progress: the viewer's own accumulated numbers + a 7-day chart. */
-export async function getMyProgress(userId: string) {
+/** My Progress: the viewer's own accumulated numbers + a 7-day chart. Deduplicated via React.cache. */
+export const getMyProgress = cache(async function getMyProgress(userId: string) {
   const circleIds = await myCircleIds(userId);
 
-  const [vaultCount, highlights, docs, actions] = await Promise.all([
+  // Only fetch highlights from the last 7 days for the chart rather than all-time history
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setHours(0, 0, 0, 0);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const [vaultCount, recentHighlights, totalHighlightsCount, docs, actions] = await Promise.all([
     db.vaultEntry.count({ where: { addedById: userId } }),
     db.highlight.findMany({
-      where: { userId },
+      where: { userId, createdAt: { gte: sevenDaysAgo } },
       select: { createdAt: true },
     }),
+    db.highlight.count({ where: { userId } }),
     db.readingProgress.count({ where: { userId } }),
     db.microAction.findMany({
       where: { circleId: { in: circleIds } },
@@ -255,7 +263,7 @@ export async function getMyProgress(userId: string) {
     d.setDate(d.getDate() - i);
     const next = new Date(d);
     next.setDate(next.getDate() + 1);
-    const count = highlights.filter(
+    const count = recentHighlights.filter(
       (h) => h.createdAt >= d && h.createdAt < next
     ).length;
     days.push({ label: dayNames[d.getDay()]!, count });
@@ -264,11 +272,11 @@ export async function getMyProgress(userId: string) {
   return {
     streak,
     insights: vaultCount,
-    highlights: highlights.length,
+    highlights: totalHighlightsCount,
     books: docs,
     week: days,
   };
-}
+});
 
 /** Global Pulse: public circles the viewer can discover + popular books. */
 export async function getDiscover(userId: string) {

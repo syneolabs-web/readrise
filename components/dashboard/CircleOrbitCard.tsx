@@ -35,7 +35,7 @@ export function CircleOrbitCard({ memberships }: Props) {
         {memberships.map((m) => (
           <Link
             key={m.id}
-            href={`/circles/${m.circle.slug}`}
+            href={`/circles/${m.circle.slug}`} prefetch={false}
             className="group flex items-center justify-between gap-3 rounded-2xl border border-ink-800/70 bg-ink-950/40 p-2.5 transition-all duration-150 hover:border-ink-600 hover:bg-ink-850/60"
           >
             <div className="min-w-0">

@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { AuthShell, AuthSwitchLink, Field, errorFrom, readNext } from "@/components/AuthShell";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -23,8 +21,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       if (!res.ok) throw new Error(await errorFrom(res, "Incorrect email or password."));
-      router.push(readNext());
-      router.refresh();
+      window.location.href = readNext();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Couldn't sign in. Try again.");
       setIsSubmitting(false);

@@ -45,7 +45,7 @@ export function ShelfShowcase({ books, firstCircleSlug }: Props) {
           return (
             <Link
               key={b.id}
-              href={`/read/${b.id}`}
+              href={`/read/${b.id}`} prefetch={false}
               className="group relative flex flex-col justify-between rounded-2xl border border-ink-800/70 bg-ink-950/40 p-3 transition-all duration-150 hover:-translate-y-0.5 hover:border-ink-600 hover:bg-ink-850/60 shadow-xs"
             >
               {/* Cover */}

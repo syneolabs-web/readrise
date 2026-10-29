@@ -12,7 +12,11 @@ const nextConfig: NextConfig = {
     return config;
   },
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
+  experimental: {
+    optimizePackageImports: ["lucide-react", "clsx", "tailwind-merge"],
+  },
+  poweredByHeader: false,
+  compress: true,
 };
 
 export default nextConfig;
-// Force Next.js dev server restart to reload Prisma Client
