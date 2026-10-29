@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Avatar, Button } from "@/components/ui";
-import { IconBack, IconFocus, IconMinus, IconPlus } from "@/components/icons";
+import { IconBack, IconCheck, IconFocus, IconMinus, IconPlus } from "@/components/icons";
 import { ThemeMenu } from "@/components/ThemeMenu";
 import type { MemberProgress } from "./types";
 
@@ -113,27 +113,40 @@ export function ReaderToolbar({
 
         {/* ── Focus session ──────────────────────────────── */}
         {focus ? (
-          <div className="flex shrink-0 items-center gap-2">
-            {/* The one inked element on this bar while a session runs. */}
-            <span className="fig inline-flex items-center gap-1.5 rounded-full bg-series px-3 py-1.5 text-xs font-bold text-series-ink shadow-sm">
-              <IconFocus size={13} />
-              {fmt(elapsed)}
-            </span>
-            <Button variant="outline" size="sm" onClick={onEndFocus}>
-              End<span className="hidden sm:inline">&nbsp;session</span>
-            </Button>
+          <div className="flex shrink-0 items-center rounded-full border border-series/40 bg-ink-950/90 p-0.5 shadow-[0_0_20px_-4px_var(--series)] ring-1 ring-series/20 backdrop-blur-md">
+            {/* Live session timer pill with pulsing status indicator */}
+            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 text-xs select-none">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-series opacity-75 duration-1000" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-series" />
+              </span>
+              <span className="font-mono text-xs font-bold tracking-tight text-series tabular-nums">
+                {fmt(elapsed)}
+              </span>
+            </div>
+
+            {/* End session tactile action button */}
+            <button
+              type="button"
+              onClick={onEndFocus}
+              aria-label="End focus session and view recap"
+              className="inline-flex items-center gap-1.5 rounded-full bg-series px-2.5 sm:px-3 py-1 text-xs font-bold text-series-ink shadow-xs transition-all duration-150 hover:brightness-110 hover:shadow-sm active:scale-95 cursor-pointer"
+            >
+              <IconCheck size={12} />
+              <span className="hidden sm:inline">End session</span>
+              <span className="sm:hidden">End</span>
+            </button>
           </div>
         ) : (
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
             onClick={onStartFocus}
             aria-label="Start a focus session"
-            className="shrink-0"
+            className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-ink-700/80 bg-ink-900/80 px-3.5 py-1.5 text-xs font-semibold text-ink-300 shadow-2xs transition-all duration-150 hover:border-accent/50 hover:bg-accent/10 hover:text-ink-100 active:scale-95 cursor-pointer backdrop-blur-xs"
           >
-            <IconFocus size={14} />
+            <IconFocus size={13} className="text-accent transition-transform duration-200 group-hover:scale-110" />
             <span className="hidden sm:inline">Focus</span>
-          </Button>
+          </button>
         )}
 
         {/* Zoom is the live proof that anchoring is resolution-independent:
