@@ -5,7 +5,7 @@ import { truncate } from "@/lib/utils";
  * - Real spine gradient shadow & embossed fold
  * - Deckle edge simulated paper thickness on the right
  * - Archival paper with fine debossed framing border
- * - Literata literary serif typography
+ * - Literata literary serif typography in permanent rich book ink (#1b160f)
  * - Dynamic foil gleam & 3D tilt on hover
  */
 const SERIES = [
@@ -39,7 +39,7 @@ export function BookCover({
 
   return (
     <div
-      className={`group relative flex shrink-0 flex-col overflow-hidden rounded-xl bg-[#fbf7ee] dark:bg-[#1b1815] shadow-[0_12px_28px_-10px_rgba(0,0,0,0.38),0_2px_6px_rgba(0,0,0,0.12)] ring-1 ring-black/10 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:rotate-[-1deg] hover:shadow-[0_20px_35px_-10px_rgba(0,0,0,0.45)] select-none ${className}`}
+      className={`group relative flex shrink-0 flex-col overflow-hidden rounded-xl bg-[#fbf7ee] shadow-[0_12px_28px_-10px_rgba(0,0,0,0.38),0_2px_6px_rgba(0,0,0,0.12)] ring-1 ring-black/15 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:rotate-[-1deg] hover:shadow-[0_20px_35px_-10px_rgba(0,0,0,0.45)] select-none ${className}`}
       style={{ width, height }}
       aria-hidden="true"
     >
@@ -82,11 +82,11 @@ export function BookCover({
       </div>
 
       {/* ── Central Literary Paper Frame ── */}
-      <div className="relative flex flex-1 flex-col justify-between p-1.5 sm:p-2 border-y border-amber-900/10 dark:border-white/10">
+      <div className="relative flex flex-1 flex-col justify-between p-1.5 sm:p-2 border-y border-[#4a3f2c]/15 bg-[#fbf7ee]">
         {/* Subtle debossed blind-stamp inner box */}
-        <div className="flex h-full w-full flex-col justify-center rounded-sm border border-dashed border-amber-900/15 dark:border-white/10 px-2 py-1 text-center">
+        <div className="flex h-full w-full flex-col justify-center rounded-sm border border-dashed border-[#4a3f2c]/15 px-2 py-1 text-center">
           <span
-            className="font-prose font-semibold italic text-paper-ink tracking-tight leading-tight block line-clamp-3"
+            className="font-prose font-semibold italic text-[#1b160f] tracking-tight leading-tight block line-clamp-3"
             style={{
               fontSize: Math.max(8.5, width * (big ? 0.13 : 0.15)),
             }}
@@ -96,7 +96,7 @@ export function BookCover({
 
           {author && medium && (
             <span
-              className="mt-1 block font-sans uppercase tracking-wider text-paper-ink/70 line-clamp-1"
+              className="mt-1 block font-sans uppercase tracking-wider text-[#524636] line-clamp-1"
               style={{ fontSize: Math.max(6.5, width * 0.075) }}
             >
               {truncate(author, 24)}
