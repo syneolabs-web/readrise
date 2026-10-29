@@ -278,8 +278,8 @@ export const getMyProgress = cache(async function getMyProgress(userId: string) 
   };
 });
 
-/** Global Pulse: public circles the viewer can discover + popular books. */
-export async function getDiscover(userId: string) {
+/** Global Pulse: public circles the viewer can discover + popular books. Deduplicated via React.cache. */
+export const getDiscover = cache(async function getDiscover(userId: string) {
   const myIds = new Set(await myCircleIds(userId));
 
   const publicCircles = await db.circle.findMany({
@@ -328,7 +328,7 @@ export async function getDiscover(userId: string) {
     .slice(0, 5);
 
   return { circles, books };
-}
+});
 
 /** Heatmap: the last 91 days of the viewer's activity (GitHub style). */
 export async function getHeatmap(userId: string) {
