@@ -77,7 +77,7 @@ export function ThemeMenu() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label="Theme and vibe"
-        className="grid h-7 w-7 place-items-center rounded-md text-ink-400 transition-colors duration-[120ms] hover:bg-ink-800 hover:text-ink-100"
+        className="grid h-7 w-7 place-items-center rounded-md text-ink-400 transition-colors duration-[120ms] hover:bg-ink-800 hover:text-ink-100 cursor-pointer"
       >
         <Palette size={15} strokeWidth={1.75} aria-hidden="true" />
       </button>
@@ -116,21 +116,29 @@ export function ThemeMenu() {
             Vibe
           </p>
           <div className="mt-2 grid grid-cols-4 gap-2">
-            {VIBES.map((v) => (
-              <button
-                key={v.id}
-                onClick={() => setVibeAndApply(v.id)}
-                aria-pressed={vibe === v.id}
-                aria-label={`${v.label} vibe`}
-                title={v.label}
-                className={cn(
-                  "aspect-square rounded-full transition-transform duration-[120ms] hover:scale-110 cursor-pointer",
-                  v.swatch,
-                  vibe === v.id &&
-                    "ring-2 ring-ink-100 ring-offset-2 ring-offset-ink-900 scale-105 shadow-sm"
-                )}
-              />
-            ))}
+            {VIBES.map((v) => {
+              const active = vibe === v.id;
+              return (
+                <button
+                  key={v.id}
+                  onClick={() => setVibeAndApply(v.id)}
+                  aria-pressed={active}
+                  aria-label={`${v.label} vibe`}
+                  title={v.label}
+                  className={cn(
+                    "relative flex aspect-square items-center justify-center rounded-full transition-all duration-[120ms] hover:scale-110 cursor-pointer",
+                    v.swatch,
+                    active
+                      ? "scale-105 shadow-sm ring-2 ring-white/90 ring-offset-2 ring-offset-ink-900"
+                      : "opacity-70 hover:opacity-100"
+                  )}
+                >
+                  {active && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-white shadow-xs" />
+                  )}
+                </button>
+              );
+            })}
           </div>
           <p className="mt-3 text-[0.7rem] leading-relaxed text-ink-500">
             Your room, your colours. The book stays the book.

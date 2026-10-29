@@ -41,13 +41,13 @@ export function Cover() {
           </Link>
 
           {/* Middle status pill */}
-          <div className="hidden items-center gap-2 rounded-full border border-cover-rule/40 bg-cover-paper-2/60 px-3 py-0.5 text-2xs font-medium text-cover-ink-soft lg:flex">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-series opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-series" />
+          <div className="hidden items-center gap-2.5 rounded-full border border-cover-rule/50 bg-cover-paper-2/70 px-4 py-1 text-2xs font-medium text-cover-ink shadow-2xs backdrop-blur-md lg:flex">
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-series opacity-75 duration-1000" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-series" />
             </span>
-            <span className="cover-label text-[0.68rem] tracking-wider uppercase">
-              A private reading circle for close friends
+            <span className="text-[0.74rem] font-semibold tracking-normal text-cover-ink/90 font-sans">
+              Synchronous Reading Pods <span className="mx-1.5 text-cover-rule/80">&bull;</span> Collaborative Margins
             </span>
           </div>
 

@@ -1,21 +1,18 @@
 import { truncate } from "@/lib/utils";
 
 /**
- * A typographic book cover, printed as a series paperback: a colour band,
- * the paper band carrying the title, a colour band at the foot.
- *
- * Our books are uploaded PDFs with no artwork, so the cover is honest
- * typography (D20) — now in the same grammar as the landing's shelf, so a
- * book on your dashboard looks like the books on the cover that brought you
- * here. The band colour is one of the four series colours, chosen
- * deterministically from the title, so a book keeps its colour everywhere it
- * appears. It is content colour, like a spine — not the viewer's vibe.
+ * A tactile literary book cover for reader PDFs:
+ * - Real spine gradient shadow & embossed fold
+ * - Deckle edge simulated paper thickness on the right
+ * - Archival paper with fine debossed framing border
+ * - Literata literary serif typography
+ * - Dynamic foil gleam & 3D tilt on hover
  */
 const SERIES = [
-  { band: "bg-series-orange", ink: "text-[var(--series-orange-ink)]" },
-  { band: "bg-series-blue", ink: "text-[var(--series-blue-ink)]" },
-  { band: "bg-series-cerise", ink: "text-[var(--series-cerise-ink)]" },
-  { band: "bg-series-green", ink: "text-[var(--series-green-ink)]" },
+  { band: "bg-series-orange", ribbon: "bg-amber-400", ink: "text-[var(--series-orange-ink)]", tag: "Vol. I" },
+  { band: "bg-series-blue", ribbon: "bg-blue-400", ink: "text-[var(--series-blue-ink)]", tag: "Vol. II" },
+  { band: "bg-series-cerise", ribbon: "bg-rose-400", ink: "text-[var(--series-cerise-ink)]", tag: "Vol. III" },
+  { band: "bg-series-green", ribbon: "bg-emerald-400", ink: "text-[var(--series-green-ink)]", tag: "Vol. IV" },
 ] as const;
 
 export function seriesFor(title: string) {
@@ -28,41 +25,95 @@ export function BookCover({
   title,
   author,
   width = 52,
+  className = "",
 }: {
   title: string;
   author?: string | null;
   width?: number;
+  className?: string;
 }) {
   const s = seriesFor(title);
-  const height = Math.round(width * 1.5);
-  const big = width >= 80;
+  const height = Math.round(width * 1.52);
+  const big = width >= 75;
+  const medium = width >= 50;
 
   return (
     <div
-      className="relative flex shrink-0 flex-col overflow-hidden rounded-xl bg-paper shadow-[0_10px_22px_-8px_rgba(0,0,0,0.35),0_1px_3px_rgba(0,0,0,0.1)] ring-1 ring-black/10 transition-transform duration-200 hover:scale-[1.03]"
+      className={`group relative flex shrink-0 flex-col overflow-hidden rounded-xl bg-[#fbf7ee] dark:bg-[#1b1815] shadow-[0_12px_28px_-10px_rgba(0,0,0,0.38),0_2px_6px_rgba(0,0,0,0.12)] ring-1 ring-black/10 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:rotate-[-1deg] hover:shadow-[0_20px_35px_-10px_rgba(0,0,0,0.45)] select-none ${className}`}
       style={{ width, height }}
       aria-hidden="true"
     >
-      {/* spine shading, as on a real paperback */}
-      <span className="absolute inset-y-0 left-0 z-10 w-[3px] bg-black/10" />
-      <span className={`${s.band} block`} style={{ height: height * 0.2 }} />
-      <span className="flex flex-1 flex-col justify-center px-[9%]">
+      {/* ── Real Book Spine Depth ── */}
+      <span className="pointer-events-none absolute inset-y-0 left-0 z-20 w-3 bg-gradient-to-r from-black/35 via-black/15 to-transparent" />
+      <span className="pointer-events-none absolute inset-y-0 left-1.5 z-20 w-px bg-white/20" />
+
+      {/* ── Fanned Page Stack (Right Edge) ── */}
+      <span className="pointer-events-none absolute inset-y-1 right-0 z-10 w-1 bg-amber-100/60 border-l border-black/10" />
+
+      {/* ── Silk Bookmark Ribbon ── */}
+      {big && (
         <span
-          className="cover-title block text-paper-ink"
-          style={{ fontSize: Math.max(7, width * (big ? 0.12 : 0.14)), lineHeight: 1 }}
+          className={`pointer-events-none absolute -top-1 right-3 z-30 h-4.5 w-1.5 rounded-b-2xs shadow-xs transition-transform duration-200 group-hover:translate-y-1 ${s.ribbon}`}
+        />
+      )}
+
+      {/* ── Diagonal Foil Sheen Sweep on Hover ── */}
+      <span className="pointer-events-none absolute -inset-full z-30 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 transition-all duration-700 ease-out group-hover:translate-x-full group-hover:opacity-100" />
+
+      {/* ── Top Archival Band ── */}
+      <div
+        className={`${s.band} ${s.ink} relative flex shrink-0 items-center justify-between px-2`}
+        style={{ height: height * 0.18 }}
+      >
+        <span
+          className="font-bold tracking-widest uppercase opacity-90 truncate"
+          style={{ fontSize: Math.max(6, width * 0.08) }}
         >
-          {truncate(title, big ? 48 : 30)}
+          Readrise
         </span>
-        {author && big && (
+        {big && (
           <span
-            className="mt-1.5 block leading-tight text-paper-ink/60"
-            style={{ fontSize: Math.max(6, width * 0.075) }}
+            className="font-mono text-3xs font-semibold opacity-80"
+            style={{ fontSize: Math.max(6, width * 0.07) }}
           >
-            {truncate(author, 28)}
+            {s.tag}
           </span>
         )}
-      </span>
-      <span className={`${s.band} block`} style={{ height: height * 0.14 }} />
+      </div>
+
+      {/* ── Central Literary Paper Frame ── */}
+      <div className="relative flex flex-1 flex-col justify-between p-1.5 sm:p-2 border-y border-amber-900/10 dark:border-white/10">
+        {/* Subtle debossed blind-stamp inner box */}
+        <div className="flex h-full w-full flex-col justify-center rounded-sm border border-dashed border-amber-900/15 dark:border-white/10 px-2 py-1 text-center">
+          <span
+            className="font-prose font-semibold italic text-paper-ink tracking-tight leading-tight block line-clamp-3"
+            style={{
+              fontSize: Math.max(8.5, width * (big ? 0.13 : 0.15)),
+            }}
+          >
+            {truncate(title, big ? 42 : 24)}
+          </span>
+
+          {author && medium && (
+            <span
+              className="mt-1 block font-sans uppercase tracking-wider text-paper-ink/70 line-clamp-1"
+              style={{ fontSize: Math.max(6.5, width * 0.075) }}
+            >
+              {truncate(author, 24)}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* ── Foot Band ── */}
+      <div
+        className={`${s.band} ${s.ink} shrink-0 px-2 flex items-center justify-center`}
+        style={{ height: height * 0.13 }}
+      >
+        <span
+          className="h-0.5 w-6 rounded-full bg-white/40"
+        />
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Readrise — read together, grow together",
   description:
-    "The anti-feed. A private reading circle for close friends: read together, argue in the margins, commit to one thing, and check on each other. Want to learn and grow? Use this. Want to waste your life? Go somewhere else.",
+    "The anti-feed. Synchronous reading pods and collaborative margins: read together, discuss in the margins, build focused reading habits, and grow together.",
 };
 
 /**
