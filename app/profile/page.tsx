@@ -1,26 +1,63 @@
 import { requireUser } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { getHeatmap, getMyProgress } from "@/lib/activity";
+import { getPublicStanding } from "@/lib/circle-governance";
 import { AppHeader } from "@/components/AppHeader";
 import { AppNav } from "@/components/AppNav";
 import { HeatmapChart } from "@/components/HeatmapChart";
-import { ProfileForm } from "./ProfileForm";
-import { Avatar, Datum, SectionHead } from "@/components/ui";
-import { getPublicStanding } from "@/lib/circle-governance";
 import { PublicStanding } from "@/components/PublicStanding";
+import { ProfileForm } from "./ProfileForm";
+import { ProfileHero } from "@/components/profile/ProfileHero";
+import { ProfileBentoStats } from "@/components/profile/ProfileBentoStats";
+import { ProfileCirclesGrid } from "@/components/profile/ProfileCirclesGrid";
+import { ProfileNotebook } from "@/components/profile/ProfileNotebook";
 
-/**
- * You: your record first (the practice), your settings after (the account).
- * The streak used to sit in a glowing, permanently pulsing badge — a loop
- * animation (banned, D15) on the exact number the product promises never to
- * dramatise. It's a figure in the record now, like every other figure.
- */
 export default async function ProfilePage() {
   const user = await requireUser();
-  const [heatmapData, progress, standing] = await Promise.all([
+
+  const [heatmapData, progress, standing, userDetails, recentHighlights] = await Promise.all([
     getHeatmap(user.id),
     getMyProgress(user.id),
     getPublicStanding(user.id),
+    db.user.findUnique({
+      where: { id: user.id },
+      include: {
+        memberships: {
+          include: {
+            circle: {
+              include: {
+                documents: {
+                  take: 1,
+                  orderBy: { createdAt: "desc" },
+                  select: { id: true, title: true, author: true },
+                },
+                _count: { select: { memberships: true, documents: true } },
+              },
+            },
+          },
+          orderBy: { joinedAt: "asc" },
+        },
+      },
+    }),
+    db.highlight.findMany({
+      where: { userId: user.id },
+      take: 4,
+      orderBy: { createdAt: "desc" },
+      include: {
+        document: {
+          select: {
+            id: true,
+            title: true,
+            author: true,
+            circle: { select: { name: true, slug: true } },
+          },
+        },
+      },
+    }),
   ]);
+
+  const memberships = userDetails?.memberships ?? [];
+  const createdAt = userDetails?.createdAt;
 
   return (
     <>
@@ -28,41 +65,71 @@ export default async function ProfilePage() {
         <AppNav active="profile" />
       </AppHeader>
 
-      <main className="mx-auto max-w-4xl px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-10">
-        <header className="flex flex-wrap items-center gap-5 border-b border-ink-800 pb-8">
-          <Avatar name={user.name} color={user.avatarColor} image={user.avatarImage} size={72} />
-          <div className="min-w-0">
-            <p className="plate-label">Your record</p>
-            <h1 className="cover-title mt-2 text-[length:clamp(2.2rem,5.6vw,3.6rem)] text-ink-100">{user.name}</h1>
-          </div>
-        </header>
-
-        <section aria-labelledby="record" className="mt-10">
-          <SectionHead id="record" title="What you've built" />
-          <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-ink-800 py-5 sm:grid-cols-4">
-            <Datum value={progress.streak} label="Week streak" sub={progress.streak ? "unbroken" : "starts this week"} />
-            <Datum value={progress.highlights} label="Highlights" sub="all time" />
-            <Datum value={progress.insights} label="In the vault" sub="saved insights" />
-            <Datum value={progress.books} label={progress.books === 1 ? "Book" : "Books"} sub="opened" />
-          </div>
+      <main className="mx-auto max-w-5xl px-4 pb-24 pt-4 sm:px-6 sm:pb-16 sm:pt-6 space-y-6 sm:space-y-8">
+        {/* 1. Reader Passport & Identity Banner */}
+        <section aria-labelledby="reader-passport">
+          <ProfileHero
+            user={{
+              ...user,
+              createdAt,
+            }}
+            stats={{
+              streak: progress.streak,
+              highlights: progress.highlights,
+              books: progress.books,
+              circlesCount: memberships.length,
+            }}
+          />
         </section>
 
-        <section aria-labelledby="days" className="mt-12">
-          <SectionHead id="days" title="The last 90 days" />
-          <div className="mt-4">
-            <HeatmapChart days={heatmapData} />
+        {/* 2. What You've Built (Bento Stats Grid) */}
+        <section aria-labelledby="what-youve-built" className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 id="what-youve-built" className="cover-label text-xs font-bold uppercase tracking-[0.14em] text-ink-400">
+              Reader&apos;s Record & Contributions
+            </h2>
+            <span className="text-3xs text-ink-500 font-semibold">
+              Collective Memory
+            </span>
           </div>
+
+          <ProfileBentoStats progress={progress} />
         </section>
 
-        <div className="mt-12">
-          <PublicStanding standing={standing} />
-        </div>
+        {/* 3. 90-Day Reading Pulse Heatmap */}
+        <section aria-labelledby="reading-pulse">
+          <HeatmapChart days={heatmapData} />
+        </section>
 
-        <section aria-labelledby="account" className="mt-14 border-t border-ink-800 pt-8">
-          <SectionHead id="account" title="Account" />
-          <div className="mt-6">
-            <ProfileForm user={user} />
+        {/* 4. Active Reading Circles Pods */}
+        <section aria-labelledby="your-circles">
+          <ProfileCirclesGrid memberships={memberships as any} />
+        </section>
+
+        {/* 5. Personal Commonplace Notebook (Highlights & Margin Notes) */}
+        <section aria-labelledby="recent-quotes">
+          <ProfileNotebook highlights={recentHighlights as any} />
+        </section>
+
+        {/* 6. Public Circle Standing (if in public circles) */}
+        {standing.tier && standing.entries.length > 0 && (
+          <section aria-labelledby="public-standing" className="rounded-3xl border border-ink-800/80 bg-ink-900 p-5 sm:p-6 shadow-sm">
+            <PublicStanding standing={standing} />
+          </section>
+        )}
+
+        {/* 7. Account & Reading Preferences Settings */}
+        <section aria-labelledby="account-settings" className="rounded-3xl border border-ink-800/80 bg-ink-900 p-6 sm:p-8 shadow-sm">
+          <div className="border-b border-ink-800/70 pb-4 mb-6">
+            <h2 id="account-settings" className="cover-title text-xl font-bold text-ink-100">
+              Account & Reading Preferences
+            </h2>
+            <p className="mt-1 text-xs text-ink-400">
+              Control your public reader identity, avatar style, and reading appearance
+            </p>
           </div>
+
+          <ProfileForm user={user} />
         </section>
       </main>
     </>
