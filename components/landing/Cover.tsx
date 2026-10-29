@@ -185,38 +185,39 @@ export function Cover() {
           {/* Floating Glass Margin Note */}
           <motion.figure
             style={{ y: noteY }}
-            className="absolute -bottom-6 left-2 w-[min(18rem,88%)] sm:-left-4 lg:-left-8 z-20"
+            className="absolute -bottom-6 left-2 w-[min(18.5rem,88%)] sm:-left-4 lg:-left-8 z-20"
           >
             <div
-              className="anim-note-in rounded-2xl border border-white/80 bg-white/95 p-3.5 shadow-[0_15px_35px_-8px_rgba(0,0,0,0.15)] backdrop-blur-2xl transition-all duration-300 hover:rotate-0 hover:scale-[1.02] dark:border-white/15 dark:bg-[#1C1814]/95 sm:p-4"
+              className="anim-note-in rounded-2xl border border-cover-rule/70 bg-cover-paper/95 p-3.5 shadow-[0_20px_45px_-10px_rgba(0,0,0,0.35)] backdrop-blur-2xl transition-all duration-300 hover:rotate-0 hover:scale-[1.02] sm:p-4 dark:border-white/15 dark:bg-[#151311]/95"
               style={{ animationDelay: "950ms" }}
             >
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-series/15 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-series">
+              <div className="mb-2.5 flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-series/30 bg-series/15 px-2.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-series shadow-xs">
                   <span className="h-1.5 w-1.5 rounded-full bg-series" />
                   Margin note
                 </span>
-                <span className="text-3xs font-medium text-cover-ink-soft">Walden, p. 112</span>
+                <span className="font-mono text-3xs font-medium text-cover-ink-soft">Walden, p. 112</span>
               </div>
 
-              <blockquote className="font-prose text-xs leading-snug text-cover-ink">
-                <mark className="rounded-md bg-series/25 px-1.5 py-0.5 font-medium text-cover-ink dark:bg-series/35">
+              <blockquote className="font-prose text-xs leading-snug">
+                <span className="inline-block rounded-md border-b-2 border-series bg-series/20 px-2 py-0.5 font-medium text-cover-ink">
                   Our life is frittered away by detail.
-                </mark>
+                </span>
               </blockquote>
 
-              <figcaption className="mt-2.5 flex items-start gap-2.5 border-t border-cover-rule/40 pt-2">
+              <figcaption className="mt-3 flex items-start gap-2.5 border-t border-cover-rule/60 pt-2.5">
                 <span
                   aria-hidden="true"
                   className="cover-label grid h-6 w-6 shrink-0 place-items-center rounded-full bg-series-cerise text-3xs font-bold text-white shadow-xs"
                 >
                   M
                 </span>
-                <span className="text-xs leading-snug text-cover-ink-soft">
-                  <b className="font-semibold text-cover-ink">Maya</b>
-                  <br />
-                  “This is my screen-time report in one sentence.”
-                </span>
+                <div className="text-xs leading-snug">
+                  <span className="font-bold text-cover-ink">Maya</span>
+                  <p className="mt-0.5 text-xs text-cover-ink-soft font-prose italic">
+                    “This is my screen-time report in one sentence.”
+                  </p>
+                </div>
               </figcaption>
             </div>
           </motion.figure>
