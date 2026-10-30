@@ -35,3 +35,6 @@ graphify-out/cache/
 .codex/
 .impeccable/
 *.local.json
+
+.open-next/
+.wrangler/

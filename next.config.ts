@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
   // pdfjs-dist ships a canvas fallback for Node that we never use in the
@@ -11,7 +14,7 @@ const nextConfig: NextConfig = {
     };
     return config;
   },
-  serverExternalPackages: ["@prisma/client", "bcryptjs"],
+  serverExternalPackages: ["@prisma/client", ".prisma/client", "bcryptjs"],
   experimental: {
     optimizePackageImports: ["lucide-react", "clsx", "tailwind-merge"],
   },
